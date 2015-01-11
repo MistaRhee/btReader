@@ -7,7 +7,7 @@ else
 	LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lcurl
 
 endif
-SAUCES = src/*.cpp main.cpp
+SAUCES = src/*.cpp 
 OBJECTS = $(SOURCES:.cpp=.o)
 
 ifeq ($(OS),Windows_NT)
