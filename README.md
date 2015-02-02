@@ -52,4 +52,9 @@ Dependencies
 Maybe more stuff later, but I'll be adding to it. No funny business here. Sorry
 to disappoint.
 
+Not So Dependencies
+-------------------
 
+This program uses pugixml, which is a pretty cool library, especially since it
+doesn't require any libraries (FREEDOM~) and so you should show it some love,
+you know, just to keep the library alive.
