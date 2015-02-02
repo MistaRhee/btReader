@@ -1,8 +1,11 @@
 #include <cstdio>
-#include "swtich.hpp"
+#include "btreader.hpp"
 
 int main(){
-    cSwitch mProg;
+    cMain mProg;
     if(mProg.run()) return 0;
-    else return mProg.getError();
+    else{
+        printf("An error has occured in the program! BTReader Error: %s", mProg.getError().c_str());
+        return -1;
+    }
 }
