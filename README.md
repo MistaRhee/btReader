@@ -3,7 +3,9 @@ Baka-Tsuki Reader for PC (Something which I'm doing in my spare time)
 
 tl;dr this is just an app which will read the BT site and download novels so
 people can access offline. Just something to make life easier I guess? Was
-suggested to me by NoOne2246 (find him on git as well).
+suggested to me by NoOne2246 (find him on git as well). Also, this will only be
+for English TLs only, sorry, but I just can't find the effort to do any more
+then what NoOne2246 wanted of me.
 
 License and stuff
 -----------------
