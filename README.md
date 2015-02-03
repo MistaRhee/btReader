@@ -57,6 +57,9 @@ to disappoint.
 Not So Dependencies
 -------------------
 
-This program uses pugixml, which is a pretty cool library, especially since it
-doesn't require any libraries (FREEDOM~) and so you should show it some love,
-you know, just to keep the library alive.
+I found this pretty nifty library for parsing XML,
+
+http://www.applied-mathematics.net/tools/xmlParser.html
+
+It is nice. I like it. Would rate 10/10 would use again. Sorry pugixml, but
+that was too complicated for my simplistic project.
