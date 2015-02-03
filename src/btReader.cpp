@@ -34,6 +34,17 @@ void cMain::createDatabase(){
     XMLNode queryNode = mainNode.getChildNode("categorymembers");
     for(int i = 0, j = queryNode.nChildNode("cm"); i < j; i++){
         tempStr = queryNode.getChildNode("categorymembers").getAttribute("name");
-        fprintf(fout, "%s\n", tempStr.c_str());
+        fprintf(fout, "%s\n", convTitle(tempStr).c_str());
     }
+}
+
+std::string convTitle(std::string incoming){
+    std::string output;
+    for(int i = 0, j = incoming.size(); i < j; i++){
+        if(incoming[i] == ' '){
+            output += '_';
+        }
+        else output += incoming[i];
+    }
+    return output;
 }

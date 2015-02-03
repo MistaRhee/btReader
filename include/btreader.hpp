@@ -32,7 +32,7 @@ class cMain{
         void processEvents();
         void render();
         std::string getError();
-        std::string convToURL(std::string);
+        std::string convTitle(std::string);
         void preComp();
         void readDatabase();
         void createDatabase();
