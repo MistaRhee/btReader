@@ -4,7 +4,9 @@
 #include <cstdio>
 #include <vector>
 #include <queue>
+#include <map>
 #include <thread>
+#include <utility>
 #include "xmlParser.h" //Nifty XML parsing library
 #include "httpd.hpp" //For website retreival
 
@@ -18,7 +20,7 @@ enum input_t{
 
 enum places_t{
     mainMenu,
-    novelList,
+    mainList,
     novelInfo,
     reader
 };
@@ -34,7 +36,7 @@ class cMain{
         std::string getError();
         std::string convTitle(std::string);
         void preComp();
-        void readDatabase();
+        bool readDatabase();
         void createDatabase();
         void updateDatabase();
         void setError(std::string);
