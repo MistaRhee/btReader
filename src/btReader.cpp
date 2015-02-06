@@ -13,11 +13,16 @@ inline bool fileExists (const std::string& name) {
 
 cMain::cMain(){
     preComp();
+    if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
+        printf("SDL could not initialize! SDL_Error: %s \n", SDL_GetError());
+    }
+    mWindow = SDL_CreateWindow("btReader - By MistaRhee and NoOne2246", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 600);
+    mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
     currThreads = 1;
 }
 
 void cMain::preComp(){
-    if(!fileExists("novels.db")){
+    if(!fileExists("data/novels.db")){
         printf("No database found! Rebuilding novel list from site! \n");
         createDatabase();
     }
@@ -66,12 +71,43 @@ std::string cMain::convTitle(std::string incoming){
     return output;
 }
 
-bool cMain::readDatabase(){
+bool cMain::readDatabase(){ //Note to self: Use try + catch for error handling maybe?
     bool rVal = 1;
+    bool tick = 0;
+    int n;
+    char buffer[200];
+    std::string title;
+    std::string fileName;
     FILE*fin = fopen("novels.db", "w+");
-    asdf
+    fscanf(fin, "%d", &n);
+    for(int i = 0; i < n; i++){
+        title.clear();
+        fileName.clear();
+        tick = 0;
+        fgets(buffer, 200, fin);
+        for(int j = 0, k = strlen(buffer); j < k; j++){
+            if(buffer[j] == ' '){
+                tick = 1;
+                continue;
+            }
+            if(tick){
+                fileName += buffer[j];
+            }
+            else title += buffer[j];
+        }
+        novelDB.insert(std::make_pair(title, fileName));
+    }
+    return rVal;
 }
 
 bool cMain::run(){
-    return 1;
+    int startTick = SDL_GetTicks();
+    while(mWindow != NULL){
+        startTick = SDL_GetTicks();
+        while(SDL_GetTicks() < startTick+FPS_CAP){
+            processEvents();
+            update();
+        }
+        render();
+    }
 }

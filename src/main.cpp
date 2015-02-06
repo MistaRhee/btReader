@@ -1,7 +1,7 @@
 #include <cstdio>
 #include "btreader.hpp"
 
-int main(){
+int main(int, char**){
     cMain mProg;
     if(mProg.run()) return 0;
     else{
