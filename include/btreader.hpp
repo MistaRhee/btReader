@@ -28,6 +28,16 @@ enum places_t{
     reader
 };
 
+class cWikiParser{
+    public:
+        std::string clean(const std::string); //Title of file to clean - Overwrites old file
+        std::string getError();
+        std::string generateRandomName(int len);
+    private:
+        std::string error;
+        void setError(std::string);
+}
+
 class cMain{
     public:
         cMain();
@@ -61,4 +71,4 @@ class cMain{
 
 };
 
-#endif //CRAWLER_HPP
+#endif //BTREADER_HPP

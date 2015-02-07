@@ -111,3 +111,19 @@ bool cMain::run(){
         render();
     }
 }
+
+std::string getNovelDetails(std::string title){
+    std::string tempFile;
+    std::string novelStore;
+    std::string progress;
+    printf("Getting Novel Details for %s. \n", title.c_str());
+    cHttpd mDownload;
+    cWikiParser mParser;
+    tempFile = mDownload.qDownload(domain+pageDetail+title, 16);
+    printf("Page saved to %s. \n", titleName.c_str());
+    novelStore = mParser.clean(tempFile);
+    printf("Cleaned page stored in %s. \n", titleName.c_str());
+    printf("Deleting old file \n");
+    remove (tempFile.c_str());
+    return novelStore;
+}
