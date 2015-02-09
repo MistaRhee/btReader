@@ -7,6 +7,15 @@ suggested to me by NoOne2246 (find him on git as well). Also, this will only be
 for English TLs only, sorry, but I just can't find the effort to do any more
 then what NoOne2246 wanted of me.
 
+After I've finished with this, I'll hand over ownership to NoOne2246 (or at
+least offer it first) and if he doesn't want it, it will be posted on the
+Baka-Tsuki IRC/Facebook Page/Forums for someone to look after this lost and
+lonely project, which I will abandon because it will drive me insane if I have
+to hardcode all the exceptions there are in the website (for example
+Hikaru ga Chikyuu ni Itakoro...... as a title should not have the extra periods
+after it.................................. and some URLs have them, others
+don't. Yeah, that stuff)
+
 License and stuff
 -----------------
 (Note: I'm surprised that people actually are reading this. Have fun wasting
