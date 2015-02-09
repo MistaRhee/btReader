@@ -71,7 +71,7 @@ void cMain::createDatabase(){
     updateDatabase();
 }
 
-bool cMain::readDatabase(){ //Note to self: Use try + catch for error handling maybe?
+bool cMain::readDatabase(){ //Note to self: I have obliterated the old note because it was unneccesary at this point 
     bool rVal = 1;
     bool tick = 0, rev = 0;
     int n;
@@ -121,7 +121,15 @@ void cMain::updateDatabase(){
     XMLNode categoryMembers = queryNode.getChildNode("categorymembers");
     for(int i = 0, j = categoryMembers.nChildNode("cm"); i < j; i++){
         novelName = categoryMembers.getChildNode("cm", i).getAttribute("title");
-        
+        if(novelDB.count(novelName) > 0){
+            if(hasNew(novelName)){ //The page has been updated (i.e. there is an extra novel)
+                std::map<std::string, std::pair<std::string, std::string> >::iterator it = novelDB.find(novelName);
+                novelDB.erase(it);
+                novelDB.insert(std::make_pair)
+        }
+        else{
+            
+        }
     }
 }
 
@@ -149,9 +157,10 @@ bool cMain::run(){
     }
 }
 
-std::string cMain::getNovelDetails(std::string title){
+std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ //Returning the filename in combination with the revID
     std::string tempFile;
     std::string novelStore;
+    std::string revID;
     std::string progress;
     printf("Getting Novel Details for %s. \n", title.c_str());
     cHttpd mDownload;
@@ -160,7 +169,12 @@ std::string cMain::getNovelDetails(std::string title){
     mDownload.download(domain+pageDetail+title, tempFile);
     printf("Page saved to %s. \n", titleName.c_str());
     printf("Extracting wiki text... \n");
-
+    XMLNode mainNode = XMLNode::openFileHelper(tempFile, "api");
+    XMLNode parseNode = mainNode.getChildNode("parse");
+    revID = parseNode.getAttribute("revid");
+    FILE*fout = fopen(tempFile.c_str(), "w+");
+    fprintf(fout, "%s", parseNode.getChildNode("wikitext").getText());
+    fclose(fout);
     printf("Extraction complete! \n");
     novelStore = "data/novels"+generateRandomName();
     printf("Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n");
@@ -168,5 +182,5 @@ std::string cMain::getNovelDetails(std::string title){
     printf("Cleaned page stored in %s. \n", titleName.c_str());
     printf("Deleting old file \n");
     remove (tempFile.c_str());
-    return novelStore;
+    return std::make_pair(novelStore, revID);
 }

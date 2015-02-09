@@ -50,7 +50,7 @@ class cMain{
         void render();
         std::string getError();
         std::string convTitle(std::string);
-        std::string getNovelDetails(std::string);
+        std::pair<std::string, std::string> getNovelDetails(std::string);
         std::string generateRandomName(int len);
         void preComp();
         bool readDatabase();
