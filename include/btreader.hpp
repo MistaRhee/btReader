@@ -1,6 +1,15 @@
 #ifndef BTREADER_HPP
 #define BTREADER_HPP
 
+/*Notes to self (stuff I need to do later):
+ *  - Multithreading (MUST DO)
+ *  - Have a file called updates or something, which allows the user to find
+ *  out what happened recently (so basically a change log which will be an
+ *  option)
+ *  ************************************************************************/
+
+
+
 #include <cstdio>
 #include <vector>
 #include <queue>

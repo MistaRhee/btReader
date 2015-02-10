@@ -158,7 +158,7 @@ bool cMain::run(){
     }
 }
 
-std::pair<std::string, std::string> cNovelGrabber::getNovelDetails(std::string title){ //Returning the filename in combination with the revID
+std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ //Returning the filename in combination with the revID
     std::string tempFile;
     std::string novelStore;
     std::string revID;
