@@ -125,10 +125,11 @@ void cMain::updateDatabase(){
             if(hasNew(novelName)){ //The page has been updated (i.e. there is an extra novel)
                 std::map<std::string, std::pair<std::string, std::string> >::iterator it = novelDB.find(novelName);
                 novelDB.erase(it);
-                novelDB.insert(std::make_pair)
+                novelDB.insert(std::make_pair(novelName, getNovelDetails(novelName)));
+            }
         }
         else{
-            
+            novelDB.insert(std::make_pair(novelName, getNovelDetails(novelName)));
         }
     }
 }
@@ -157,7 +158,7 @@ bool cMain::run(){
     }
 }
 
-std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ //Returning the filename in combination with the revID
+std::pair<std::string, std::string> cNovelGrabber::getNovelDetails(std::string title){ //Returning the filename in combination with the revID
     std::string tempFile;
     std::string novelStore;
     std::string revID;

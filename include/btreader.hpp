@@ -37,7 +37,7 @@ class cWikiParser{
     private:
         std::string error;
         void setError(std::string);
-}
+};
 
 class cMain{
     public:
@@ -50,8 +50,8 @@ class cMain{
         void render();
         std::string getError();
         std::string convTitle(std::string);
-        std::pair<std::string, std::string> getNovelDetails(std::string);
         std::string generateRandomName(int len);
+        std::pair<std::string, std::string> getNovelDetails(std::string);
         void preComp();
         bool readDatabase();
         void createDatabase();
@@ -68,13 +68,10 @@ class cMain{
         int currThreads;
         std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title, place to read from
         std::string error;
-        std::vector<std::thread> processes;
         SDL_Window* mWindow;
         SDL_Renderer* mRenderer;
         std::vector<cTextBox> text;
         std::vector<cImage> images;
-
-
 };
 
 #endif //BTREADER_HPP
