@@ -71,7 +71,7 @@ void cMain::createDatabase(){
     updateDatabase();
 }
 
-bool cMain::readDatabase(){ //Note to self: I have obliterated the old note because it was unneccesary at this point 
+bool cMain::readDatabase(){ 
     bool rVal = 1;
     bool tick = 0, rev = 0;
     int n;
@@ -81,7 +81,10 @@ bool cMain::readDatabase(){ //Note to self: I have obliterated the old note beca
     std::string revID;
     FILE*fin = fopen("novels.db", "r");
     fscanf(fin, "%d", &n);
-    for(int i = 0; i < n; i++){
+    if(n == 0){
+        rVal = 0;
+    }
+    else for(int i = 0; i < n; i++){
         title.clear();
         fileName.clear();
         revID.clear();
@@ -108,6 +111,19 @@ bool cMain::readDatabase(){ //Note to self: I have obliterated the old note beca
         novelDB.insert(std::make_pair(title, std::make_pair(fileName, revID)));
     }
     fclose(fin);
+    return rVal;
+}
+
+bool cMain::hasNew(const std::string title){
+    cHttpd newDl;
+    bool rVal = 1;
+    const std::string original = novelDB.find(title)->second.second;
+    std::string fileName = tempLoc+generateRandomName(8);
+    newDl.download(domain+revID+title, fileName);
+    XMLNode mNode = XMLNode::openFileHelper(fileName.c_str(), "api");
+    if(original.compare(mainNode.getChildNode("query").getChildNode("novels").getChildNode("novel").getChildNode("revisions").getChildNode("rev").getAttribute("revid"))!= 0){
+        rVal = 0;
+    }
     return rVal;
 }
 

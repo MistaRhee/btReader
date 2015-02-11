@@ -2,6 +2,8 @@
 #define BTREADER_HPP
 
 /*Notes to self (stuff I need to do later):
+ *  - WikiParser
+ *  - Reader
  *  - Multithreading (MUST DO)
  *  - Have a file called updates or something, which allows the user to find
  *  out what happened recently (so basically a change log which will be an
@@ -18,6 +20,8 @@
 #include <utility>
 #include <ctime>
 #include <SDL2/SDL.h>
+#include <string>
+#include <cstring>
 #include "xmlParser.h" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
 #include "httpd.hpp" //For website retreival
 #include "objects.hpp" //For SDL Objects
