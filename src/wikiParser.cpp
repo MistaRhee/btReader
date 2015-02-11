@@ -1,48 +1,74 @@
 #include "btreader.hpp"
 
-#define TITLE 0
-#define SYNOPSIS 1
-#define INFO 2
-#define VOLUMES 3
-#define CHAPTERS 4
+#define SYNOPSIS 0
+#define VOLUMES 1
+#define CHAPTERS 2
 
-void cWikiParser::clean(const std::string inFile, const std::string outFile){
+void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile){
     FILE*fin = fopen(inFile.c_str(), "r");
     FILE*fout = fopen(outFile.c_str(), "w+");
     char buffer[4096];
-    std::string currText;
-    int stage = 0;
-    XML
-    while(!feof()){
+    XMLNode mainNode = XMLNode::createXMLTopNode("node");
+    XMLNode infoNode = mainNode.addChild("info");
+    std::string synopsisText;
+    std::string tempStr;
+    int status = 0;
+    bool found = 0;
+    while(true){
         fgets(buffer, 4096, fin);
-        for(int i = 0, j = strlen(buffer); i < j; i++){
-            if(buffer[i] == ' '){
-                switch(stage){
-                    case TITLE:
-                        asdf
-                        break;
-                    case SYNOPSIS:
-                        asdf
-                        break;
-                    case INFO:
-                        asdf
-                        break;
-                    case VOLUMES:
-                        asdf
-                        break;
-                    case CHAPTERS:
-                        asdf
-                        break;
-                    default:
-                        printf("You really shouldn't be here.... \n");
-                        break;
+        switch(status){
+            case SYNOPSIS:
+                if(buffer[0] == '=' and buffer[1] == '='){
+                    tempStr = buffer;
+                    tempStr.erase(0, 2);
+                    tempStr.erase(tempStr.end()-2, tempStr.end());
                 }
-                currText.clear();
-            }
-            else{
-                currText += buffer[i];
-            }
-        }
+                while(true){
+                    fgets(buffer, 4096, fin);
+                    if(buffer[0] == '='){
+                        break;
+                    }
+                    else{
+                        synopsisText += buffer;
+                        synopsisText += '\n';
+                    }
+                }
+                XMLNode synopsis = mainNode.createChild("synopsis");
+                synopsis.addText(synopsisText.c_str());
+                synopsisText.clear();
+                status = VOLUMES;
+                break;
+            case VOLUMES:
+                if(!found){
+                    if(buffer[0] == '=' and buffer[1] == '=' and buffer[2] != '='){
+                        std::string word;
+                        tempStr = buffer;
+                        tempStr.erase(0, 2);
+                        tempStr.erase(tempStr.end()-2, tempStr.end());
+                        for(int i = 0, j = tempStr.size(); i < j; i++){
+                            if(tempStr[i] == ' '){
+                                if(word.compare("by") == 0){
+                                    found = 1;
+                                }
+                                word.clear();
+                                break;
+                            }
+                            else{
+                                word += tempStr[i];
+                            }
+                        }
+                    }
+                }
+                else{
+                    
+                }
+                break;
+            case CHAPTERS:
+                asdf
+                break;
+            default:
+                printf("You really shouldn't be in here you know! \n");
+                break;
     }
 }
 

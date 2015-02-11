@@ -4,7 +4,11 @@
 /*Notes to self (stuff I need to do later):
  *  - WikiParser
  *  - Reader
+ *  - Check validity of the pages (maybe do with the Wiki Parser - I'm only not
+ *  doing it because it will make the code look bad)
  *  - Multithreading (MUST DO)
+ *  - Can download an external site translation onto user HD and open that HTML
+ *  page with their default browser
  *  - Have a file called updates or something, which allows the user to find
  *  out what happened recently (so basically a change log which will be an
  *  option)
@@ -45,7 +49,8 @@ enum places_t{
 
 class cWikiParser{
     public:
-        void clean(const std::string, const std::string); //Title of file to clean, title of location to save to
+        void cleanNovel(const std::string, const std::string); //Title of file to clean, title of location to save to
+        void cleanChapter(const std::string, const std::string); //Title of the file to clean, title of the location to save to
         std::string getError();
     private:
         std::string error;
