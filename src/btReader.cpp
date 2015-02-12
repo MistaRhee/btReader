@@ -51,6 +51,15 @@ std::string cMain::convTitle(std::string incoming){
     return output;
 }
 
+std::string cMain::generateRandomName(int length){       
+    srand(time(NULL));     
+    const char aCharacters[] = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";       
+    std::string rVal;      
+    for(int i = 0, j = strlen(aCharacters); i < length; i++){      
+        rVal += aCharacters[rand()%j];     
+    }      
+    return rVal;       
+
 void cMain::createDatabase(){
     //This is the lengthy process of getting the novels when the program first
     //starts up. Just so the user doesn't have to do it themselves

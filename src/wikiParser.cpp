@@ -3,7 +3,25 @@
 #define END -1
 #define SYNOPSIS 0
 #define VOLUMES 1
-#define CHAPTERS 2
+
+inline bool fileExists (const std::string& name) {
+    if (FILE *file = fopen(name.c_str(), "r")) {
+        fclose(file);
+        return true;
+    } else {
+        return false;
+    }   
+}
+
+std::string cWikiParser::generateRandomName(int length){       
+    srand(time(NULL));     
+    const char aCharacters[] = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";       
+    std::string rVal;      
+    for(int i = 0, j = strlen(aCharacters); i < length; i++){      
+        rVal += aCharacters[rand()%j];     
+    }      
+    return rVal;       
+}
 
 void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile){
     FILE*fin = fopen(inFile.c_str(), "r");
@@ -71,12 +89,51 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                     }
                 }
                 else{
+                    XMLNode newVolume = mainNode.addChild("volume");
                     if(buffer[0] == '=' and buffer[1] == '=') {
                         if(buffer[2] == '='){
                             tempStr = buffer;
                             tempStr.erase(0, 3);
+                            std::string title;
                             for(int i = 0, j = tempStr.size(); i < j; i++){
-                                
+                                if(tempStr[i] == '(' or tempStr[i] == '='){
+                                    newVolume.addAttribute("title", volumeTitle.c_str());
+                                    volumeTitle.clear();
+                                }
+                                else{
+                                    volumeTitle += tempStr[i];
+                                }
+                            }
+                            fgets(buffer, 4096, fin);
+                            std::string fileLocation;
+                            std::string saveTo = "data/images/"+generateRandomName(25);
+                            while(fileExists(saveTo)){
+                                saveTo = "data/images/"+generateRandomName(25);
+                            }
+                            while(true){
+                                XMLNode chapterNode = newVolume.addChild("chapter");
+                                fgets(buffer, 4096, fin);
+                                std::string title;
+                                if(buffer[0] == ':'){
+                                    bool grabbing = 0;
+                                    for(int i = 1, j = strlen(buffer); i < j; i++){
+                                        if(grabbing){
+                                            if(buffer[i] == ']'){
+                                                break;
+                                            }
+                                            else{
+                                                title += buffer[i];
+                                            }
+                                        }
+                                        if(buffer[i] == '|'){
+                                            grabbing = 1;
+                                        }
+                                    }
+                                    chapterNode.addAttribute("title", title.c_str());
+                                }
+                                else{
+                                    break;
+                                }
                             }
 
                         }
@@ -85,9 +142,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                         }
                     }             
                 }
-                break;
-            case CHAPTERS:
-                asdf
                 break;
             case EXIT:
                 printf("Time to go! \n");

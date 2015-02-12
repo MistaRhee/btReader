@@ -47,11 +47,19 @@ enum places_t{
     reader
 };
 
+class cGetImage{
+    public:
+        void getImage(const std::string, const std::string); //File name, location to save to
+    private:
+        const std::string imageQuery = "http://www.baka-tsuki.org/project/api.php?action=query&prop=imageinfo&iiprop=url&titles=";
+};
+
 class cWikiParser{
     public:
         void cleanNovel(const std::string, const std::string); //Title of file to clean, title of location to save to
         void cleanChapter(const std::string, const std::string); //Title of the file to clean, title of the location to save to
         std::string getError();
+        std::string generateRandomName(int len);
     private:
         std::string error;
         void setError(std::string);
