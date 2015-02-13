@@ -2,7 +2,8 @@
 #define BTREADER_HPP
 
 /*Notes to self (stuff I need to do later):
- *  - WikiParser
+ *  - Image Downloader (Debugging now)
+ *  - WikiParser (Debugging now)
  *  - Reader
  *  - Check validity of the pages (maybe do with the Wiki Parser - I'm only not
  *  doing it because it will make the code look bad)
@@ -49,9 +50,11 @@ enum places_t{
 
 class cGetImage{
     public:
-        void getImage(const std::string, const std::string); //File name, location to save to
+        std::string getImage(const std::string); //File name, returns file saved location
+        std::string generateRandomName(int);
     private:
         const std::string imageQuery = "http://www.baka-tsuki.org/project/api.php?action=query&prop=imageinfo&iiprop=url&titles=";
+        const std::string imageStore = "data/images/"
 };
 
 class cWikiParser{

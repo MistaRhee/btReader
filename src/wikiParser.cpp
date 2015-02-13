@@ -13,7 +13,7 @@ inline bool fileExists (const std::string& name) {
     }   
 }
 
-std::string cWikiParser::generateRandomName(int length){       
+std::string cWikiParser::generateRandomName(int length){ 
     srand(time(NULL));     
     const char aCharacters[] = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";       
     std::string rVal;      
@@ -105,11 +105,10 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                 }
                             }
                             fgets(buffer, 4096, fin);
-                            std::string fileLocation;
-                            std::string saveTo = "data/images/"+generateRandomName(25);
-                            while(fileExists(saveTo)){
-                                saveTo = "data/images/"+generateRandomName(25);
-                            }
+                            std::string fileName;
+                            cGetImage newImageGrab;
+                            std::string savedTo = newImageGrab.getImage(fileName);
+                            newVolume.addAttribute("image", savedTo.c_str());
                             while(true){
                                 XMLNode chapterNode = newVolume.addChild("chapter");
                                 fgets(buffer, 4096, fin);
@@ -130,6 +129,13 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                         }
                                     }
                                     chapterNode.addAttribute("title", title.c_str());
+                                    title.clear();
+                                    title = "data/novels/"+generateRandomName(25);
+                                    while(fileExists(title)){
+                                        title = "data/novels/"+generateRandomName(25);
+                                    }
+                                    chapterNode.addAttribute("location", title.c_str()); //The chapter will be saved here, it doesn't mean that it will actually have content stored there... That will come later.
+                                    fprintf(fopen(title.c_str(), "w+"), "<chapter dl=\"no\"/>\n");
                                 }
                                 else{
                                     break;
@@ -154,6 +160,9 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
             break;
         }
     }
+    char *t=mainNode.createXMLString(true);
+    fprintf(fout, "%s \n", t);
+    free(t);
 }
 
 std::string cWikiParser::getError(){

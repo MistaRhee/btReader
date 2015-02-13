@@ -65,6 +65,9 @@ void cMain::createDatabase(){
     //starts up. Just so the user doesn't have to do it themselves
     cHttpd stream1;
     std::string mainPageFileName = tempLoc+generateRandomName(16);
+    while(fileExists(mainPageFileName)){
+        mainPageFileName = tempLoc+generateRandomName(16);
+    }
     stream1.download(domain+novelList, mainPageFileName);
     std::string tempStr;
     XMLNode mainNode = XMLNode::openFileHelper(mainPageFileName.c_str(), "api");
@@ -128,6 +131,8 @@ bool cMain::hasNew(const std::string title){
     bool rVal = 1;
     const std::string original = novelDB.find(title)->second.second;
     std::string fileName = tempLoc+generateRandomName(8);
+    while(fileExists(fileName)){
+        fileName = tempLoc+generateRandomName(8);
     newDl.download(domain+revID+title, fileName);
     XMLNode mNode = XMLNode::openFileHelper(fileName.c_str(), "api");
     if(original.compare(mainNode.getChildNode("query").getChildNode("novels").getChildNode("novel").getChildNode("revisions").getChildNode("rev").getAttribute("revid"))!= 0){
@@ -139,6 +144,9 @@ bool cMain::hasNew(const std::string title){
 void cMain::updateDatabase(){
     cHttpd stream1;
     std::string tempFile = tempLoc+generateRandomName(16);
+    while(fileExists(tempFile)){
+        tempFile = tempLoc+generateRandomName(16);
+    }
     std::string novelName;
     stream1.download(domain+novelList, tempFile);
     XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
@@ -192,6 +200,9 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
     cHttpd mDownload;
     cWikiParser mParser;
     tempFile = "data/temp/"+generateRandomName();
+    while(fileExists(tempFile)){
+        tempFile = "data/temp/"+generateRandomName();
+    }
     mDownload.download(domain+pageDetail+title, tempFile);
     printf("Page saved to %s. \n", titleName.c_str());
     printf("Extracting wiki text... \n");
@@ -202,7 +213,10 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
     fprintf(fout, "%s", parseNode.getChildNode("wikitext").getText());
     fclose(fout);
     printf("Extraction complete! \n");
-    novelStore = "data/novels"+generateRandomName();
+    novelStore = "data/novels/"+generateRandomName(25);
+    while(fileExists(novelStore)){
+        novelStore = "data/novels/"+generateRandomName(25);
+    }
     printf("Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n");
     mParser.clean(tempFile, novelStore);
     printf("Cleaned page stored in %s. \n", titleName.c_str());
