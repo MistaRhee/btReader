@@ -12,7 +12,7 @@ inline bool fileExists (const std::string& name) {
 }
 
 cMain::cMain(){
-    //preComp();
+    preComp();
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
         printf("SDL could not initialize! SDL_Error: %s \n", SDL_GetError());
     }
@@ -193,7 +193,6 @@ void cMain::replaceDatabase(){
 bool cMain::run(){
     int startTick = SDL_GetTicks();
     createDatabase();
-    /*
     while(mWindow != NULL){
         startTick = SDL_GetTicks();
         while(SDL_GetTicks() < startTick+FPS_CAP){
@@ -202,7 +201,6 @@ bool cMain::run(){
         }
         render();
     }
-    */
     printf("Runtime = %d", SDL_GetTicks() - startTick);
     return 1;
 }

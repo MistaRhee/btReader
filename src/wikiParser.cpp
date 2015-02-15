@@ -32,7 +32,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
     std::string tempStr;
     int status = SYNOPSIS;
     bool found = 0;
-    printf("outFile = %s \n", outFile.c_str());
     while(true){
         if(feof(fin)){
             break;
@@ -46,7 +45,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                         tempStr = buffer;
                         tempStr.erase(0, 2);
                         tempStr.erase(tempStr.end()-3, tempStr.end());
-                        printf("%s \n", tempStr.c_str());
                         while(true){
                             fgets(buffer, 4096, fin);
                             if(buffer[0] == '='){
@@ -72,10 +70,8 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                             tempStr = buffer;
                             tempStr.erase(0, 2);
                             tempStr.erase(tempStr.end()-3, tempStr.end());
-                            printf("temp str = %s \n", tempStr.c_str());
                             for(int i = 0, j = tempStr.size(); i < j; i++){
                                 if(tempStr[i] == ' '){
-                                    printf("word = %s \n", word.c_str());
                                     if(word.compare("by") == 0){
                                         found = 1;
                                         std::string title;
@@ -116,20 +112,27 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                 }
                                 fgets(buffer, 4096, fin);
                                 std::string fileName;
-                                for(int i = 2, j = strlen(buffer); i < j; i++){
-                                    if(buffer[i] == '|'){
-                                        break;
+                                bool skipOne = 1;
+                                if(buffer[0] == '[' and buffer[1] == '['){
+                                    for(int i = 2, j = strlen(buffer); i < j; i++){
+                                        if(buffer[i] == '|'){
+                                            break;
+                                        }
+                                        else{
+                                            fileName += buffer[i];
+                                        }
                                     }
-                                    else{
-                                        fileName += buffer[i];
-                                    }
+                                    skipOne = 0;
                                 }
                                 cGetImage newImageGrab;
                                 std::string savedTo = newImageGrab.getImage(fileName);
                                 newVolume.addAttribute("image", savedTo.c_str());
                                 while(true){
                                     XMLNode chapterNode = newVolume.addChild("chapter");
-                                    fgets(buffer, 4096, fin);
+                                    if(skipOne){
+                                        fgets(buffer, 4096, fin);
+                                        skipOne = 0;
+                                    }
                                     std::string title;
                                     if(buffer[0] == ':'){
                                         bool grabbing = 0;
