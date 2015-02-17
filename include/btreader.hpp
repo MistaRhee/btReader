@@ -35,17 +35,12 @@
 #define MAX_THREADS 5
 #define FPS_CAP 1000/60
 
-enum input_t{
-    novelList,
-    coverInfo,
-    content
-};
-
 enum places_t{
-    mainMenu,
-    mainList,
-    novelInfo,
-    reader
+    settings,
+    novelList,
+    reader,
+    dlList
+    //updates (maybe implementing later)
 };
 
 class cGetImage{
@@ -93,6 +88,8 @@ class cMain{
         const std::string novelList = "query&list=categorymembers&cmtitle=Category:Light_novel_(English)&cmlimit=500&format=xml";
         const std::string pageDetail = "parse&prop=wikitext|revid&format=xml&page="; //Add novel name after this (NAME_TITLE_ETC/CHAPTER_NAME)
         const std::string revID = "query&prop=revisions&revlimit=1&titles="; //Add titles after this
+        const std::string systemLoc = "system/";
+        const std::string systemImagesLoc = "system/images/";
         places_t whereAt;
         int currThreads;
         std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title, place to read from

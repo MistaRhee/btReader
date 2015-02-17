@@ -88,50 +88,16 @@ void cMain::createDatabase(){
 }
 
 bool cMain::readDatabase(){ 
-    bool rVal = 1;
-    bool tick = 0, rev = 0;
-    int n;
-    char buffer[200];
-    std::string title;
-    std::string fileName;
-    std::string revID;
-    FILE*fin = fopen("novels.db", "r");
-    fscanf(fin, "%d", &n);
-    if(n == 0){
-        rVal = 0;
-        setError("Empty database existing");
+    bool rVal = 0;
+    XMLNode mainNode = XMLNode::openFileHelper("data/novels.db", "novelList");
+    for(int i = 0, j = mainNode.nChildNode("novel"); i < j; i++){
+        XMLNode newEntry = mainNode.getChildNode("novel", i);
+        novelDB.insert(std::make_pair(newEntry.getAttribute("title"), std::make_pair(newEntry.getAttribute("location"), newEntry.getAttribute("revid"))));
     }
-    else for(int i = 0; i < n; i++){
-        if(feof(fin)){
-            setError("Database incomplete! \n");
-            rVal = 0;
-        }
-        title.clear();
-        fileName.clear();
-        revID.clear();
-        tick = 0;
-        rev = 0;
-        fgets(buffer, 200, fin);
-        for(int j = 0, k = strlen(buffer); j < k; j++){
-            if(!tick && buffer[j] == ' '){
-                tick = 1;
-                continue;
-            }
-            if(tick && buffer[j] == ' '){
-                rev = 1;
-                continue;
-            }
-            if(tick && !rev){
-                fileName += buffer[j];
-            }
-            if(rev){
-                revID += buffer[j];
-            }
-            else title += buffer[j];
-        }
-        novelDB.insert(std::make_pair(title, std::make_pair(fileName, revID)));
+    if(novelDB.size() != mainnode.nChildNode("novel")){
+        printf("An error has occurred when reading the database! Mismatch in numbers! \nRebuilding the database from scratch! \n");
+        rVal = 1;
     }
-    fclose(fin);
     return rVal;
 }
 
@@ -179,20 +145,31 @@ void cMain::updateDatabase(){
 }
 
 void cMain::replaceDatabase(){
-    FILE*fout = fopen("data/novels.db", "w+");
-    fprintf(fout, "%d\n", novelDB.size());
+    XMLNode mainNode = XMLNode::createXMLTopNode("novellist");
     int count = 0;
     for(std::map<std::string, std::pair<std::string, std::string> >::iterator it; it != novelDB.end(); ++it){
-        fprintf(fout, "%s %s %s\n", it->first.c_str(), it->second.first.c_str(), it->second.second.c_str());
+        XMLNode newEntry = mainNode.addChildNode("novel");
+        newEntry.addAttribute("title", it->first.c_str());
+        newEntry.addAttribute("location", it->second.first.c_str());
+        newEntry.addAttribute("revid", it->second.second.c_str());
         count ++;
     }
-    if(count != novelDB.size()) printf("An error has occured when replacing old database! Unsure of the issue \n");
-    else printf("Old database has been successfully replaced! \n");
+    if(count != novelDB.size()){
+        printf("An error has occured when replacing the old database! Mismatch in numbers \n");
+    }
+    else{
+        char* t;
+        t = mainNode.createXMLString(true);
+        fprintf(fopen("data/novels.db", "w+"), "%s\n", t);
+        free(t);
+        printf("Database successfully replaced! \n");
+    }
 }
 
 bool cMain::run(){
     int startTick = SDL_GetTicks();
     createDatabase();
+    /*
     while(mWindow != NULL){
         startTick = SDL_GetTicks();
         while(SDL_GetTicks() < startTick+FPS_CAP){
@@ -201,6 +178,8 @@ bool cMain::run(){
         }
         render();
     }
+    Will be uncommented when getting the database has been optimised
+    */
     printf("Runtime = %d", SDL_GetTicks() - startTick);
     return 1;
 }
