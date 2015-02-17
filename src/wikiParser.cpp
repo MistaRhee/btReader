@@ -134,7 +134,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                         skipOne = 0;
                                     }
                                     std::string title;
-                                    if(buffer[0] == ':'){
+                                    if(buffer[0] == ':' or buffer[0] == '*'){
                                         bool grabbing = 0;
                                         for(int i = 1, j = strlen(buffer); i < j; i++){
                                             if(grabbing){

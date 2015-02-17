@@ -142,11 +142,11 @@ bool cMain::hasNew(const std::string title){
     std::string fileName = tempLoc+generateRandomName(50);
     while(fileExists(fileName)){
         fileName = tempLoc+generateRandomName(50);
-        newDl.download(domain+revID+title, fileName);
-        XMLNode mNode = XMLNode::openFileHelper(fileName.c_str(), "api");
-        if(original.compare(mNode.getChildNode("query").getChildNode("novels").getChildNode("novel").getChildNode("revisions").getChildNode("rev").getAttribute("revid"))!= 0){
-            rVal = 0;
-        }
+    }
+    newDl.download(domain+revID+title, fileName);
+    XMLNode mNode = XMLNode::openFileHelper(fileName.c_str(), "api");
+    if(original.compare(mNode.getChildNode("query").getChildNode("novels").getChildNode("novel").getChildNode("revisions").getChildNode("rev").getAttribute("revid"))!= 0){
+        rVal = 0;
     }
     return rVal;
 }
