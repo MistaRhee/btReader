@@ -1,0 +1,19 @@
+<!-- Notes on this XML: The original folder must be included first, before any of it's children folders (i.e. data/ before data/novels) for non-essential folders. Files are automatically considered as essential.-->
+
+<content>
+    <folder essential="false" sauce="data" />
+    <folder essential="false" sauce="data/novels/" />
+    <folder essential="false" sauce="data/images/" />
+    <folder essential="false" sauce="data/temp/" />
+    <folder essential="true" sauce="system/" />
+    <folder essential="true" sauce="system/fonts/" />
+    <folder essential="true" sauce="system/images/" />
+    <file essential="true" sauce="system/menu.xml" />
+    <file sauce="system/fonts/droidsansfallback.ttf" />
+    <file sauce="system/images/download.png" />
+    <file sauce="system/images/download_invert.png" />
+    <file sauce="system/images/notHere.jpg" />
+    <file sauce="system/images/settings.png" />
+    <file sauce="system/images/settings_invert.png" />
+    <file sauce="system/images/update.png" />
+</content>

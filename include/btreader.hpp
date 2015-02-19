@@ -10,10 +10,13 @@
  *  - Can download an external site translation onto user HD and open that HTML
  *  page with their default browser
  *  ************************************************************************/
-
-
-
+#if defined(WIN32)
+#include <windows.h>
+#elif defined(UNIX)
+#include <dirent.h>
+#endif
 #include <cstdio>
+#include <cstdlib>
 #include <vector>
 #include <queue>
 #include <map>
@@ -63,6 +66,8 @@ class cMain{
     public:
         cMain();
         ~cMain();
+        bool checkDependencies();
+        void preComp();
         bool hasNew(const std::string); //Request title (checks revIds)
         bool run();
         void update();
@@ -72,7 +77,6 @@ class cMain{
         std::string convTitle(std::string);
         std::string generateRandomName(int len);
         std::pair<std::string, std::string> getNovelDetails(std::string);
-        void preComp();
         bool readDatabase();
         void createDatabase();
         void updateDatabase();
