@@ -78,6 +78,8 @@ Dependencies
 ------------
 
 - SDL2
+- SDL_Image
+- SDL_TTF
 - libCurl
 
 Maybe more stuff later, but I'll be adding to it. No funny business here. Sorry
