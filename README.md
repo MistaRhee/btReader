@@ -35,6 +35,12 @@ precious settings. You can do nifty things to it (like set the text colour or
 the background colour) which I don't really want to put into the settings menu
 because I want it to be simple (not out of laziness).
 
+There are quite a few restrictions in the modding though. There MUST BE certain
+elements, (such as settings, settings-selected etc..) to ensure that the user
+is able to have access to all of the functions, and since everything is on ONE
+SCREEN (i.e. there will be no changes in windows) these things must be readily
+available. 
+
 
 License and stuff
 -----------------

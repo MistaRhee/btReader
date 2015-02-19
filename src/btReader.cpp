@@ -236,10 +236,11 @@ void cMain::replaceDatabase(){
 
 bool cMain::run(){
     bool rVal = 1;
-    while(mWindow != NULL){
+    bool running = 1;
+    while(running){
         if(error.size() > 0){
             rVal = 0;
-            break;
+            running = 0;
         }
         startTick = SDL_GetTicks();
         while(SDL_GetTicks() < startTick+FPS_CAP){
