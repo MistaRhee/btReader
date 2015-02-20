@@ -73,6 +73,7 @@ class cMain{
         void update();
         void processEvents();
         void render();
+        void getObjects();
         std::string getError();
         std::string convTitle(std::string);
         std::string generateRandomName(int len);
