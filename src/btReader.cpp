@@ -46,6 +46,7 @@ cMain::cMain(){
         mWindow = SDL_CreateWindow("btReader - By MistaRhee and NoOne2246", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 600, SDL_WINDOW_SHOWN);
         mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
         currThreads = 1;
+        getObjects();
     }
 }
 
@@ -64,6 +65,20 @@ void cMain::preComp(){
         printf("Error! The database is corrupt and cannot be read. Overwriting the database! \n");
         createDatabase();
     }
+    /* Setting default colours! (will be overwritten by the XML file if it
+     * exists
+     */
+    SDL_Colour temp;
+    temp.r = 255;
+    temp.g = 255;
+    temp.b = 255;
+    temp.a = 255;
+    colours.insert(std::make_pair("back", temp));
+    temp.r = 0;
+    temp.g = 0;
+    temp.b = 0;
+    colours.insert(std::make_pair("clear", temp));
+    colours.insert(std::make_pair("text", temp));
     getObjects();
 }
 
@@ -112,6 +127,43 @@ void cMain::setError(std::string mError){
 std::string cMain::getError(){
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error - Program hasn't exited correctly", error.c_str(), NULL);
     return error;
+}
+
+void cMain::getObjects(){
+    XMLNode mainNode = XMLNode::openFileHelper("system/menu.xml", "menu");
+    for(int i = 0, j = mainNode.nChildNode(); i < j; i++){
+        XMLNode curr = mainNode.getChildNode(i);
+        std::string name = curr.getName;
+        std::string id;
+        if(name.compare("font") == 0){
+            id = curr.getAttribute("name");
+            std::string sauce = curr.getAttribute("sauce");
+            fonts.insert(std::make_pair(id, sauce));
+        }
+        else if(name.compare("image") == 0){
+            id = curr.getAttribute("name");
+
+        }
+        else if(name.compare("text") == 0){
+            id = curr.getAttribute("name");
+            
+        }
+        else if(name.compare("content") == 0){
+            id = curr.getAttribute("name");
+            SDL_Rect mRect;
+            mRect.x = atoi(curr.getAttribute("x"));
+            mRect.y = atoi(curr.getAttribute("y"));
+            mRect.h = atoi(curr.getAttribute("h"));
+            mRect.w = atoi(curr.getAttribute("w"));
+            content.insert(std::make_pair(id, &mRect);
+        }
+        else if(name.compare("colour") == 0){
+            id = curr.getAttribute("name");
+        }
+        else{
+            printf("Invalid menu object type! %s\n", name.c_str());
+        }
+    }
 }
 
 bool cMain::run(){

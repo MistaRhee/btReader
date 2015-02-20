@@ -36,6 +36,7 @@ namespace beatOff{
             void setFont(std::string);
             void setTextCol(int, int, int, int);
             void setBoxCol(int, int, int, int);
+            bool canFit(int); //Given the height (the rest of the stuff is kept the same), checks if the text can actually fit within the height
             void render(SDL_Renderer*);
         protected:
             std::string text;

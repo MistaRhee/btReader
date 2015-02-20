@@ -13,10 +13,13 @@
         - IMAGE: downloads-inactive
         - CONTENT: rendering (For the place for all the details of each section to be rendered)
 
+There is the optional tag name COLOUR. This tag allows the modder to change the default colours (such as text colours, background colours and the screen clear colours). To change the text colour, just have the tag <colour> with the attributes name(which can be either back, clear or text), r, g, b, a (each of the rgba combinations must be a number between 0 - 255
+
+There is only support for one content ATM
  -->
 
 <menu>
-    <font name="default" sauce="">
+    <font name="default" sauce="system/fonts/droidsansfallback.ttf">
     <image name="settings" sauce="system/images/settings.png" x="0" y="0" h="50" w="50"/>
     <image name="settings-selected" sauce="system/images/settings_invert.png" x="0" y="0" h="50" w="50" />
     <text name="novelList" text="Novel List" font="default" x="55" y="0" h="50" w="453" />

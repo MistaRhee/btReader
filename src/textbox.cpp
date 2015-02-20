@@ -96,10 +96,16 @@ namespace beatOff{
         boxA = inA;
     }
 
+    bool cTextBox::canFit(int incomingHeight){
+        int renderedHeight = 0;
+
+        return(renderedHeight < incomingHeight);
+    }
+
     void cTextBox::render(SDL_Renderer* mRenderer){
         if(!fileExists(font)){
             printf("cTextBox Error! Font does not exist! \n");
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!", "A fatal error has occurred! There is no such font! Please ensure that the file exists and game is installed correctly. If so, please contact the developers for more assistance.", NULL);
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!", "A fatal error has occurred! There is no such font! Please ensure that the program was installed correctly before contacting developers.", NULL);
         }
         else{
             TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
@@ -160,7 +166,21 @@ namespace beatOff{
                 SDL_FreeSurface(mSurface);
                 SDL_DestroyTexture(mTexture);
             }
-        }
+            TTF_CloseFont(mFont);
+        } 
     }
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
