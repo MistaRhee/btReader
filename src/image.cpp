@@ -13,14 +13,18 @@ namespace beatOff{
 
     cImage::cImage(){
         if(IMG_Init(IMG_INIT_JPG||IMG_INIT_PNG) < 0){
-            printf ("Image didn't init. Image Error: %s", IMG_GetError());
+            std::string e = "cImage error: SDL_Image failed to init (Image Error: " + IMG_GetError() + ")";
+            printf ("%s", e.c_str());
+            setError(e);
         }
         setSize(-1, -1);
     }
 
     cImage::cImage(std::string inLoc, int inx, int iny, int inh, int inw){ 
         if(IMG_Init(IMG_INIT_JPG||IMG_INIT_PNG) < 0){
-            printf ("Image didn't init. Image Error: %s", IMG_GetError());
+            std::string e = "cImage error: SDL_Image failed to init (Image Error: " + IMG_GetError() + ")";
+            printf ("%s", e.c_str());
+            setError(e);
         }
         setPicLoc(inLoc);
         setPos(inx, iny);
@@ -37,7 +41,8 @@ namespace beatOff{
         SDL_Rect dRect;
         if(!fileExists(location)){
             printf("cImage Error! No image found! \n");
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!", "A Fatal Error has occurred! Image not found! Please reinstall the game properly, and message devs of this error and how it occurred", NULL);
+            std::string e = "cImage Error - No image found (Image location: " + location + ")";
+            setError(e)
         }
         else{
             mSurface = IMG_Load(location.c_str());

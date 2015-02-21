@@ -19,4 +19,15 @@ namespace beatOff{
         y += dy;
     }
 
+    void cObject::setError(std::string in){
+        error += in + "\n";
+    }
+
+    std::string getError(){
+        return error;
+    } 
+    
+    bool hasError(){
+        return(error.size() > 0);
+    }
 }

@@ -21,10 +21,16 @@ namespace beatOff{
 
     cTextBox::cTextBox(){
         if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
-            printf("Error! SDL couldn't initialise. SDL Error: %s \n", SDL_GetError());
-        } else if(!TTF_WasInit() && TTF_Init() == -1){
-            printf("Error! TTF couldn't initialise. TTF Error: %s \n", TTF_GetError());
-        } else{
+            std::string e = "cTextBox Error - SDL couldn't initialise (SDL Error: " + SDL_GetError() + ")";
+            setError(e);
+            printf("%s \n", e.c_str());
+        } 
+        else if(!TTF_WasInit() && TTF_Init() == -1){
+            std::string e = "cTextBox Error - TTF Couldn't initialise (TTF Error: " + TTF_GetError() + ")";
+            setError(e);
+            printf("%s \n", e.c_str());
+        } 
+        else{
             textR = 0;
             textG = 0;
             textB = 0;
@@ -39,10 +45,16 @@ namespace beatOff{
 
     cTextBox::cTextBox(std::string inText, std::string fontLoc, int inX, int inY, int inW, int inSize){
         if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
-            printf("Error! SDL couldn't initialise. SDL Error: %s \n", SDL_GetError());
-        } else if(!TTF_WasInit() && TTF_Init() == -1){
-            printf("Error! TTF couldn't initialise. TTF Error: %s \n", TTF_GetError());
-        } else{
+            std::string e = "cTextBox Error - SDL couldn't initialise (SDL Error: " + SDL_GetError() + ")";
+            setError(e);
+            printf("%s \n", e.c_str());
+        } 
+        else if(!TTF_WasInit() && TTF_Init() == -1){
+            std::string e = "cTextBox Error - TTF Couldn't initialise (TTF Error: " + TTF_GetError() + ")";
+            setError(e);
+            printf("%s \n", e.c_str());
+        } 
+        else{
             textR = 0;
             textG = 0;
             textB = 0;
@@ -97,15 +109,41 @@ namespace beatOff{
     }
 
     bool cTextBox::canFit(int incomingHeight){
-        int renderedHeight = 0;
-
+        if(!fileExists(font)){
+            std::string e = "cTextBox Error - Font doesn't exist (Font location = " + font + ")";
+            printf("%s\n", e.c_str());
+        }
+        else{
+            int renderedHeight, tempWidth, numLines = 0, space = -1;
+            std::string temp;
+            for(int i = 0; i < text.size(); i++){
+                temp += temp[i];
+                if(text[i] == ' '){
+                    space = i;
+                }
+                TTF_SizeText(mFOnt, temp.c_str(), &tempW, &renderedHeight);
+                if(tempW > w){
+                    if(space < 0){
+                        i--;
+                        temp.clear();
+                    }
+                    else{
+                        i = space;
+                        space = -1;
+                        temp.clear();
+                    }
+                    numLines ++;
+                }
+            }
+            renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* numLines - 1);
+        }
         return(renderedHeight < incomingHeight);
     }
 
     void cTextBox::render(SDL_Renderer* mRenderer){
         if(!fileExists(font)){
-            printf("cTextBox Error! Font does not exist! \n");
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!", "A fatal error has occurred! There is no such font! Please ensure that the program was installed correctly before contacting developers.", NULL);
+            std::string e = "cTextBox Error - Font doesn't exist (Font location = " + font + ")";
+            printf("%s\n", e.c_str());
         }
         else{
             TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);

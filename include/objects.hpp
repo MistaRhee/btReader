@@ -19,9 +19,13 @@ namespace beatOff{
             void setPos(int, int);
             void setSize(int, int);
             void move(int, int);
+            void setError(std::string);
+            std::string getError;
+            bool hasError();
         protected:
             int x, y;
             int h, w;
+            std::string error;
     };
     
     class cTextBox : public cObject{
@@ -33,7 +37,7 @@ namespace beatOff{
             void setTextSize(int);
             void showBox();
             void hideBox();
-            void setFont(std::string);
+            void setFont(std::string); //Font must be set before using the following functions - canFit, render
             void setTextCol(int, int, int, int);
             void setBoxCol(int, int, int, int);
             bool canFit(int); //Given the height (the rest of the stuff is kept the same), checks if the text can actually fit within the height
