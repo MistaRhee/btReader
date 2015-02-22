@@ -16,22 +16,26 @@ namespace beatOff{
         public:
             cObject();
             virtual void render(SDL_Renderer*) {}
-            void setPos(int, int);
-            void setSize(int, int);
-            void move(int, int);
+            void setPos(int, int); //x, y
+            void setSize(int, int); //h, w
+            void move(int, int); //dx, dy
             void setError(std::string);
-            std::string getError;
+            void setWarning(std::string);
+            bool hasWarning();
+            std::string getWarning();
+            std::string getError();
             bool hasError();
         protected:
             int x, y;
             int h, w;
             std::string error;
+            std::string warning;
     };
     
     class cTextBox : public cObject{
         public:
             cTextBox(); //Initialise
-            cTextBox(std::string, std::string, int, int, int, int); //Initialise while setting text, xPos, yPos, width, fontSize. Height is calculated within the render function
+            cTextBox(std::string, std::string, int, int, int, int, int); //Initialise while setting text, xPos, yPos, width, height, fontSize. (Height can be left as -1 if you want it to be calculated in the actual function, otherwise, it will be the height of the bounding box.
             ~cTextBox();
             void setText(std::string);
             void setTextSize(int);
@@ -40,6 +44,7 @@ namespace beatOff{
             void setFont(std::string); //Font must be set before using the following functions - canFit, render
             void setTextCol(int, int, int, int);
             void setBoxCol(int, int, int, int);
+            int wrappedHeight(); //Returns the expected height of the rendering
             bool canFit(int); //Given the height (the rest of the stuff is kept the same), checks if the text can actually fit within the height
             void render(SDL_Renderer*);
         protected:
@@ -53,11 +58,13 @@ namespace beatOff{
     };
 
     class cImage : public cObject{
+        /* To leave the image at its original size, set height and width to -1 */
         public:
             cImage(); //Initialise
             cImage(std::string, int, int, int, int);//Initialise while setting location, xPos, yPos, height, width (-1 height and width to make image height)
             void setPicLoc(std::string);
             void render(SDL_Renderer*);
+            std::pair<int, int> getSize(); //Will only work if location is set
         private:
             std::string location;
 

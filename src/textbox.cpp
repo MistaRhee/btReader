@@ -39,7 +39,7 @@ namespace beatOff{
             boxB = 0;
             textA = 255;
             boxA = 255;
-            drawBox = 0;
+            drawBox = 1;
         }
     }
 
@@ -58,12 +58,12 @@ namespace beatOff{
             textR = 0;
             textG = 0;
             textB = 0;
-            boxR = 0;
-            boxG = 0;
-            boxB = 0;
+            boxR = 255;
+            boxG = 255;
+            boxB = 255;
             textA = 255;
             boxA = 255;
-            drawBox = 0;
+            drawBox = 1;
             setPos(inX, inY);
             setText(inText);
             setSize(0, inW);
@@ -108,7 +108,7 @@ namespace beatOff{
         boxA = inA;
     }
 
-    bool cTextBox::canFit(int incomingHeight){
+    int cTextBox::wrappedHeight(){
         if(!fileExists(font)){
             std::string e = "cTextBox Error - Font doesn't exist (Font location = " + font + ")";
             printf("%s\n", e.c_str());
@@ -135,9 +135,13 @@ namespace beatOff{
                     numLines ++;
                 }
             }
-            renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* numLines - 1);
+            renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* numLines);
         }
-        return(renderedHeight < incomingHeight);
+        return(renderedHeight);
+    }
+
+    bool cTextBox::canFit(int incomingHeight){
+        return(wrappedHeight < incomingHeight);
     }
 
     void cTextBox::render(SDL_Renderer* mRenderer){
@@ -147,6 +151,21 @@ namespace beatOff{
         }
         else{
             TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
+            if(h > 0){
+                int expected = wrappedHeight(), tempW;
+                if(h > expected){
+                    std::string w = "cTextBox Warning - Inputted height is too small by " + to_string(h - wrappedHeight) + " pixels! Prentending if the guideline height didn't exist";
+                    setWarning(w);
+                    printf("%s \n", w.c_str());
+                }
+                else{
+                    y += (expected - h)/2;
+                    TTF_SizeText(mFont, text.c_str(), &tempW, &expected);
+                    if(w < tempW){
+                        x += (tempW-w)/2;
+                    }
+                }
+            }
             int tempW, multiplier = 1, lineSkip = TTF_FontLineSkip(mFont);
             int space = -1;
             std::string temp;
@@ -205,20 +224,7 @@ namespace beatOff{
                 SDL_DestroyTexture(mTexture);
             }
             TTF_CloseFont(mFont);
-        } 
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

@@ -97,11 +97,11 @@ class cMain{
         std::string error;
         SDL_Window* mWindow;
         SDL_Renderer* mRenderer;
-        std::map<std::string, beatOff::cImage*> images;
-        std::map<std::string, beatOff::cText*> text;
+        std::map<std::string, beatOff::cImage> images;
+        std::map<std::string, beatOff::cText> text;
         std::map<std::string, std::string> font;
         std::map<std::string, SDL_Colour> colours;
-        std::map<std::string, SDL_Rect*> content;
+        std::map<std::string, SDL_Rect> content;
 };
 
 #endif //BTREADER_HPP

@@ -35,6 +35,29 @@ namespace beatOff{
         location = inLoc;
     }
 
+    std::pair<int, int> getSize(){
+        std::pair<int, int> rVal;
+        if(!fileExists(location)){
+            printf("cImage Warning! No image set before checking size! \n");
+            rVal = std::make_pair(-1, -1);
+        }
+        else{
+            SDL_Surface* mSurface = NULL;
+            mSurface = IMG_Load(location.c_str());
+            if(mSurface == NULL){
+                printf("cImage Error! Failed to load image \n");
+                std::string e = "cImage Error - Image failed to load (SDL_Image error: " + IMG_GetError() + ")";
+                setError(e);
+                rVal = std::make_pair(-1, -1);
+            }
+            else{
+                rVal = std::make_pair(mSurface->h, mSurface->w);
+                SDL_FreeSurface(mSurface);
+            }
+        }
+        return rVal;
+    }
+
     void cImage::render(SDL_Renderer* mRenderer){
         SDL_Surface* mSurface = NULL;
         SDL_Texture* mTexture = NULL;
@@ -46,18 +69,32 @@ namespace beatOff{
         }
         else{
             mSurface = IMG_Load(location.c_str());
-            mTexture = SDL_CreateTextureFromSurface(mRenderer, mSurface);
-            dRect.x = x;
-            dRect.y = y;
-            if(h < 0 or w < 0){
-                dRect.h = mSurface->h;
-                dRect.w = mSurface->w;
+            if(!mSurface or mSurface == NULL){
+                printf("cImage Error! Failed to load image \n");
+                std::string e = "cImage Error - Image loading failure (SDL_Image error: " + IMG_GetError() + ")";
+                setError(e);
             }
             else{
-                dRect.h = h;
-                dRect.w = w;
+                mTexture = SDL_CreateTextureFromSurface(mRenderer, mSurface);
+                if(mTexture == NULL){
+                    printf("cImage Error! Failed to create texture \n");
+                    std::string e = "cImage Error - Failed to create texture from surface (SDL Error: " + SDL_GetError() + ")";
+                    setError(e);
+                }
+                else{
+                    dRect.x = x;
+                    dRect.y = y;
+                    if(h < 0 or w < 0){
+                        dRect.h = mSurface->h;
+                        dRect.w = mSurface->w;
+                    }
+                    else{
+                        dRect.h = h;
+                        dRect.w = w;
+                    }
+                    SDL_RenderCopy(mRenderer, mTexture, NULL, &dRect);
+                }
             }
-            SDL_RenderCopy(mRenderer, mTexture, NULL, &dRect);
         }
         SDL_FreeSurface(mSurface);
         SDL_DestroyTexture(mTexture);

@@ -23,11 +23,25 @@ namespace beatOff{
         error += in + "\n";
     }
 
-    std::string getError(){
+    std::string cObject::getError(){
         return error;
     } 
     
-    bool hasError(){
+    bool cObject::hasError(){
         return(error.size() > 0);
+    }
+
+    void cObject::setWarning(std::string in){
+        warning += in + "\n";
+    }
+
+    std::string cObject::getWarning(){
+        std::string rVal = warning;
+        warning.clear();
+        return rVal;
+    }
+    
+    bool cObject::hasWarning(){
+        return (warning.size() > 0);
     }
 }

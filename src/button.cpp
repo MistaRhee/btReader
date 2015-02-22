@@ -17,12 +17,12 @@ namespace beatOff{
             textR = 0;
             textG = 0;
             textB = 0;
-            boxR = 0;
-            boxG = 0;
-            boxB = 0;
+            boxR = 255;
+            boxG = 255;
+            boxB = 255;
             textA = 255;
             boxA = 255;
-            drawBox = 0;
+            drawBox = 1;
         }
         showBox();
     }
@@ -42,21 +42,21 @@ namespace beatOff{
             textR = 0;
             textG = 0;
             textB = 0;
-            boxR = 0;
-            boxG = 0;
-            boxB = 0;
+            boxR = 255;
+            boxG = 255;
+            boxB = 255;
             textA = 255;
             boxA = 255;
-            drawBox = 0;
+            drawBox = 1;
             setPos(inX, inY);
             setText(inText);
             setSize(0, inW);
             setFont(fontLoc);
             setTextSize(inSize);
-            showBox();
         }
     }
     void cButton::select(){
+        setTextCol(255-textR, 255-textG, 255-textB, 255-textA);
         setBoxCol(255-boxR, 255-boxG, 255-boxB, 255-boxA);
     }
 

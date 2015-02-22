@@ -142,11 +142,14 @@ void cMain::getObjects(){
         }
         else if(name.compare("image") == 0){
             id = curr.getAttribute("name");
-
+            beatOff::cImage newImage;
+            newImage.setPicLoc(curr.getAttribute("sauce"));
+            newImage.setPos(atoi(curr.getAttribute(x)), atoi(curr.getAttribute(y)));
+            newImage.setSize(atoi(curr.getAttribute(h)), atoi(curr.getAttribute(w)));
+            images.insert(std::make_pair(id, std::move(newImage));
         }
         else if(name.compare("text") == 0){
             id = curr.getAttribute("name");
-            
         }
         else if(name.compare("content") == 0){
             id = curr.getAttribute("name");
@@ -155,7 +158,7 @@ void cMain::getObjects(){
             mRect.y = atoi(curr.getAttribute("y"));
             mRect.h = atoi(curr.getAttribute("h"));
             mRect.w = atoi(curr.getAttribute("w"));
-            content.insert(std::make_pair(id, &mRect);
+            content.insert(std::make_pair(id, std::move(mRect));
         }
         else if(name.compare("colour") == 0){
             id = curr.getAttribute("name");
