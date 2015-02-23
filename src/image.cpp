@@ -13,7 +13,9 @@ namespace beatOff{
 
     cImage::cImage(){
         if(IMG_Init(IMG_INIT_JPG||IMG_INIT_PNG) < 0){
-            std::string e = "cImage error: SDL_Image failed to init (Image Error: " + IMG_GetError() + ")";
+            std::string e = "cImage error: SDL_Image failed to init (Image Error: ";
+            e += IMG_GetError();
+            e += ")";
             printf ("%s", e.c_str());
             setError(e);
         }
@@ -22,7 +24,9 @@ namespace beatOff{
 
     cImage::cImage(std::string inLoc, int inx, int iny, int inh, int inw){ 
         if(IMG_Init(IMG_INIT_JPG||IMG_INIT_PNG) < 0){
-            std::string e = "cImage error: SDL_Image failed to init (Image Error: " + IMG_GetError() + ")";
+            std::string e = "cImage error: SDL_Image failed to init (Image Error: ";
+            e += IMG_GetError();
+            e += ")";
             printf ("%s", e.c_str());
             setError(e);
         }
@@ -46,7 +50,9 @@ namespace beatOff{
             mSurface = IMG_Load(location.c_str());
             if(mSurface == NULL){
                 printf("cImage Error! Failed to load image \n");
-                std::string e = "cImage Error - Image failed to load (SDL_Image error: " + IMG_GetError() + ")";
+                std::string e = "cImage Error - Image failed to load (SDL_Image error: ";
+                e += IMG_GetError();
+                e = ")";
                 setError(e);
                 rVal = std::make_pair(-1, -1);
             }
@@ -64,21 +70,27 @@ namespace beatOff{
         SDL_Rect dRect;
         if(!fileExists(location)){
             printf("cImage Error! No image found! \n");
-            std::string e = "cImage Error - No image found (Image location: " + location + ")";
+            std::string e = "cImage Error - No image found (Image location: ";
+            e += location;
+            e += ")";
             setError(e)
         }
         else{
             mSurface = IMG_Load(location.c_str());
             if(!mSurface or mSurface == NULL){
                 printf("cImage Error! Failed to load image \n");
-                std::string e = "cImage Error - Image loading failure (SDL_Image error: " + IMG_GetError() + ")";
+                std::string e = "cImage Error - Image loading failure (SDL_Image error: ";
+                e += IMG_GetError();
+                e += ")";
                 setError(e);
             }
             else{
                 mTexture = SDL_CreateTextureFromSurface(mRenderer, mSurface);
                 if(mTexture == NULL){
                     printf("cImage Error! Failed to create texture \n");
-                    std::string e = "cImage Error - Failed to create texture from surface (SDL Error: " + SDL_GetError() + ")";
+                    std::string e = "cImage Error - Failed to create texture from surface (SDL Error: ";
+                    e += SDL_GetError();
+                    e += ")";
                     setError(e);
                 }
                 else{

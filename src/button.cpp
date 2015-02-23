@@ -4,12 +4,16 @@ namespace beatOff{
 
     cButton::cButton(){
         if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
-            std::string e = "cTextBox Error - SDL couldn't initialise (SDL Error: " + SDL_GetError() + ")";
+            std::string e = "cTextBox Error - SDL couldn't initialise (SDL Error: ";
+            e += SDL_GetError();
+            e += ")";
             setError(e);
             printf("%s \n", e.c_str());
         } 
         else if(!TTF_WasInit() && TTF_Init() == -1){
-            std::string e = "cTextBox Error - TTF Couldn't initialise (TTF Error: " + TTF_GetError() + ")";
+            std::string e = "cTextBox Error - TTF Couldn't initialise (TTF Error: ";
+            e += TTF_GetError();
+            e += ")";
             setError(e);
             printf("%s \n", e.c_str());
         } 
@@ -29,12 +33,16 @@ namespace beatOff{
 
     cButton::cButton(std::string inText, std::string fontLoc, int inX, int inY, int inW, int inSize){
         if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
-            std::string e = "cTextBox Error - SDL couldn't initialise (SDL Error: " + SDL_GetError() + ")";
+            std::string e = "cTextBox Error - SDL couldn't initialise (SDL Error: ";
+            e += SDL_GetError();
+            e += ")";
             setError(e);
             printf("%s \n", e.c_str());
         } 
         else if(!TTF_WasInit() && TTF_Init() == -1){
-            std::string e = "cTextBox Error - TTF Couldn't initialise (TTF Error: " + TTF_GetError() + ")";
+            std::string e = "cTextBox Error - TTF Couldn't initialise (TTF Error: ";
+            e += TTF_GetError();
+            e += ")";
             setError(e);
             printf("%s \n", e.c_str());
         } 
