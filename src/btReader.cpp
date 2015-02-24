@@ -81,7 +81,7 @@ void cMain::preComp(){
     colours.insert(std::make_pair("text", temp));
     getObjects();
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
-        mNovelList.addNovel(i->first);
+        mNovelList->addNovel(i->first);
     }
 }
 
@@ -172,8 +172,10 @@ void cMain::getObjects(){
             mRect.w = atoi(curr.getAttribute("w"));
             beatOff::cNovelList newNovels(&mRect);
             beatOff::cReader newReader(&mRect);
+            beatOff::cNovelDetails newDetails(&mRect);
             mNovelList = &newNovels;
             mReader = &newReader;
+            mNovelDetails = &newDetails;
         }
         else if(name.compare("colour") == 0){
             id = curr.getAttribute("name");
@@ -211,6 +213,10 @@ bool cMain::run(){
     return rVal;
 }
 
+void cMain::update(){
+    
+}
+
 void cMain::render(){
     /* Clear the screen with the background colour */
     auto found = colors.find("clear");
@@ -223,7 +229,7 @@ void cMain::render(){
             break;
         
         case novelList:
-            mNovelList.render(mRenderer);
+            mNovelList->render(mRenderer);
             break;
 
         case novelDetails:
@@ -231,7 +237,7 @@ void cMain::render(){
             break;
 
         case reader:
-            mReader.render(mRenderer);
+            mReader->render(mRenderer);
             break;
         
         case dlList:

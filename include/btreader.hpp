@@ -106,6 +106,7 @@ class cMain{
         std::map<std::string, SDL_Color> colours;
         beatOff::cNovelList* mNovelList;
         beatOff::cReader* mReader;
+        beatOff::cNovelDetails* mNovelDetails;
 };
 
 #endif //BTREADER_HPP
