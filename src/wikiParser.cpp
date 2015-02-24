@@ -193,57 +193,34 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
     static const int LV2 = 0, LV3 = 1, LV4 = 2, LV5 = 3, LV6 = 4, BOLD = 5, ITALIC = 6, IMAGE = 7;
     FILE*fin = fopen(in.c_str(), "r");
     char buffer[1000000];
-//    bool status[8]; //Lv2 heading, Lv3 heading, Lv4 heading, Lv5 heading, Lv6 heading, bold, italic, image (Leaving out bold and italic at the moment-would be difficult given the circumstances)
-    XMLNode mainNode = XMLNode::createTopNode("chapter");
+    std::string text;
     while(true){
-        if(feof(fin)){
+        if(!feof(fin)){
             break;
         }
         else{
             fgets(buffer, 1000000, fin);
-            if(buffer[0] == '='){
-                //Heading
-                int count = 0;
-                std::string heading;
-                std::string type;
-                XMLNode newHeading = mainNode.addChildNode("heading");
-                for(int i = 0; i < 5; i++){
-                    if(buffer[i] == '='){
-                        count ++;
-                    }
-                }
-                for(int i = count, j = strlen(buffer); i < j; i++){
-                    if(buffer[i] == '='){
+            if(buffer[0] == '[' and buffer[1] == '['){
+                std::string fileName;
+                for(int i = 2;; i++){
+                    if(buffer[i] == '|'){
                         break;
                     }
                     else{
-                        heading += buffer[i];
+                        fileName += buffer[i];
                     }
                 }
-                type = "lv"+to_string(count);
-                newHeading.addAttribute("type", type.c_str());
-                newHeading.addText(heading.c_str());
+                cGetImage newImage;
+                text += "[[";
+                text += newImage.getImage(fileName);
+                text += "]]";
             }
             else{
-                std::string workingLine;
-                XMLNode newText = mainNode.addChildNode("text");
-                for(int i = 0, j = strlen(buffer); i < j; i++){
-                    if(buffer[i] == '''){
-                        if(buffer[i+1] == '''){
-                            while(buffer[i] == '''){
-                                i++;
-                            }
-                        }
-                    }
-                    workingLine += buffer[i];
-                }
-                newText.addText(workingLine.c_str());
+                text += buffer;
+                text += "\n";
             }
         }
     }
-    char* t = mainNode.createXMLString(true);
-    fprintf(fopen(out.c_str(), "w+"), "%s\n", t);
-    free(t);
 }
 
 std::string cWikiParser::getError(){

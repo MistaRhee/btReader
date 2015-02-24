@@ -31,7 +31,7 @@ namespace beatOff{
             std::string error;
             std::string warning;
     };
-    
+
     class cTextBox : public cObject{
         public:
             cTextBox(); //Initialise
@@ -77,5 +77,30 @@ namespace beatOff{
             void select();
     };
 
+    class cContent : public cObject{
+        public:
+            virtual void createContent() {}
+            void render(SDL_Renderer*);
+        protected:
+            bool changed, created;
+            SDL_Texture* mTexture;
+
+    class cNovelList : public cObject{
+        public:
+            cNovelList::cNovelList(SDL_Rect*); //Sets the position start and the rendered size of the object
+            void createContent();
+            void addNovel(std::string);
+        private:
+            std::vector<cTextBox> mNovels;
+    };
+
+    class cReader : public cObject{
+        public:
+            cReader::cReader(SDL_Rect*); //Sets the dimensions of the rendered object (so the program won't get confused)
+            void createContent();
+            void getContent(std::string); //Automatically calls createContent at the end of it's function
+        private:
+    }
+    
 }
 #endif //OBJECTS_HPP
