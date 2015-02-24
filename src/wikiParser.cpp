@@ -221,6 +221,9 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
             }
         }
     }
+    fclose(fin);
+    fopen(out.c_str(), "w+");
+    fprintf(fout, "%s \n", text.c_str());
 }
 
 std::string cWikiParser::getError(){
