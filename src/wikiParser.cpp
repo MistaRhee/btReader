@@ -98,6 +98,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                         if(buffer[0] == '=' and buffer[1] == '=') {
                             if(buffer[2] == '='){
                                 XMLNode newVolume = mainNode.addChild("volume");
+                                printf("Adding Volume \n");
                                 tempStr = buffer;
                                 tempStr.erase(0, 3);
                                 std::string volumeTitle;
@@ -129,9 +130,12 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                 newVolume.addAttribute("image", savedTo.c_str());
                                 while(true){
                                     XMLNode chapterNode = newVolume.addChild("chapter");
+                                    printf("Adding Chapter! \n");
                                     if(skipOne){
-                                        fgets(buffer, 4096, fin);
                                         skipOne = 0;
+                                    }
+                                    else{
+                                        fgets(buffer, 4096, fin);
                                     }
                                     std::string title;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
@@ -190,7 +194,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
 }
 
 void cWikiParser::cleanChapter(const std::string in, const std::string out){
-    static const int LV2 = 0, LV3 = 1, LV4 = 2, LV5 = 3, LV6 = 4, BOLD = 5, ITALIC = 6, IMAGE = 7;
     FILE*fin = fopen(in.c_str(), "r");
     char buffer[1000000];
     std::string text;
@@ -222,8 +225,7 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
         }
     }
     fclose(fin);
-    fopen(out.c_str(), "w+");
-    fprintf(fout, "%s \n", text.c_str());
+    fprintf(fopen(out.c_str(), "w+"), "%s \n", text.c_str());
 }
 
 std::string cWikiParser::getError(){

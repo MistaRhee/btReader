@@ -58,7 +58,7 @@ bool cMain::readDatabase(){
         XMLNode newEntry = mainNode.getChildNode("novel", i);
         novelDB.insert(std::make_pair(newEntry.getAttribute("title"), std::make_pair(newEntry.getAttribute("location"), newEntry.getAttribute("revid"))));
     }
-    if(novelDB.size() != mainnode.nChildNode("novel")){
+    if(novelDB.size() != mainNode.nChildNode("novel")){
         printf("An error has occurred when reading the database! Mismatch in numbers! \nRebuilding the database from scratch! \n");
         rVal = 1;
     }
@@ -96,9 +96,15 @@ void cMain::updateDatabase(){
         novelName = categoryMembers.getChildNode("cm", i).getAttribute("title");
         novelName = convTitle(novelName);
         if(novelDB.count(novelName) > 0){
-            if(hasNew(novelName)){ //The page has been updated (i.e. there is an extra novel)
-                std::map<std::string, std::pair<std::string, std::string> >::iterator it = novelDB.find(novelName);
-                novelDB.erase(it);
+            auto found = novelDB.find(novelName);
+            if(found->second.second.size() > 0){
+                if(hasNew(novelName)){ //The page has been updated (i.e. there is an extra novel)
+                    std::map<std::string, std::pair<std::string, std::string> >::iterator it = novelDB.find(novelName);
+                    novelDB.erase(it);
+                    novelDB.insert(std::make_pair(novelName, getNovelDetails(novelName)));
+                }
+            }
+            else{
                 novelDB.insert(std::make_pair(novelName, getNovelDetails(novelName)));
             }
         }
@@ -112,7 +118,7 @@ void cMain::replaceDatabase(){
     XMLNode mainNode = XMLNode::createXMLTopNode("novellist");
     int count = 0;
     for(std::map<std::string, std::pair<std::string, std::string> >::iterator it; it != novelDB.end(); ++it){
-        XMLNode newEntry = mainNode.addChildNode("novel");
+        XMLNode newEntry = mainNode.addChild("novel");
         newEntry.addAttribute("title", it->first.c_str());
         newEntry.addAttribute("location", it->second.first.c_str());
         newEntry.addAttribute("revid", it->second.second.c_str());

@@ -47,7 +47,7 @@ namespace beatOff{
         }
     }
 
-    cTextBox::cTextBox(std::string inText, std::string fontLoc, int inX, int inY, int inW, int inSize){
+    cTextBox::cTextBox(std::string inText, std::string fontLoc, int inX, int inY, int inW, int inH, int inSize){
         if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
             std::string e = "cTextBox Error - SDL couldn't initialise (SDL Error: ";
             e += SDL_GetError();
@@ -74,7 +74,7 @@ namespace beatOff{
             drawBox = 1;
             setPos(inX, inY);
             setText(inText);
-            setSize(0, inW);
+            setSize(inH, inW);
             setFont(fontLoc);
             setTextSize(inSize);
         }
@@ -117,6 +117,7 @@ namespace beatOff{
     }
 
     int cTextBox::wrappedHeight(){
+        int renderedHeight = -1;
         if(!fileExists(font)){
             std::string e = "cTextBox Error - Font doesn't exist (Font location = ";
             e += font;
@@ -125,15 +126,16 @@ namespace beatOff{
             setWarning(e); //Only warning the user (maybe they forgot to set the font before the test... IDK LOL!
         }
         else{
-            int renderedHeight, tempWidth, numLines = 0, space = -1;
+            int tempWidth, numLines = 0, space = -1;
             std::string temp;
+            TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
             for(int i = 0; i < text.size(); i++){
                 temp += temp[i];
                 if(text[i] == ' '){
                     space = i;
                 }
-                TTF_SizeText(mFOnt, temp.c_str(), &tempW, &renderedHeight);
-                if(tempW > w){
+                TTF_SizeText(mFont, temp.c_str(), &tempWidth, &renderedHeight);
+                if(tempWidth > w){
                     if(space < 0){
                         i--;
                         temp.clear();
@@ -147,12 +149,17 @@ namespace beatOff{
                 }
             }
             renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* numLines);
+            TTF_CloseFont(mFont);
         }
         return(renderedHeight);
     }
 
     bool cTextBox::canFit(int incomingHeight){
         return(wrappedHeight() < incomingHeight);
+    }
+
+    std::string cTextBox::getText(){
+        return text;
     }
 
     void cTextBox::render(SDL_Renderer* mRenderer){
@@ -169,7 +176,7 @@ namespace beatOff{
                 int expected = wrappedHeight(), tempW;
                 if(h > expected){
                     std::string w = "cTextBox Warning - Inputted height is too small by ";
-                    w += to_string(h - wrappedHeight);
+                    w += std::to_string(h - wrappedHeight());
                     w += " pixels! Prentending if the guideline height didn't exist";
                     setWarning(w);
                     printf("%s \n", w.c_str());

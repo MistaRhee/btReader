@@ -18,11 +18,6 @@ namespace beatOff{
         backColour.a = 255;
     }
 
-    cReader::cReader(SDL_Rect* inRect){
-        setPos(inRect->x, inRect->y);
-        setSize(inRect->h, inRect->w);
-    }
-
     void cNovelList::addNovel(std::string in){
         cTextBox newText;
         newText.setText(in);
@@ -33,7 +28,7 @@ namespace beatOff{
         newText.setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
         newText.setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);
         newText.setFont(fontLoc);
-        mNovels.push_back(std::move(newText));
+        mNovels.push_back(newText);
         h += novelHeight;
     }
 
@@ -46,7 +41,7 @@ namespace beatOff{
     }
 
     std::string cNovelList::getSelected(){
-        return mNovels[selected];
+        return mNovels[selected].getText();
     }
 
     void cNovelList::render(SDL_Renderer* mRenderer){

@@ -1,6 +1,6 @@
 #include "btreader.hpp"
 
-#if defined(WIN32)
+#ifdef _WIN32
 inline bool dirExists(const std::string& dirName) {
     DWORD ftyp = GetFileAttributesA(dirName.c_str());
     if (ftyp == INVALID_FILE_ATTRIBUTES) return false;
@@ -13,7 +13,8 @@ inline void createFolder(const std::string& dirName){
     command = "mkdir "+dirName;
     system(command.c_str());
 }
-#elif defined(UNIX)
+#endif
+#ifdef __unix__
 inline bool dirExists(const std::string& dirName){
     DIR* myDir = NULL;
     myDir = opendir(dirName.c_str());
@@ -48,6 +49,7 @@ cMain::cMain(){
         currThreads = 1;
         getObjects();
     }
+    startRunTime = SDL_GetTicks();
 }
 
 cMain::~cMain(){
@@ -86,6 +88,7 @@ void cMain::preComp(){
 }
 
 bool cMain::checkDependencies(){ //Checking if directories exist and important files are there.
+    bool rVal = 1;
     XMLNode mainNode = XMLNode::openFileHelper("manifest.db", "content");
     for(int i = 0, j = mainNode.nChildNode(); i < j; i++){
         XMLNode currNode = mainNode.getChildNode(i);
@@ -93,12 +96,14 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
         if(type.compare("folder") == 0){
             /* For system folders */
             std::string essential = currNode.getAttribute("essential");
-            if(!dirExist(currNode.getAttribute("sauce"))){
-                if(essential.compare("true")){
+            if(!dirExists(currNode.getAttribute("sauce"))){
+                if(!essential.compare("true")){
                     /* Important shit that can't just be made on the spot */
                     printf("Essential Folder doesn't exist \n");
-                    std::string mError = "Check Dependencies Error - Essential Folder doesn't exist: " + currNode.getAttribute("sauce");
-                    setError(mError);
+                    std::string e = "Check Dependencies Error - Essential Folder doesn't exist: ";
+                    e = currNode.getAttribute("sauce");
+                    setError(e);
+                    rVal = 0;
                 }
                 else{
                     createFolder(currNode.getAttribute("sauce"));
@@ -109,8 +114,10 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
             /* For important system files */
             if(!fileExists(currNode.getAttribute("sauce"))){
                 printf("Essential File doesn't exist \n");
-                std::string mError = "Check Dependencies Error - Essential File doesn't exist: " + currNode.getAttribute("sauce");
+                std::string mError = "Check Dependencies Error - Essential File doesn't exist: ";
+                mError += currNode.getAttribute("sauce");
                 setError(mError);
+                rVal = 0;
             }
         }
         else{
@@ -118,9 +125,10 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
             printf("Invalid typing. \n");
             std::string mError = "Check Dependencies Error - Invalid typing: " + type;
             setError(mError);
+            rVal = 0;
         }
-
     }
+    return rVal;
 }
 
 void cMain::setError(std::string mError){
@@ -136,7 +144,7 @@ void cMain::getObjects(){
     XMLNode mainNode = XMLNode::openFileHelper("system/menu.xml", "menu");
     for(int i = 0, j = mainNode.nChildNode(); i < j; i++){
         XMLNode curr = mainNode.getChildNode(i);
-        std::string name = curr.getName;
+        std::string name = curr.getName();
         std::string id;
         if(name.compare("font") == 0){
             id = curr.getAttribute("name");
@@ -147,9 +155,9 @@ void cMain::getObjects(){
             id = curr.getAttribute("name");
             beatOff::cImage newImage;
             newImage.setPicLoc(curr.getAttribute("sauce"));
-            newImage.setPos(atoi(curr.getAttribute(x)), atoi(curr.getAttribute(y)));
-            newImage.setSize(atoi(curr.getAttribute(h)), atoi(curr.getAttribute(w)));
-            images.insert(std::make_pair(id, std::move(newImage));
+            newImage.setPos(atoi(curr.getAttribute("x")), atoi(curr.getAttribute("y")));
+            newImage.setSize(atoi(curr.getAttribute("h")), atoi(curr.getAttribute("w")));
+            images.insert(std::make_pair(id, std::move(newImage)));
         }
         else if(name.compare("button") == 0){
             id = curr.getAttribute("name");
@@ -157,9 +165,9 @@ void cMain::getObjects(){
             auto textCol = colours.find("text");
             auto boxCol = colours.find("back");
             newButton.setText(curr.getAttribute("text"));
-            newButton.setTextSize(curr.getAttribute("size"));
-            newButton.setTextCol(textCol->r, textCol->g, textCol->b, textCol->a);
-            newButton.setBoxCol(boxCol->r, boxCol->g, boxCol->g, boxCol->a);
+            newButton.setTextSize(atoi(curr.getAttribute("size")));
+            newButton.setTextCol(textCol->second.r, textCol->second.g, textCol->second.b, textCol->second.a);
+            newButton.setBoxCol(boxCol->second.r, boxCol->second.g, boxCol->second.b, boxCol->second.a);
             newButton.setFont(curr.getAttribute("font"));
             buttons.insert(std::make_pair(id, std::move(newButton)));
         }
@@ -171,11 +179,11 @@ void cMain::getObjects(){
             mRect.h = atoi(curr.getAttribute("h"));
             mRect.w = atoi(curr.getAttribute("w"));
             beatOff::cNovelList newNovels(&mRect);
-            beatOff::cReader newReader(&mRect);
-            beatOff::cNovelDetails newDetails(&mRect);
+//            beatOff::cReader newReader(&mRect);
+//            beatOff::cNovelDetails newDetails(&mRect);
             mNovelList = &newNovels;
-            mReader = &newReader;
-            mNovelDetails = &newDetails;
+//            mReader = &newReader;
+//            mNovelDetails = &newDetails;
         }
         else if(name.compare("colour") == 0){
             id = curr.getAttribute("name");
@@ -195,6 +203,7 @@ void cMain::getObjects(){
 bool cMain::run(){
     bool rVal = 1;
     bool running = 1;
+    int startTick = SDL_GetTicks();
     while(running){
         if(error.size() > 0){
             rVal = 0;
@@ -202,25 +211,25 @@ bool cMain::run(){
         }
         else{
             startTick = SDL_GetTicks();
-            while(SDL_GetTicks() < startTick+FPS_CAP){
-                processEvents();
-                update();
-            }
+//            while(SDL_GetTicks() < startTick+FPS_CAP){
+//                processEvents();
+//                update();
+//            }
             render();
         }
     }
     printf("Runtime = %d", SDL_GetTicks() - startRunTime);
     return rVal;
 }
-
+/*
 void cMain::update(){
     
 }
-
+*/
 void cMain::render(){
     /* Clear the screen with the background colour */
-    auto found = colors.find("clear");
-    SDL_SetRenderDrawColor(mRenderer, found->r, found->g, found->b, found->a);
+    auto found = colours.find("clear");
+    SDL_SetRenderDrawColor(mRenderer, found->second.r, found->second.g, found->second.b, found->second.a);
     SDL_RenderClear(mRenderer);
     /* Draw the content first */
     switch(whereAt){
@@ -228,7 +237,7 @@ void cMain::render(){
             /* Not done yet. You mad? */
             break;
         
-        case novelList:
+        case showNovels:
             mNovelList->render(mRenderer);
             break;
 
@@ -237,7 +246,7 @@ void cMain::render(){
             break;
 
         case reader:
-            mReader->render(mRenderer);
+//            mReader->render(mRenderer);
             break;
         
         case dlList:
@@ -252,48 +261,48 @@ void cMain::render(){
      * consist of the objects below (no dynamic loading etc...) */
     switch(whereAt){
         case settings:
-            image["settings-selected"].render(mRenderer);
+            images["settings-selected"].render(mRenderer);
             buttons["novelList"].deselect();
             buttons["novelList"].render(mRenderer);
             buttons["reader"].deselect();
             buttons["reader"].render(mRenderer);
-            image["downloads"].render(mRenderer);
+            images["downloads"].render(mRenderer);
             break;
 
-        case novelList:
-            image["settings"].render(mRenderer);
+        case showNovels:
+            images["settings"].render(mRenderer);
             buttons["novelList"].select();
             buttons["novelList"].render(mRenderer);
             buttons["reader"].deselect();
             buttons["reader"].render(mRenderer);
-            image["downloads"].render(mRenderer);
+            images["downloads"].render(mRenderer);
             break;
 
         case novelDetails:
-            image["settings"].render(mRenderer);
+            images["settings"].render(mRenderer);
             buttons["novelList"].select();
             buttons["novelList"].render(mRenderer);
             buttons["reader"].deselect();
             buttons["reader"].render(mRenderer);
-            image["downloads"].render(mRenderer);
+            images["downloads"].render(mRenderer);
             break;
 
         case reader:
-            image["settings"].render(mRenderer);
+            images["settings"].render(mRenderer);
             buttons["novelList"].deselect();
             buttons["novelList"].render(mRenderer);
             buttons["reader"].select();
             buttons["reader"].render(mRenderer);
-            image["downloads"].render(mRenderer);
+            images["downloads"].render(mRenderer);
             break;
 
         case dlList:
-            image["settings"].render(mRenderer);
+            images["settings"].render(mRenderer);
             buttons["novelList"].deselect();
             buttons["novelList"].render(mRenderer);
             buttons["reader"].deselect();
             buttons["reader"].render(mRenderer);
-            image["downloads-selected"].render(mRenderer);
+            images["downloads-selected"].render(mRenderer);
             break;
 
         default:

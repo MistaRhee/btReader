@@ -39,7 +39,7 @@ namespace beatOff{
         location = inLoc;
     }
 
-    std::pair<int, int> getSize(){
+    std::pair<int, int> cImage::getSize(){
         std::pair<int, int> rVal;
         if(!fileExists(location)){
             printf("cImage Warning! No image set before checking size! \n");
@@ -73,7 +73,7 @@ namespace beatOff{
             std::string e = "cImage Error - No image found (Image location: ";
             e += location;
             e += ")";
-            setError(e)
+            setError(e);
         }
         else{
             mSurface = IMG_Load(location.c_str());

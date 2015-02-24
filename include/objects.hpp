@@ -46,6 +46,7 @@ namespace beatOff{
             void setBoxCol(int, int, int, int);
             int wrappedHeight(); //Returns the expected height of the rendering
             bool canFit(int); //Given the height (the rest of the stuff is kept the same), checks if the text can actually fit within the height
+            std::string getText();
             void render(SDL_Renderer*);
         protected:
             std::string text;
@@ -82,7 +83,7 @@ namespace beatOff{
 
     class cContent : public cObject{
         public:
-            virtual void render(SDL_Renderer*);
+            virtual void render(SDL_Renderer*) {}
             void setFont(std::string);
             void setFontSize(int);
             void setTextColour(SDL_Color);
@@ -97,7 +98,7 @@ namespace beatOff{
 
     class cNovelList : public cContent{
         public:
-            cNovelList::cNovelList(SDL_Rect*); //Sets the position start and the rendered size of the object
+            cNovelList(SDL_Rect*); //Sets the position start and the rendered size of the object
             void addNovel(std::string);
             void moveSelection(int);
             std::string getSelected();
@@ -107,10 +108,10 @@ namespace beatOff{
             std::vector<cTextBox> mNovels;
             int selected;
     };
-
+/*
     class cReader : public cContent{
         public:
-            cReader::cReader(SDL_Rect*); //Sets the dimensions of the rendered object (so the program won't get confused)
+            cReader(SDL_Rect*); //Sets the dimensions of the rendered object (so the program won't get confused)
             void createContent();
             void render(SDL_Renderer*);
             void getContent(std::string); //Automatically calls createContent at the end of it's function
@@ -119,12 +120,12 @@ namespace beatOff{
 
     class cNovelDetails : public cContent{
         public:
-            cNovelDetails::cNovelDetails(SDL_Rect*);
+            cNovelDetails(SDL_Rect*);
             void render(SDL_Renderer*);
             void setFile(std::string);
         private:
             std::string fileLoc;
     }
-    
+*/    
 }
 #endif //OBJECTS_HPP
