@@ -28,6 +28,7 @@ namespace beatOff{
             boxA = 255;
             drawBox = 1;
         }
+        selected = 0;
         showBox();
     }
 
@@ -62,10 +63,23 @@ namespace beatOff{
             setFont(fontLoc);
             setTextSize(inSize);
         }
+        selected = 0;
+        showBox();
     }
     void cButton::select(){
-        setTextCol(255-textR, 255-textG, 255-textB, 255-textA);
-        setBoxCol(255-boxR, 255-boxG, 255-boxB, 255-boxA);
+        if(!selected){
+            setTextCol(255-textR, 255-textG, 255-textB, 255-textA);
+            setBoxCol(255-boxR, 255-boxG, 255-boxB, 255-boxA);
+            selected = 1;
+        }
+    }
+
+    void cButton::deselect(){
+        if(selected){
+            setTextCol(255-textR, 255-textG, 255-textB, 255-textA);
+            setBoxCol(255-boxR, 255-boxG, 255-boxB, 255-boxA);
+            selected = 0;
+        }
     }
 
 }

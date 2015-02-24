@@ -80,6 +80,9 @@ void cMain::preComp(){
     colours.insert(std::make_pair("clear", temp));
     colours.insert(std::make_pair("text", temp));
     getObjects();
+    for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
+        mNovelList.addNovel(i->first);
+    }
 }
 
 bool cMain::checkDependencies(){ //Checking if directories exist and important files are there.
@@ -148,8 +151,17 @@ void cMain::getObjects(){
             newImage.setSize(atoi(curr.getAttribute(h)), atoi(curr.getAttribute(w)));
             images.insert(std::make_pair(id, std::move(newImage));
         }
-        else if(name.compare("text") == 0){
+        else if(name.compare("button") == 0){
             id = curr.getAttribute("name");
+            beatOff::cButton newButton;
+            auto textCol = colours.find("text");
+            auto boxCol = colours.find("back");
+            newButton.setText(curr.getAttribute("text"));
+            newButton.setTextSize(curr.getAttribute("size"));
+            newButton.setTextCol(textCol->r, textCol->g, textCol->b, textCol->a);
+            newButton.setBoxCol(boxCol->r, boxCol->g, boxCol->g, boxCol->a);
+            newButton.setFont(curr.getAttribute("font"));
+            buttons.insert(std::make_pair(id, std::move(newButton)));
         }
         else if(name.compare("content") == 0){
             id = curr.getAttribute("name");
@@ -158,10 +170,19 @@ void cMain::getObjects(){
             mRect.y = atoi(curr.getAttribute("y"));
             mRect.h = atoi(curr.getAttribute("h"));
             mRect.w = atoi(curr.getAttribute("w"));
-            content.insert(std::make_pair(id, std::move(mRect));
+            beatOff::cNovelList newNovels(&mRect);
+            beatOff::cReader newReader(&mRect);
+            mNovelList = &newNovels;
+            mReader = &newReader;
         }
         else if(name.compare("colour") == 0){
             id = curr.getAttribute("name");
+            SDL_Color newColour;
+            newColour.r = atoi(curr.getAttribute("r"));
+            newColour.g = atoi(curr.getAttribute("g"));
+            newColour.b = atoi(curr.getAttribute("b"));
+            newColour.a = atoi(curr.getAttribute("a"));
+            colours.insert(std::make_pair(id, std::move(newColour)));
         }
         else{
             printf("Invalid menu object type! %s\n", name.c_str());
@@ -177,14 +198,103 @@ bool cMain::run(){
             rVal = 0;
             running = 0;
         }
-        startTick = SDL_GetTicks();
-        while(SDL_GetTicks() < startTick+FPS_CAP){
-            processEvents();
-            update();
+        else{
+            startTick = SDL_GetTicks();
+            while(SDL_GetTicks() < startTick+FPS_CAP){
+                processEvents();
+                update();
+            }
+            render();
         }
-        render();
     }
     printf("Runtime = %d", SDL_GetTicks() - startRunTime);
     return rVal;
 }
 
+void cMain::render(){
+    /* Clear the screen with the background colour */
+    auto found = colors.find("clear");
+    SDL_SetRenderDrawColor(mRenderer, found->r, found->g, found->b, found->a);
+    SDL_RenderClear(mRenderer);
+    /* Draw the content first */
+    switch(whereAt){
+        case settings:
+            /* Not done yet. You mad? */
+            break;
+        
+        case novelList:
+            mNovelList.render(mRenderer);
+            break;
+
+        case novelDetails:
+            /* Not done yet. You mad? */
+            break;
+
+        case reader:
+            mReader.render(mRenderer);
+            break;
+        
+        case dlList:
+            /* Not done yet. You mad? */
+            break;
+
+        default:
+            setError("Stuck at render. Invalid whereAt");
+            break;
+    }
+    /* Draw the "interface" over the content. Interface will ALWAYS only
+     * consist of the objects below (no dynamic loading etc...) */
+    switch(whereAt){
+        case settings:
+            image["settings-selected"].render(mRenderer);
+            buttons["novelList"].deselect();
+            buttons["novelList"].render(mRenderer);
+            buttons["reader"].deselect();
+            buttons["reader"].render(mRenderer);
+            image["downloads"].render(mRenderer);
+            break;
+
+        case novelList:
+            image["settings"].render(mRenderer);
+            buttons["novelList"].select();
+            buttons["novelList"].render(mRenderer);
+            buttons["reader"].deselect();
+            buttons["reader"].render(mRenderer);
+            image["downloads"].render(mRenderer);
+            break;
+
+        case novelDetails:
+            image["settings"].render(mRenderer);
+            buttons["novelList"].select();
+            buttons["novelList"].render(mRenderer);
+            buttons["reader"].deselect();
+            buttons["reader"].render(mRenderer);
+            image["downloads"].render(mRenderer);
+            break;
+
+        case reader:
+            image["settings"].render(mRenderer);
+            buttons["novelList"].deselect();
+            buttons["novelList"].render(mRenderer);
+            buttons["reader"].select();
+            buttons["reader"].render(mRenderer);
+            image["downloads"].render(mRenderer);
+            break;
+
+        case dlList:
+            image["settings"].render(mRenderer);
+            buttons["novelList"].deselect();
+            buttons["novelList"].render(mRenderer);
+            buttons["reader"].deselect();
+            buttons["reader"].render(mRenderer);
+            image["downloads-selected"].render(mRenderer);
+            break;
+
+        default:
+            setError("Stuck at render. Invalid whereAt");
+            break;
+    }
+    /* Display the image \0/ */
+    SDL_RenderPresent(mRenderer);
+    /* Come again to render more shit :D */
+}

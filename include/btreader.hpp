@@ -4,6 +4,8 @@
 /*Notes to self (stuff I need to do later):
  *  - Reader
  *  - Multithreading (MUST DO)
+ *  - Have the program also recognise parts of the main GUI as either buttons
+ *  or images instead of only buttons for two and images for two
  *  - Have a file called updates or something, which allows the user to find
  *  out what happened recently (so basically a change log which will be an
  *  option)
@@ -37,6 +39,7 @@
 enum places_t{
     settings,
     novelList,
+    novelDetails,
     reader,
     dlList
     //updates (maybe implementing later)
@@ -98,10 +101,11 @@ class cMain{
         SDL_Window* mWindow;
         SDL_Renderer* mRenderer;
         std::map<std::string, beatOff::cImage> images;
-        std::map<std::string, beatOff::cText> text;
+        std::map<std::string, beatOff::cButton> buttons;
         std::map<std::string, std::string> font;
-        std::map<std::string, SDL_Colour> colours;
-        std::map<std::string, SDL_Rect> content;
+        std::map<std::string, SDL_Color> colours;
+        beatOff::cNovelList* mNovelList;
+        beatOff::cReader* mReader;
 };
 
 #endif //BTREADER_HPP

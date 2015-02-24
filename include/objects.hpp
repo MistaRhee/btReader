@@ -75,29 +75,45 @@ namespace beatOff{
             cButton(); //Initialise
             cButton(std::string, std::string, int, int, int, int); //Initialise while setting text, xPos, yPos, width, fontSize. Height is calculated within the render function
             void select();
+            void deselect();
+        private:
+            bool selected;
     };
 
     class cContent : public cObject{
         public:
-            virtual void createContent() {}
-            void render(SDL_Renderer*);
+            virtual void render(SDL_Renderer*);
+            void setFont(std::string);
+            void setFontSize(int);
+            void setTextColour(SDL_Color);
+            void setBackColour(SDL_Color);
         protected:
             bool changed, created;
-            SDL_Texture* mTexture;
-
-    class cNovelList : public cObject{
-        public:
-            cNovelList::cNovelList(SDL_Rect*); //Sets the position start and the rendered size of the object
-            void createContent();
-            void addNovel(std::string);
-        private:
-            std::vector<cTextBox> mNovels;
+            std::string fontLoc;
+            int fontSize;
+            SDL_Color textColour;
+            SDL_Color backColour;
     };
 
-    class cReader : public cObject{
+    class cNovelList : public cContent{
+        public:
+            cNovelList::cNovelList(SDL_Rect*); //Sets the position start and the rendered size of the object
+            void addNovel(std::string);
+            void moveSelection(int);
+            std::string getSelected();
+            void render(SDL_Renderer*);
+        private:
+            const int novelHeight = 50; //Subject to change
+            const int textSize = 25; //Subject to change
+            std::vector<cTextBox> mNovels;
+            int selected;
+    };
+
+    class cReader : public cContent{
         public:
             cReader::cReader(SDL_Rect*); //Sets the dimensions of the rendered object (so the program won't get confused)
             void createContent();
+            void render(SDL_Renderer*);
             void getContent(std::string); //Automatically calls createContent at the end of it's function
         private:
     }
