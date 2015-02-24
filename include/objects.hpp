@@ -104,7 +104,6 @@ namespace beatOff{
             void render(SDL_Renderer*);
         private:
             const int novelHeight = 50; //Subject to change
-            const int textSize = 25; //Subject to change
             std::vector<cTextBox> mNovels;
             int selected;
     };
@@ -116,6 +115,15 @@ namespace beatOff{
             void render(SDL_Renderer*);
             void getContent(std::string); //Automatically calls createContent at the end of it's function
         private:
+    };
+
+    class cNovelDetails : public cContent{
+        public:
+            cNovelDetails::cNovelDetails(SDL_Rect*);
+            void render(SDL_Renderer*);
+            void setFile(std::string);
+        private:
+            std::string fileLoc;
     }
     
 }
