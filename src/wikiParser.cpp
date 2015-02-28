@@ -95,7 +95,22 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                         }
                     }
                     else{
-                        if(buffer[0] == '=' and buffer[1] == '=') {
+                        std::string fileName;
+                        bool image = 0;
+                        if(buffer[0] == '[' and buffer[1] == '['){
+                            /* Get the link, check if it is an image. If it is,
+                             * hold it just in case its useful
+                             * ************************************************/
+                            for(int i = 2, j = strlen(buffer); i < j; i++){
+                                if(buffer[i] == '|' or ']'){
+                                    break;
+                                }
+                                else{
+                                    fileName += buffer[i];
+                                }
+                            }
+                        }
+                        if(buffer[0] == '=' and buffer[1] == '='){
                             if(buffer[2] == '='){
                                 XMLNode newVolume = mainNode.addChild("volume");
                                 printf("Adding Volume \n");
@@ -112,7 +127,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                     }
                                 }
                                 fgets(buffer, 4096, fin);
-                                std::string fileName;
                                 bool skipOne = 1;
                                 if(buffer[0] == '[' and buffer[1] == '['){
                                     for(int i = 2, j = strlen(buffer); i < j; i++){
@@ -167,7 +181,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                         break;
                                     }
                                 }
-
                             }
                             else{
                                 status = EXIT;

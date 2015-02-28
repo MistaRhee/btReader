@@ -21,32 +21,38 @@ std::string cGetImage::generateRandomName(int length){
 
 std::string cGetImage::getImage(const std::string fileName){
     if(fileName.size() > 0){
-        printf("Grabbing image %s\n", fileName.c_str());
-        std::string imageInfo = imageQuery+fileName+"&";
-        cHttpd mDownload;
-        printf("Getting URL of actual file\n");
-        std::string tempFile = "data/temp/"+generateRandomName(50);
-        while(fileExists(tempFile)){ //Just to ensure no double ups in name
-            tempFile = "data/temp/"+generateRandomName(50);
-        }
-        mDownload.download(imageInfo, tempFile.c_str());
-        printf("Image info saved to %s\n", tempFile.c_str());
-        XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
-        std::string check = mainNode.getChildNode("query").getChildNode("pages").getChildNode("page").getAttribute("imagerepository");
-        if(check.compare("local") != 0){
-            return "system/images/notHere.jpg";
-        }
-        else{
-            std::string imageSource = mainNode.getChildNode("query").getChildNode("pages").getChildNode("page").getChildNode("imageinfo").getChildNode("ii").getAttribute("url");
-            remove(tempFile.c_str());
-            printf("Getting image \n");
-            tempFile = imageStore+generateRandomName(25);
+        try{
+            printf("Grabbing image %s\n", fileName.c_str());
+            std::string imageInfo = imageQuery+fileName+"&";
+            cHttpd mDownload;
+            printf("Getting URL of actual file\n");
+            std::string tempFile = "data/temp/"+generateRandomName(50);
             while(fileExists(tempFile)){ //Just to ensure no double ups in name
-                tempFile = "data/image/"+generateRandomName(25);
+                tempFile = "data/temp/"+generateRandomName(50);
             }
-            mDownload.download(imageSource, tempFile);
-            printf("Image gotten\n");
-            return tempFile;
+            mDownload.download(imageInfo, tempFile.c_str());
+            printf("Image info saved to %s\n", tempFile.c_str());
+            XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
+            std::string check = mainNode.getChildNode("query").getChildNode("pages").getChildNode("page").getAttribute("imagerepository");
+            if(check.compare("local") != 0){
+                return "system/images/notHere.jpg";
+            }
+            else{
+                std::string imageSource = mainNode.getChildNode("query").getChildNode("pages").getChildNode("page").getChildNode("imageinfo").getChildNode("ii").getAttribute("url");
+                remove(tempFile.c_str());
+                printf("Getting image \n");
+                tempFile = imageStore+generateRandomName(25);
+                while(fileExists(tempFile)){ //Just to ensure no double ups in name
+                    tempFile = "data/image/"+generateRandomName(25);
+                }
+                mDownload.download(imageSource, tempFile);
+                printf("Image gotten\n");
+                return tempFile;
+            }
+        }
+        catch(mException& e){
+            printf("%s\n", e.what());
+            return "system/images/notHere.jpg";
         }
     }
     else return "system/images/notHere.jpg";

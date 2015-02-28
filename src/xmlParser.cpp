@@ -64,8 +64,10 @@
 
 #include <memory.h>
 #include <assert.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
+#include <exception>
+#include <string>
 #include <stdlib.h>
 
 XMLCSTR XMLNode::getVersion() { return _CXML("v2.44"); }
@@ -430,10 +432,10 @@ XMLNode XMLNode::openFileHelper(XMLCSTR filename, XMLCSTR tag)
         // display message
 #if defined(_XMLWINDOWS) && !defined(UNDER_CE) && !defined(_XMLPARSER_NO_MESSAGEBOX_)
         MessageBoxA(NULL,message,"XML Parsing error",MB_OK|MB_ICONERROR|MB_TOPMOST);
+        throw(mException(message));
 #else
-        printf("%s",message);
+        throw(mException(message));
 #endif
-        exit(255);
     }
     return xnode;
 }

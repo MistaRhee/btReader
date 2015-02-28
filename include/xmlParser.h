@@ -86,6 +86,9 @@
 #define __INCLUDE_XML_NODE__
 
 #include <stdlib.h>
+#include <cstring>
+#include <string>
+#include <exception>
 
 #if defined(UNICODE) || defined(_UNICODE)
 // If you comment the next "define" line then the library will never "switch to" _UNICODE (wchar_t*) mode (16/32 bits per characters).
@@ -151,6 +154,16 @@
     #define TRUE 1
 #endif /* TRUE */
 
+/// Creation of an exception to custom hold errors
+struct mException : public std::exception{
+    mException(std::string in){
+        this->message = in;
+    }
+    std::string message;
+    const char* what() const throw(){
+        return message.c_str();
+    }
+};
 
 /// Enumeration for XML parse errors.
 typedef enum XMLError
