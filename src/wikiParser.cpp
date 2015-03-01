@@ -132,33 +132,12 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                         volumeTitle += tempStr[i];
                                     }
                                 }
-                                fgets(buffer, 4096, fin);
-                                bool skipOne = 1;
-                                if(buffer[0] == '[' and buffer[1] == '['){
-                                    for(int i = 2, j = strlen(buffer); i < j; i++){
-                                        if(buffer[i] == '|'){
-                                            break;
-                                        }
-                                        else{
-                                            fileName += buffer[i];
-                                        }
-                                    }
-                                    skipOne = 0;
-                                    cGetImage newImageGrab;
-                                    std::string savedTo = newImageGrab.getImage(fileName);
-                                    newVolume.addAttribute("image", savedTo.c_str());
-                                }
                                 while(true){
                                     XMLNode chapterNode = newVolume.addChild("chapter");
-                                    printf("Adding Chapter! \n");
-                                    if(skipOne){
-                                        skipOne = 0;
-                                    }
-                                    else{
-                                        fgets(buffer, 4096, fin);
-                                    }
+                                    fgets(buffer, 4096, fin);
                                     std::string title;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
+                                        printf("Adding Chapter! \n");
                                         bool grabbing = 0;
                                         for(int i = 1, j = strlen(buffer); i < j; i++){
                                             if(grabbing){
@@ -188,8 +167,13 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                          * I'm just gonna assume its another
                                          * image
                                          */
+                                        printf("Adding Image! \n");
                                         if(!newVolume.isAttributeSet("image")){
                                             for(int i = 1, j = strlen(buffer); i < j; i++){
+                                                if(buffer[i] == '['){
+                                                    /* Ignore useless
+                                                     * characters */
+                                                }
                                                 if(buffer[i] == '|'){
                                                     break;
                                                 }
@@ -202,7 +186,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                             newVolume.addAttribute("image", savedTo.c_str());
                                         }
                                     }
-                                    else if(strlen(buffer) == 1 or buffer[0] == '<' or buffer[0] == '\''){
+                                    else if(strlen(buffer) == 1 or buffer[0] == '<' or buffer[0] == '\'' or buffer[0] == '&'){
                                         /* Ignore this, because it's just a
                                          * whitespace or HTML tag or a comment
                                          * etc...
