@@ -32,11 +32,17 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
     std::string tempStr;
     int status = SYNOPSIS;
     bool found = 0;
+    bool processed = 1;
     while(true){
         if(feof(fin)){
             break;
         }
-        fgets(buffer, 4096, fin);
+        if(processed){
+            fgets(buffer, 4096, fin);
+        }
+        if(!processed){
+            processed = 1;
+        }
         switch(status){
             case SYNOPSIS:
                 {
@@ -96,7 +102,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                     }
                     else{
                         std::string fileName;
-                        bool image = 0;
                         if(buffer[0] == '[' and buffer[1] == '['){
                             /* Get the link, check if it is an image. If it is,
                              * hold it just in case its useful
@@ -109,6 +114,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                     fileName += buffer[i];
                                 }
                             }
+                            fgets(buffer, 4096, fin);
                         }
                         if(buffer[0] == '=' and buffer[1] == '='){
                             if(buffer[2] == '='){
@@ -138,10 +144,10 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                         }
                                     }
                                     skipOne = 0;
+                                    cGetImage newImageGrab;
+                                    std::string savedTo = newImageGrab.getImage(fileName);
+                                    newVolume.addAttribute("image", savedTo.c_str());
                                 }
-                                cGetImage newImageGrab;
-                                std::string savedTo = newImageGrab.getImage(fileName);
-                                newVolume.addAttribute("image", savedTo.c_str());
                                 while(true){
                                     XMLNode chapterNode = newVolume.addChild("chapter");
                                     printf("Adding Chapter! \n");
@@ -177,7 +183,34 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                         chapterNode.addAttribute("dl", "no");
                                         chapterNode.addAttribute("revid", "");
                                     }
+                                    else if(buffer[0] == '['){
+                                        /* There is a link without indentataion
+                                         * I'm just gonna assume its another
+                                         * image
+                                         */
+                                        if(!newVolume.isAttributeSet("image")){
+                                            for(int i = 1, j = strlen(buffer); i < j; i++){
+                                                if(buffer[i] == '|'){
+                                                    break;
+                                                }
+                                                else{
+                                                    fileName += buffer[i];
+                                                }
+                                            }
+                                            cGetImage newImageGrab;
+                                            std::string savedTo = newImageGrab.getImage(fileName);
+                                            newVolume.addAttribute("image", savedTo.c_str());
+                                        }
+                                    }
+                                    else if(strlen(buffer) == 1 or buffer[0] == '<' or buffer[0] == '\''){
+                                        /* Ignore this, because it's just a
+                                         * whitespace or HTML tag or a comment
+                                         * etc...
+                                         */
+                                    }
                                     else{
+                                        printf("Exiting adding chapters with buffer: %s \n", buffer);
+                                        processed = 0;
                                         break;
                                     }
                                 }
