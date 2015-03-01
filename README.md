@@ -76,9 +76,11 @@ Compiling
 I'm not even there yet, but
 
 $make
+$make clean
 
-is usually how this works (I think). When it actually works, it'll only be
-tested under GNU/Linux. Should work for Windows with a few tweaks I guess.
+is usually how this works. MAKE SURE YOU CLEAN (YOU DON'T WANT TO BE A DIRTY
+PERSON When it actually works, it'll only be tested under GNU/Linux. Should 
+work for Windows with a few tweaks I guess.
 
 Dependencies
 ------------
