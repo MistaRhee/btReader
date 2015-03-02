@@ -100,6 +100,7 @@ bool cMain::hasNew(const std::string title){
 }
 
 void cMain::updateDatabase(){
+    printf("Updating the database \n");
     cHttpd stream1;
     std::string tempFile = tempLoc+generateRandomName(50);
     while(fileExists(tempFile)){
@@ -120,27 +121,35 @@ void cMain::updateDatabase(){
                     if(hasNew(novelName)){ //The page has been updated (i.e. there is an extra novel)
                         std::map<std::string, std::pair<std::string, std::string> >::iterator it = novelDB.find(novelName);
                         novelDB.erase(it);
-                        novelDB.insert(std::make_pair(novelName, getNovelDetails(novelName)));
+                        std::pair<std::string, std::string> mDetails = getNovelDetails(novelName);
+                        printf("Novel Details: %s %s \n", mDetails.first.c_str(), mDetails.second.c_str());
+                        novelDB.insert(std::make_pair(novelName, mDetails));
                     }
                 }
                 else{
-                    novelDB.insert(std::make_pair(novelName, getNovelDetails(novelName)));
+                    std::pair<std::string, std::string> mDetails = getNovelDetails(novelName);
+                    printf("Novel Details: %s %s \n", mDetails.first.c_str(), mDetails.second.c_str());
+                    novelDB.insert(std::make_pair(novelName, mDetails));
                 }
             }
             else{
-                novelDB.insert(std::make_pair(novelName, getNovelDetails(novelName)));
+                std::pair<std::string, std::string> mDetails = getNovelDetails(novelName);
+                printf("Novel Details: %s %s \n", mDetails.first.c_str(), mDetails.second.c_str());
+                novelDB.insert(std::make_pair(novelName, mDetails));
             }
         }
     }
     catch(mException& e){
         setError(e.what());
     }
+    printf("Finished updating the database \n");
 }
 
 void cMain::replaceDatabase(){
+    printf("Replacing Database! \n");
     XMLNode mainNode = XMLNode::createXMLTopNode("novellist");
     int count = 0;
-    for(std::map<std::string, std::pair<std::string, std::string> >::iterator it; it != novelDB.end(); ++it){
+    for(std::map<std::string, std::pair<std::string, std::string> >::iterator it = novelDB.begin(); it != novelDB.end(); ++it){
         XMLNode newEntry = mainNode.addChild("novel");
         newEntry.addAttribute("title", it->first.c_str());
         newEntry.addAttribute("location", it->second.first.c_str());
@@ -195,6 +204,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
     }
     catch(mException& e){
         setError(e.what());
+        printf("There has been an error! \n");
         return std::make_pair("", "");
     }
 }
