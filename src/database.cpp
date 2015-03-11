@@ -46,7 +46,7 @@ void cMain::createDatabase(){
         XMLNode categoryNode = queryNode.getChildNode("categorymembers");
         for(int i = 0, j = categoryNode.nChildNode("cm"); i < j; i++){
             tempStr = categoryNode.getChildNode("cm", i).getAttribute("title");
-            novelDB.insert(std::make_pair(convTitle(tempStr), std::make_pair("", "")));
+            novelDB[convTitle(tempStr)] = std::make_pair("", "");
         }
         remove(mainPageFileName.c_str());
         updateDatabase();
@@ -119,23 +119,18 @@ void cMain::updateDatabase(){
                 auto found = novelDB.find(novelName);
                 if(found->second.second.size() > 0){
                     if(hasNew(novelName)){ //The page has been updated (i.e. there is an extra novel)
-                        std::map<std::string, std::pair<std::string, std::string> >::iterator it = novelDB.find(novelName);
-                        novelDB.erase(it);
                         std::pair<std::string, std::string> mDetails = getNovelDetails(novelName);
-                        printf("Novel Details: %s %s \n", mDetails.first.c_str(), mDetails.second.c_str());
-                        novelDB.insert(std::make_pair(novelName, mDetails));
+                        novelDB[novelName] = mDetails;
                     }
                 }
                 else{
                     std::pair<std::string, std::string> mDetails = getNovelDetails(novelName);
-                    printf("Novel Details: %s %s \n", mDetails.first.c_str(), mDetails.second.c_str());
-                    novelDB.insert(std::make_pair(novelName, mDetails));
+                    novelDB[novelName] = mDetails;
                 }
             }
             else{
                 std::pair<std::string, std::string> mDetails = getNovelDetails(novelName);
-                printf("Novel Details: %s %s \n", mDetails.first.c_str(), mDetails.second.c_str());
-                novelDB.insert(std::make_pair(novelName, mDetails));
+                novelDB[novelName] = mDetails;
             }
         }
     }
