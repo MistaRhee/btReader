@@ -32,7 +32,6 @@
 #include "xmlParser.h" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
 #include "httpd.hpp" //For website retreival
 #include "objects.hpp" //For SDL Objects
-#include "reader.hpp" //For the reader... (I might just use an external project if I don't have the time
 
 #define MAX_THREADS 5
 #define FPS_CAP 1000/60
