@@ -33,8 +33,7 @@ inline bool fileExists (const std::string& name) {
     if (FILE *file = fopen(name.c_str(), "r")) {
         fclose(file);
         return true;
-    }
-    else {
+    } else {
         return false;
     }   
 }
@@ -181,11 +180,11 @@ void cMain::getObjects(){
             mRect.h = atoi(curr.getAttribute("h"));
             mRect.w = atoi(curr.getAttribute("w"));
             beatOff::cNovelList newNovels(&mRect);
-            beatOff::cReader newReader(&mRect);
-            beatOff::cNovelDetails newDetails(&mRect);
+//            beatOff::cReader newReader(&mRect);
+//            beatOff::cNovelDetails newDetails(&mRect);
             mNovelList = &newNovels;
-            mReader = &newReader;
-            mNovelDetails = &newDetails;
+//            mReader = &newReader;
+//            mNovelDetails = &newDetails;
         }
         else if(name.compare("colour") == 0){
             id = curr.getAttribute("name");
@@ -213,23 +212,22 @@ bool cMain::run(){
         }
         else{
             startTick = SDL_GetTicks();
-/*
-            while(SDL_GetTicks() < startTick+FPS_CAP){
-                processEvents();
-                update();
-*/
-            }
+//            while(SDL_GetTicks() < startTick+FPS_CAP){
+//                processEvents();
+//                update();
+//            }
             render();
         }
     }
+    replaceDatabase();
     printf("Runtime = %d", SDL_GetTicks() - startRunTime);
     return rVal;
 }
-
+/*
 void cMain::update(){
     
 }
-
+*/
 void cMain::render(){
     /* Clear the screen with the background colour */
     auto found = colours.find("clear");
@@ -250,7 +248,7 @@ void cMain::render(){
             break;
 
         case reader:
-            mReader->render(mRenderer);
+//            mReader->render(mRenderer);
             break;
         
         case dlList:

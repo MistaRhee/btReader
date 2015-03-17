@@ -16,6 +16,8 @@ namespace beatOff{
         backColour.g = 255;
         backColour.b = 255;
         backColour.a = 255;
+        setFont("system/fonts/droidsansfallback.ttf");
+        setFontSize(20);
     }
 
     void cNovelList::addNovel(std::string in){

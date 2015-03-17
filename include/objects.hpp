@@ -12,11 +12,6 @@
 
 namespace beatOff{
 
-    struct novel{
-        std::string title, author;
-        std::string synopsis;
-    };
-
     class cObject{
         public:
             cObject();
@@ -88,7 +83,6 @@ namespace beatOff{
 
     class cContent : public cObject{
         public:
-            virtual void render(SDL_Renderer*) {}
             void setFont(std::string);
             void setFontSize(int);
             void setTextColour(SDL_Color);
@@ -113,28 +107,27 @@ namespace beatOff{
             std::vector<cTextBox> mNovels;
             int selected;
     };
-
+    
     class cReader : public cContent{
         public:
             cReader(SDL_Rect*); //Sets the dimensions of the rendered object (so the program won't get confused)
-            void createContent();
             void render(SDL_Renderer*);
-            void getContent(std::string); //Automatically calls createContent at the end of it's function
+            void getContent(std::string); //Gets the content from a file and then renders it to a texture
         private:
             SDL_Texture* mTexture;
             bool loaded;
     };
-
+/*
     class cNovelDetails : public cContent{
         public:
             cNovelDetails(SDL_Rect*);
             void render(SDL_Renderer*);
-            void getContent(std::string);
+            void setFile(std::string);
+            void update(SDL_Event&);
+            bool selected();
         private:
-            SDL_Texture* mTexture;
-            bool loaded;
-            novel currNovel;
-    };
-
+            std::string fileLoc;
+    }
+*/    
 }
 #endif //OBJECTS_HPP

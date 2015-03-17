@@ -59,19 +59,20 @@ void cMain::createDatabase(){
 bool cMain::readDatabase(){ 
     bool rVal = 1;
     try{
-        XMLNode mainNode = XMLNode::openFileHelper("data/novels.db", "novelList");
+        XMLNode mainNode = XMLNode::openFileHelper("data/novels.db", "novellist");
         for(int i = 0, j = mainNode.nChildNode("novel"); i < j; i++){
             XMLNode newEntry = mainNode.getChildNode("novel", i);
-            novelDB.insert(std::make_pair(newEntry.getAttribute("title"), std::make_pair(newEntry.getAttribute("location"), newEntry.getAttribute("revid"))));
+            novelDB[newEntry.getAttribute("title")] = std::make_pair(newEntry.getAttribute("location"), newEntry.getAttribute("revid"));
         }
         if(novelDB.size() != mainNode.nChildNode("novel")){
-            printf("An error has occurred when reading the database! Mismatch in numbers! \nRebuilding the database from scratch! \n");
+            printf("An error has occurred when reading the database! Mismatch in numbers! \nRebuilding the database from scratch! Size: %d NovelList Size: %d \n", novelDB.size(), mainNode.nChildNode("novel"));
             rVal = 0;
         }
     }
     catch(mException& e){
         setError(e.what());
-        rVal = 1;
+        printf("Error: There was an exception! \n%s \n", e.what());
+        rVal = 0;
     }
     return rVal;
 

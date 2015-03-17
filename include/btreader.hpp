@@ -29,6 +29,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <cstring>
+#include <exception>
 #include "xmlParser.h" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
 #include "httpd.hpp" //For website retreival
 #include "objects.hpp" //For SDL Objects
@@ -50,6 +51,7 @@ class cGetImage{
         std::string getImage(const std::string); //File name, returns file saved location
         std::string generateRandomName(int);
     private:
+        std::string sanatize(const std::string);
         const std::string imageQuery = "http://www.baka-tsuki.org/project/api.php?action=query&prop=imageinfo&iiprop=url&format=xml&titles=";
         const std::string imageStore = "data/images/";
 };
@@ -107,7 +109,7 @@ class cMain{
         std::map<std::string, SDL_Color> colours;
         beatOff::cNovelList* mNovelList;
 //        beatOff::cReader* mReader;
-        beatOff::cNovelDetails* mNovelDetails;
+//        beatOff::cNovelDetails* mNovelDetails;
 };
 
 #endif //BTREADER_HPP
