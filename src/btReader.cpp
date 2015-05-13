@@ -35,7 +35,7 @@ inline bool fileExists (const std::string& name) {
         return true;
     } else {
         return false;
-    }   
+    }
 }
 
 cMain::cMain(){

@@ -8,4 +8,8 @@ namespace beatOff{
 
     }
 
+    void render(SDL_Renderer* mRenderer){
+        
+    }
+
 }

@@ -75,8 +75,8 @@ Compiling
 
 I'm not even there yet, but
 
-$ make
-$ make clean
+    $ make
+    $ make clean
 
 is usually how this works. MAKE SURE YOU CLEAN (YOU DON'T WANT TO BE A DIRTY
 PERSON When it actually works, it'll only be tested under GNU/Linux. Should 
