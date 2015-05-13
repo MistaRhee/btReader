@@ -196,7 +196,9 @@ void cMain::getObjects(){
             colours.insert(std::make_pair(id, std::move(newColour)));
         }
         else{
-            printf("Invalid menu object type! %s\n", name.c_str());
+            std::string mError = "Invaid menu object type! (Type: ";
+            mError += name + ")\n";
+            printf("Invalid menu object type! (Type: %s) \n", name.c_str());
         }
     }
 }
@@ -234,82 +236,88 @@ void cMain::render(){
     SDL_SetRenderDrawColor(mRenderer, found->second.r, found->second.g, found->second.b, found->second.a);
     SDL_RenderClear(mRenderer);
     /* Draw the content first */
-    switch(whereAt){
-        case settings:
-            /* Not done yet. You mad? */
-            break;
-        
-        case showNovels:
-            mNovelList->render(mRenderer);
-            break;
+    try{
+        switch(whereAt){
+            case settings:
+                /* Not done yet. You mad? */
+                break;
 
-        case novelDetails:
-            /* Not done yet. You mad? */
-            break;
+            case showNovels:
+                mNovelList->render(mRenderer);
+                break;
 
-        case reader:
-//            mReader->render(mRenderer);
-            break;
-        
-        case dlList:
-            /* Not done yet. You mad? */
-            break;
+            case novelDetails:
+                /* Not done yet. You mad? */
+                break;
 
-        default:
-            setError("Stuck at render. Invalid whereAt");
-            break;
+            case reader:
+                //            mReader->render(mRenderer);
+                break;
+
+            case dlList:
+                /* Not done yet. You mad? */
+                break;
+
+            default:
+                setError("Stuck at render. Invalid whereAt");
+                break;
+        }
+        /* Draw the "interface" over the content. Interface will ALWAYS only
+         * consist of the objects below (no dynamic loading etc...) */
+        switch(whereAt){
+            case settings:
+                images["settings-selected"].render(mRenderer);
+                buttons["novelList"].deselect();
+                buttons["novelList"].render(mRenderer);
+                buttons["reader"].deselect();
+                buttons["reader"].render(mRenderer);
+                images["downloads"].render(mRenderer);
+                break;
+
+            case showNovels:
+                images["settings"].render(mRenderer);
+                buttons["novelList"].select();
+                buttons["novelList"].render(mRenderer);
+                buttons["reader"].deselect();
+                buttons["reader"].render(mRenderer);
+                images["downloads"].render(mRenderer);
+                break;
+
+            case novelDetails:
+                images["settings"].render(mRenderer);
+                buttons["novelList"].select();
+                buttons["novelList"].render(mRenderer);
+                buttons["reader"].deselect();
+                buttons["reader"].render(mRenderer);
+                images["downloads"].render(mRenderer);
+                break;
+
+            case reader:
+                images["settings"].render(mRenderer);
+                buttons["novelList"].deselect();
+                buttons["novelList"].render(mRenderer);
+                buttons["reader"].select();
+                buttons["reader"].render(mRenderer);
+                images["downloads"].render(mRenderer);
+                break;
+
+            case dlList:
+                images["settings"].render(mRenderer);
+                buttons["novelList"].deselect();
+                buttons["novelList"].render(mRenderer);
+                buttons["reader"].deselect();
+                buttons["reader"].render(mRenderer);
+                images["downloads-selected"].render(mRenderer);
+                break;
+
+            default:
+                setError("Stuck at render. Invalid whereAt");
+                break;
+        }
     }
-    /* Draw the "interface" over the content. Interface will ALWAYS only
-     * consist of the objects below (no dynamic loading etc...) */
-    switch(whereAt){
-        case settings:
-            images["settings-selected"].render(mRenderer);
-            buttons["novelList"].deselect();
-            buttons["novelList"].render(mRenderer);
-            buttons["reader"].deselect();
-            buttons["reader"].render(mRenderer);
-            images["downloads"].render(mRenderer);
-            break;
-
-        case showNovels:
-            images["settings"].render(mRenderer);
-            buttons["novelList"].select();
-            buttons["novelList"].render(mRenderer);
-            buttons["reader"].deselect();
-            buttons["reader"].render(mRenderer);
-            images["downloads"].render(mRenderer);
-            break;
-
-        case novelDetails:
-            images["settings"].render(mRenderer);
-            buttons["novelList"].select();
-            buttons["novelList"].render(mRenderer);
-            buttons["reader"].deselect();
-            buttons["reader"].render(mRenderer);
-            images["downloads"].render(mRenderer);
-            break;
-
-        case reader:
-            images["settings"].render(mRenderer);
-            buttons["novelList"].deselect();
-            buttons["novelList"].render(mRenderer);
-            buttons["reader"].select();
-            buttons["reader"].render(mRenderer);
-            images["downloads"].render(mRenderer);
-            break;
-
-        case dlList:
-            images["settings"].render(mRenderer);
-            buttons["novelList"].deselect();
-            buttons["novelList"].render(mRenderer);
-            buttons["reader"].deselect();
-            buttons["reader"].render(mRenderer);
-            images["downloads-selected"].render(mRenderer);
-            break;
-
-        default:
-            setError("Stuck at render. Invalid whereAt");
-            break;
+    catch(mException& e){
+        std::string err = "btReader.cpp Error: In Render, ";
+        err += e.what();
     }
     /* Display the image \0/ */
     SDL_RenderPresent(mRenderer);
