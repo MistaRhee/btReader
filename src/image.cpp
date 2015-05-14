@@ -9,11 +9,23 @@ inline bool fileExists (const std::string& name) {
     }
 }
 
+// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
+std::string currentDateTime() {
+    time_t now = time(0);
+    struct tm tstruct;
+    char buf[80];
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+
+    return buf;
+}
+
 namespace beatOff{
 
     cImage::cImage(){
         if(IMG_Init(IMG_INIT_JPG||IMG_INIT_PNG) < 0){
-            std::string e = "cImage error: SDL_Image failed to init (Image Error: ";
+            std::string e = currentDateTime() + ": ";
+            e += "cImage error: SDL_Image failed to init (Image Error: ";
             e += IMG_GetError();
             e += ")";
             printf ("%s", e.c_str());
@@ -24,7 +36,8 @@ namespace beatOff{
 
     cImage::cImage(std::string inLoc, int inx, int iny, int inh, int inw){ 
         if(IMG_Init(IMG_INIT_JPG||IMG_INIT_PNG) < 0){
-            std::string e = "cImage error: SDL_Image failed to init (Image Error: ";
+            std::string e = currentDateTime() + ": ";
+            e += "cImage error: SDL_Image failed to init (Image Error: ";
             e += IMG_GetError();
             e += ")";
             printf ("%s", e.c_str());
@@ -42,18 +55,19 @@ namespace beatOff{
     std::pair<int, int> cImage::getSize(){
         std::pair<int, int> rVal;
         if(!fileExists(location)){
-            printf("cImage Warning! No image set before checking size! \n");
+            printf("%s: cImage Warning! No image set before checking size! \n", currentDateTime().c_str());
             rVal = std::make_pair(-1, -1);
         }
         else{
             SDL_Surface* mSurface = NULL;
             mSurface = IMG_Load(location.c_str());
             if(mSurface == NULL){
-                printf("cImage Error! Failed to load image \n");
-                std::string e = "cImage Error - Image failed to load (SDL_Image error: ";
+                std::string e = currentDateTime() + ": ";
+                e += "cImage Error - Image failed to load (SDL_Image error: ";
                 e += IMG_GetError();
                 e = ")";
                 setError(e);
+                printf("%s \n", e);
                 rVal = std::make_pair(-1, -1);
             }
             else{

@@ -1,21 +1,34 @@
 #include "objects.hpp"
 
+// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
+std::string currentDateTime() {
+    time_t now = time(0);
+    struct tm tstruct;
+    char buf[80];
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+
+    return buf;
+}
+
 namespace beatOff{
 
     cButton::cButton(){
         if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
-            std::string e = "cTextBox Error - SDL couldn't initialise (SDL Error: ";
-            e += SDL_GetError();
-            e += ")";
-            setError(e);
-            printf("%s \n", e.c_str());
+            std::string mError = currentDateTime() + ": ";
+            mError += "[button.cpp] - SDL couldn't initialise (SDL Error: ";
+            mError += SDL_GetError();
+            mError += ")";
+            setError(mError);
+            printf("%s \n", mError.c_str());
         } 
         else if(!TTF_WasInit() && TTF_Init() == -1){
-            std::string e = "cTextBox Error - TTF Couldn't initialise (TTF Error: ";
-            e += TTF_GetError();
-            e += ")";
-            setError(e);
-            printf("%s \n", e.c_str());
+            std::string mError = currentDateTime() + ": ";
+            mError += "[button.cpp] - TTF couldn't initialise (TTF Error: ";
+            mError += SDL_GetError();
+            mError += ")";
+            setError(mError);
+            printf("%s \n", mError.c_str());
         } 
         else{
             textR = 0;
@@ -34,18 +47,19 @@ namespace beatOff{
 
     cButton::cButton(std::string inText, std::string fontLoc, int inX, int inY, int inW, int inSize){
         if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
-            std::string e = "cTextBox Error - SDL couldn't initialise (SDL Error: ";
-            e += SDL_GetError();
-            e += ")";
-            setError(e);
-            printf("%s \n", e.c_str());
+            std::string mError = currentDateTime() + ": ";
+            mError += "[button.cpp] - SDL couldn't initialise (SDL Error: ";
+            mError += SDL_GetError();
+            mError += ")";
+            setError(mError);
+            printf("%s \n", mError.c_str());
         } 
         else if(!TTF_WasInit() && TTF_Init() == -1){
-            std::string e = "cTextBox Error - TTF Couldn't initialise (TTF Error: ";
-            e += TTF_GetError();
-            e += ")";
-            setError(e);
-            printf("%s \n", e.c_str());
+            std::string mError = currentDateTime() + ": ";
+            mError += "[button.cpp] - SDL couldn't initialise (SDL Error: ";
+            mError += SDL_GetError();
+            mError += ")";
+            setError(mError);
         } 
         else{
             textR = 0;

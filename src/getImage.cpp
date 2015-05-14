@@ -9,6 +9,17 @@ inline bool fileExists (const std::string& name) {
     }   
 }
 
+// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
+std::string currentDateTime() {
+    time_t now = time(0);
+    struct tm tstruct;
+    char buf[80];
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+    return buf;
+}
+
+
 std::string sanitize(const std::string filename){
     std::string newString;
     for(int i = 0, j = filename.size(); i < j; i++){
@@ -16,7 +27,7 @@ std::string sanitize(const std::string filename){
             newString += "%20";
         }
         else if(filename[i] == '[' or filename[i] == ']'){
-            /* Ignoring */
+            /* Ignoring at the moment anyway */
         }
         else{
             newString += filename[i];
@@ -64,7 +75,7 @@ std::string cGetImage::getImage(const std::string fileName){
             }
         }
         catch(mException& e){
-            printf("%s\n", e.what());
+            printf("%s: [getImage.cpp] %s\n", currentDateTime().c_str(), e.what());
             return "system/images/notHere.jpg";
         }
     }

@@ -9,7 +9,10 @@ namespace beatOff{
     }
 
     void render(SDL_Renderer* mRenderer){
-        
+        if(!loaded){
+            printf("You dun goofed sun! No novel was loaded into the reader! \n");
+            throw(mException("Novel wasn't loaded into reader before trying to render"));
+        }
     }
 
 }

@@ -38,11 +38,22 @@ inline bool fileExists (const std::string& name) {
     }
 }
 
+// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
+std::string currentDateTime() {
+    time_t now = time(0);
+    struct tm tstruct;
+    char buf[80];
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+
+    return buf;
+}
+
 cMain::cMain(){
     if(checkDependencies()){
         preComp();
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
-            printf("SDL could not initialize! SDL_Error: %s \n", SDL_GetError());
+            printf("%s: [btReader.cpp] - SDL could not initialize! SDL_Error: %s \n",currentDateTime().c_str(), SDL_GetError());
         }
         mWindow = SDL_CreateWindow("btReader - By MistaRhee and NoOne2246", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 600, SDL_WINDOW_SHOWN);
         mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
@@ -60,11 +71,11 @@ cMain::~cMain(){
 
 void cMain::preComp(){
     if(!fileExists("data/novels.db")){
-        printf("No database found! Rebuilding novel list from site! \n");
+        printf("%s: [btReader.cpp] - No database found! Rebuilding novel list from site! \n", currentDateTime().c_str());
         createDatabase();
     }
     else if(!readDatabase()){
-        printf("Error! The database is corrupt and cannot be read. Overwriting the database! \n");
+        printf("%s: [btReader.cpp] - Error! The database is corrupt and cannot be read. Overwriting the database! \n", currentDateTime().c_str());
         createDatabase();
     }
     /* Setting default colours! (will be overwritten by the XML file if it
@@ -100,10 +111,12 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
             if(!dirExists(currNode.getAttribute("sauce"))){
                 if(!essential.compare("true")){
                     /* Important shit that can't just be made on the spot */
-                    printf("Essential Folder doesn't exist \n");
-                    std::string e = "Check Dependencies Error - Essential Folder doesn't exist: ";
-                    e = currNode.getAttribute("sauce");
+                    std::string mError = currentDateTime() + ": ";
+                    mError += "[btReader.cpp] - Check Dependencies Error: Essential Folder doesn't exist (";
+                    mError += currNode.getAttribute("sauce");
+                    mError += ")";
                     setError(e);
+                    printf("%s \n", mError.c_str());
                     rVal = 0;
                 }
                 else{
@@ -114,18 +127,21 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
         else if(type.compare("file") == 0){
             /* For important system files */
             if(!fileExists(currNode.getAttribute("sauce"))){
-                printf("Essential File doesn't exist \n");
-                std::string mError = "Check Dependencies Error - Essential File doesn't exist: ";
+                std::string mError = currentDateTime() + ": ";
+                mError += "[btReader.cpp] - Check Dependencies Error: Essential File doesn't exist: ";
                 mError += currNode.getAttribute("sauce");
                 setError(mError);
+                print("%s \n", mError.c_str());
                 rVal = 0;
             }
         }
         else{
             /* Invalid manifest type... I mean, if it isn't a file nor folder, what is it???? */
-            printf("Invalid typing. \n");
-            std::string mError = "Check Dependencies Error - Invalid typing: " + type;
+            std::string mError = currentDateTime() + ": ";
+            mError += "[btReader.cpp] - Check Dependencies Error: Invalid typing: ";
+            mError += type;
             setError(mError);
+            print ("%s \n", mError.c_str());
             rVal = 0;
         }
     }
@@ -137,7 +153,7 @@ void cMain::setError(std::string mError){
 }
 
 std::string cMain::getError(){
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error - Program hasn't exited correctly", error.c_str(), NULL);
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", error.c_str(), NULL);
     return error;
 }
 
@@ -196,9 +212,10 @@ void cMain::getObjects(){
             colours.insert(std::make_pair(id, std::move(newColour)));
         }
         else{
-            std::string mError = "Invaid menu object type! (Type: ";
+            std::string mError = currentDateTime() + ": ";
+            mError += "[btReader.cpp] - Invaid menu object type! (Type: ";
             mError += name + ")\n";
-            printf("Invalid menu object type! (Type: %s) \n", name.c_str());
+            print ("%s \n", mError.c_str());
         }
     }
 }
@@ -259,7 +276,11 @@ void cMain::render(){
                 break;
 
             default:
-                setError("Stuck at render. Invalid whereAt");
+                std::string mError = currentDateTime() + ": ";
+                mError += "[btReader.cpp] - Stuck at renderer. Invalid WhereAt (Code: ";
+                mError += to_string(whereAt);
+                setError(mError);
+                printf("Invalid menu object type! (Type: %s) \n", name.c_str());
                 break;
         }
         /* Draw the "interface" over the content. Interface will ALWAYS only
@@ -311,13 +332,20 @@ void cMain::render(){
                 break;
 
             default:
-                setError("Stuck at render. Invalid whereAt");
+                std::string mError = currentDateTime() + ": ";
+                mError += "[btReader.cpp] - Stuck at render. Invalid WhereAt (Code: ";
+                mError += to_string(whereAt);
+                setError(mError);
+                printf("%s \n", mError.c_str());
                 break;
         }
     }
     catch(mException& e){
-        std::string err = "btReader.cpp Error: In Render, ";
-        err += e.what();
+        std::string mError = currentDateTime() + ": ";
+        mError += "[btReader.cpp] - Error: In Render, ";
+        mError += e.what();
+        setError(mError);
+        print("%s \n", mError.c_str());
     }
     /* Display the image \0/ */
     SDL_RenderPresent(mRenderer);
