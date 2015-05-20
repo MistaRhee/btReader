@@ -37,16 +37,6 @@
 #define MAX_THREADS 5
 #define FPS_CAP 1000/60
 
-struct mException : public std::exception {
-    mException(std::string in){
-        this->message = in;
-    }
-    std::string message;
-    const char * what() const throw(){
-        return message.c_str();
-    }
-};
-
 enum places_t{
     settings,
     showNovels,
@@ -119,7 +109,7 @@ class cMain{
         std::map<std::string, SDL_Color> colours;
         beatOff::cNovelList* mNovelList;
 //        beatOff::cReader* mReader;
-        beatOff::cNovelDetails* mNovelDetails;
+//        beatOff::cNovelDetails* mNovelDetails;
 };
 
 #endif //BTREADER_HPP

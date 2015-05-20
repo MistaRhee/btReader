@@ -10,16 +10,6 @@
 #include <cstring>
 #include <string>
 
-struct mException : public std::exception {
-    mException(std::string in){
-        this->message = in;
-    }
-    std::string message;
-    const char * what() const throw(){
-        return message.c_str();
-    }
-};
-
 namespace beatOff{
 
     class cObject{
@@ -127,17 +117,19 @@ namespace beatOff{
             SDL_Texture* mTexture;
             bool loaded;
     };
-/*
+
     class cNovelDetails : public cContent{
         public:
-            cNovelDetails(SDL_Rect*);
-            void render(SDL_Renderer*);
-            void setFile(std::string);
-            void update(SDL_Event&);
-            bool selected();
+            cNovelDetails(SDL_Rect*); //Only care about the rectangle's xPos and yPos and width
+            void openNovel(std::string); //Opens up a novel from XML and then creates a texture
+            void render(SDL_Renderer*); //Draws a section of the texture
+            void move(int, int); //Moves the image around (dx, dy). Should only require to move dy (scrolling)
+            std::string getSelected();
         private:
+            bool loaded;
             std::string fileLoc;
+            int selection;
     }
-*/    
+    
 }
 #endif //OBJECTS_HPP

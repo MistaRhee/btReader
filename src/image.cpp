@@ -25,10 +25,10 @@ namespace beatOff{
     cImage::cImage(){
         if(IMG_Init(IMG_INIT_JPG||IMG_INIT_PNG) < 0){
             std::string e = currentDateTime() + ": ";
-            e += "cImage error: SDL_Image failed to init (Image Error: ";
+            e += "[image.cpp] - SDL_Image failed to init (Image Error: ";
             e += IMG_GetError();
             e += ")";
-            printf ("%s", e.c_str());
+            printf ("%s \n", e.c_str());
             setError(e);
         }
         setSize(-1, -1);
@@ -37,10 +37,10 @@ namespace beatOff{
     cImage::cImage(std::string inLoc, int inx, int iny, int inh, int inw){ 
         if(IMG_Init(IMG_INIT_JPG||IMG_INIT_PNG) < 0){
             std::string e = currentDateTime() + ": ";
-            e += "cImage error: SDL_Image failed to init (Image Error: ";
+            e += "[image.cpp] - SDL_Image failed to init (Image Error: ";
             e += IMG_GetError();
             e += ")";
-            printf ("%s", e.c_str());
+            printf ("%s \n", e.c_str());
             setError(e);
         }
         setPicLoc(inLoc);
@@ -55,7 +55,7 @@ namespace beatOff{
     std::pair<int, int> cImage::getSize(){
         std::pair<int, int> rVal;
         if(!fileExists(location)){
-            printf("%s: cImage Warning! No image set before checking size! \n", currentDateTime().c_str());
+            printf("%s: [image.cpp] - Warning! No image set before checking size! \n", currentDateTime().c_str());
             rVal = std::make_pair(-1, -1);
         }
         else{

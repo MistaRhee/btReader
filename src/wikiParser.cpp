@@ -207,10 +207,10 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                     break;
                 }
             case EXIT:
-                printf("Time to go! \n");
+                /* Time to go! */
                 break;
             default:
-                printf("You really shouldn't be in here you know! \n");
+                /* You really shouldn't be in here! */
                 break;
         }
         if(status == EXIT){

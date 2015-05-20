@@ -131,7 +131,7 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
                 mError += "[btReader.cpp] - Check Dependencies Error: Essential File doesn't exist: ";
                 mError += currNode.getAttribute("sauce");
                 setError(mError);
-                print("%s \n", mError.c_str());
+                printf("%s \n", mError.c_str());
                 rVal = 0;
             }
         }
@@ -141,7 +141,7 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
             mError += "[btReader.cpp] - Check Dependencies Error: Invalid typing: ";
             mError += type;
             setError(mError);
-            print ("%s \n", mError.c_str());
+            printf("%s \n", mError.c_str());
             rVal = 0;
         }
     }
@@ -215,7 +215,7 @@ void cMain::getObjects(){
             std::string mError = currentDateTime() + ": ";
             mError += "[btReader.cpp] - Invaid menu object type! (Type: ";
             mError += name + ")\n";
-            print ("%s \n", mError.c_str());
+            printf("%s \n", mError.c_str());
         }
     }
 }
@@ -278,7 +278,7 @@ void cMain::render(){
             default:
                 std::string mError = currentDateTime() + ": ";
                 mError += "[btReader.cpp] - Stuck at renderer. Invalid WhereAt (Code: ";
-                mError += to_string(whereAt);
+                mError += std::to_string(whereAt);
                 setError(mError);
                 printf("Invalid menu object type! (Type: %s) \n", name.c_str());
                 break;
@@ -345,7 +345,7 @@ void cMain::render(){
         mError += "[btReader.cpp] - Error: In Render, ";
         mError += e.what();
         setError(mError);
-        print("%s \n", mError.c_str());
+        printf("%s \n", mError.c_str());
     }
     /* Display the image \0/ */
     SDL_RenderPresent(mRenderer);

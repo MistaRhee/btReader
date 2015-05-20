@@ -1,28 +1,73 @@
 #include "objects.hpp"
 
+// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
+std::string currentDateTime() {
+    time_t now = time(0);
+    struct tm tstruct;
+    char buf[80];
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+
+    return buf;
+}
+
 namespace beatOff{
 
     cNovelDetails::cNovelDetails(SDL_Rect* inRect){
         loaded = 0;
+        selection = 0;
         setPos(inRect->x, inRect->y);
         setSize(inRect->h, inRect->w); //Like all things, height is variable, its just the width that stays the same
     }
 
-    void cNovelDetails::getContent(std::string sauce){
+    void cNovelDetails::openNovel(std::string sauce){
         try{
+            /* Grabbing Volume + Chapter list */
+            std::vector<std::vector<std::pair<std::string, std::string> > > volumes;
             XMLNode mainNode = XMLNode::openFileHelper(sauce.c_str(), "novel");
             title = mainNode.getChildNode("info").getAttribute("title");
             author = mainNode.getChildNode("info").getAttribute("author");
             synopsis = mainNode.getChildNode("synopsis").getText();
             for(int i = 0, j = mainNode.nChildNode("volume"); i < j; i++){
                 XMLNode volume = mainNode.getChildNode("volume", i);
+                std::vector<std::pair<std::string, std::string> > chapterDetails;
                 for(int k = 0, l = volume.nChildNode("chapter"); k < l; k++){
-                    
+                    XMLNode chapNode = volume.getChildNode("chapter", i);
+                    chapterDetails.push_back(std::make_pair(chapNode.getAttribute("title"), chapNode.getAttribute("location"))); //Wew!
                 }
+                volumes.push_back(chapterDetails);
             }
+            loaded = 1;
+            
+            /* TIME TO RENDER TO A TEXTURE !!! */
+            
+            /* Set default starting pos to 0, 0 */
+            sauceRect.x = 0;
+            sauceRect.y = 0;
+            /* The h and w of sauceRect SHOULD've been set in the constructor. */
+
         }
         catch(mException& e){
            setError(e.what()); 
+           printf("%s \n", e.what());
+        }
+    }
+
+    void cNovelDetails::move(int dx, int dy){
+        /*Ignoring dx at the momemnt, until I can get zoom working. */
+        sauceRect.y += dy;
+        //sauceRect.x += dx;
+    }
+
+    void cNovelDetails::render(SDL_Renderer* mRenderer){
+        if(!loaded){
+            std::string mError = currentDateTime() = ": ";
+            mError += "[novelDetails.cpp] File wasn't loaded before calling render \n";
+            throw(mException(mError));
+            printf("%s \n", mError);
+        }
+        else{
+            SDL_RenderCopy
         }
     }
 
