@@ -28,6 +28,14 @@ namespace beatOff{
             title = mainNode.getChildNode("info").getAttribute("title");
             author = mainNode.getChildNode("info").getAttribute("author");
             synopsis = mainNode.getChildNode("synopsis").getText();
+
+            /* Grab the image location to render 
+             * This only grabs the cover image from the first volume. I could
+             * edit it so that it would include the first cover image that
+             * exists, but that is for later ~~~~~~~~~~~~~
+             * ***************************************************************/
+            std::string frontLoc = mainNode.getChildNode("volume", 0).getAttribute("image"); 
+
             for(int i = 0, j = mainNode.nChildNode("volume"); i < j; i++){
                 XMLNode volume = mainNode.getChildNode("volume", i);
                 std::vector<std::pair<std::string, std::string> > chapterDetails;
