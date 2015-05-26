@@ -39,3 +39,65 @@ External Site():
       mad that we dl the stuff) DO AT YOUR OWN RISK!!!
     - Download externally hosted novels as html files and then display on
       userland's favourite browser.
+
+
+General Rules/Guidelines on committing to this repo
+===================================================
+
+Don't commit bugs. Ever. Like, on the pain of death, if you do, you'll be the
+person in the name&shame file, until someone else commits a bug.
+
+If you are changing a main file (i.e. btReader.cpp, which will be changed quite
+a bit, please notify the other people about it before doing that. People will
+be upset if you delete their changes. Like, very upset)
+
+It is a good idea to keep a dropbox daemon continuously updating your files
+too, just in case you delete everything before you have the chance to commit,
+so you can regain lost data.
+
+Git?!? How to??!?
+=================
+
+(A quick guide for some of the people I invited, because I know they are newbs)
+
+Generally: 
+
+    $ git pull origin master
+
+to grab the changes from repos (ALWAYS do this before you start any work)
+    
+    $ git add -u 
+
+to add all uncommitted changes on "tracked" files (i.e. files you want to send)
+
+    $ git add *
+
+to add all changes within a folder (you should do this in the home folder to
+add all changes)
+
+    $ git commit -m YOUR MESSAGE HERE (in quotes)
+
+to commit your changes. Please leave an intelligent fucking message (not my
+shitty ones)
+
+    $ git push origin master
+
+to send all your changes to the server (ALWAYS DO THIS WHEN YOU FINISH!!!). You
+need to add -> commit -> push before the server updates to your version.
+
+Have a look at:
+
+    $ git blame
+
+so you can see the different people's contribution to a specific file (you can
+also specify a specific time too)
+
+To look at previous commits (for comments as well as version names):
+    
+    $ git log
+
+Fore more info, go to:
+
+   http://rogerdudler.github.io/git-guide/ 
+
+This guy gives a pretty nice rundown on git
