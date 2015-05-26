@@ -1,0 +1,41 @@
+A quick To-Do list (so people don't clash on what they work on)
+===============================================================
+
+Empty brackets next to filenames in source means that someone isn't working on
+it. Plz use IRC or something to contact me (MistaRhee@freenode) 
+(webchat.freenode.net to access) if you want more details etc.
+
+Novel Details: (MistaRhee)
+    - Get something on the screen
+    - Make it look pretty
+
+Novel List ():
+    - Finish implementing the scroll down method for it. The selection and all
+      the other back-end stuff are done, just rendering left to do
+
+    - Debug it, make sure it works properly
+        * What it's supposed to do is display all the novels in a list and
+        * scroll down as you are looking down it
+
+Reader ():
+    - Implement EVERYTHING
+    - Nothing has been done on this 
+
+settings - In general, there is no file for this yet ():
+    - Change font size/zoom
+    - Change the foreground/background colour
+
+MultiThreaded downloads():
+    - Optimize/change the program so that everything runs on one thread, and
+      when a user initiates a download, it starts a new thread.
+
+Stored updates():
+    - Have a file which writes all updates into and then have a tab which a
+      user can pull out what novels/chapters etc. were updated
+
+External Site():
+    - This may be a little risky, because we might run into other copyright
+      issues (BT people said they were fine with it, but others might be kinda
+      mad that we dl the stuff) DO AT YOUR OWN RISK!!!
+    - Download externally hosted novels as html files and then display on
+      userland's favourite browser.
