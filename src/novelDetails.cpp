@@ -21,7 +21,7 @@ namespace beatOff{
         mTexture = NULL;
     }
 
-    void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer){
+    void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer, std::string font){
         try{
             /* Grabbing Volume + Chapter list */
             std::vector<std::vector<std::pair<std::string, std::string> > > volumes;
@@ -52,6 +52,7 @@ namespace beatOff{
             SDL_SetRenderTarget(mRenderer, mTexture);
 
             int currentY = 0;
+            cTextBox titleText(
             
             /* Set default starting pos to 0, 0 */
             sauceRect.x = 0;

@@ -95,7 +95,7 @@ void cMain::preComp(){
     colours.insert(std::make_pair("text", temp));
     getObjects();
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
-        mNovelList->addNovel(i->first);
+        mNovelList.addNovel(i->first);
     }
 }
 
@@ -195,12 +195,12 @@ void cMain::getObjects(){
             mRect.y = atoi(curr.getAttribute("y"));
             mRect.h = atoi(curr.getAttribute("h"));
             mRect.w = atoi(curr.getAttribute("w"));
-            beatOff::cNovelList newNovels(&mRect);
-//            beatOff::cReader newReader(&mRect);
-//            beatOff::cNovelDetails newDetails(&mRect);
-            mNovelList = &newNovels;
-//            mReader = &newReader;
-//            mNovelDetails = &newDetails;
+            mNovelList.setPos(mRect.x, mRect.y);
+            mNovelList.setPos(mRect.x, mRect.y);
+//            mNovelReader.setSize(mRect.h, mRect.w);
+//            mNovelReader.setSize(mRect.h, mRect.w);
+            mNovelDetails.setPos(mRect.x, mRect.y);
+            mNovelDetails.setSize(mRect.h, mRect.w);
         }
         else if(name.compare("colour") == 0){
             id = curr.getAttribute("name");
@@ -260,7 +260,7 @@ void cMain::render(){
                 break;
 
             case showNovels:
-                mNovelList->render(mRenderer);
+                mNovelList.render(mRenderer);
                 break;
 
             case novelDetails:
@@ -268,7 +268,7 @@ void cMain::render(){
                 break;
 
             case reader:
-                //            mReader->render(mRenderer);
+                //            mReader.render(mRenderer);
                 break;
 
             case dlList:

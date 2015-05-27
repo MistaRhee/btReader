@@ -96,9 +96,9 @@ class cMain{
         std::map<std::string, beatOff::cButton> buttons;
         std::map<std::string, std::string> fonts;
         std::map<std::string, SDL_Color> colours;
-        beatOff::cNovelList* mNovelList;
+        beatOff::cNovelList mNovelList;
 //        beatOff::cReader* mReader;
-//        beatOff::cNovelDetails* mNovelDetails;
+        beatOff::cNovelDetails mNovelDetails;
 };
 
 #endif //BTREADER_HPP
