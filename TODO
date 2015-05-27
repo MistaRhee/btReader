@@ -5,7 +5,7 @@ Empty brackets next to filenames in source means that someone isn't working on
 it. Plz use IRC or something to contact me (MistaRhee@freenode) 
 (webchat.freenode.net to access) if you want more details etc.
 
-Novel Details: (MistaRhee)
+Novel Details (MistaRhee):
     - Get something on the screen
     - Make it look pretty
 
@@ -20,6 +20,18 @@ Novel List ():
 Reader ():
     - Implement EVERYTHING
     - Nothing has been done on this 
+
+Improved WikiParser ():
+    - Currently the wiki parser is hard coded to only work for the majority of
+      novels (and so if there is a different format which goes outside the
+      guidelines - I know, it shouldn't, but there are always exceptions - Then
+      we need to handle those)
+
+    - At the moment, all images are being downloaded. Let's say that again, all
+      images are being downloaded. This means that if an image is used twice or
+      three times, it would be downloaded twice/three times, which takes up a
+      lot of space. We really don't want that, so maybe come up with some
+      databasing system to deal with it.
 
 settings - In general, there is no file for this yet ():
     - Change font size/zoom
