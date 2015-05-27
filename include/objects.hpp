@@ -121,11 +121,12 @@ namespace beatOff{
     class cNovelDetails : public cContent{
         public:
             cNovelDetails(SDL_Rect*); //Only care about the rectangle's xPos and yPos and width
-            void openNovel(std::string); //Opens up a novel from XML and then creates a texture
+            void openNovel(std::string, SDL_Renderer*); //Opens up a novel from XML and then renders it to a texture
             void render(SDL_Renderer*); //Draws a section of the texture
             void move(int, int); //Moves the image around (dx, dy). Should only require to move dy (scrolling)
             std::string getSelected();
         private:
+            SDL_Texture* mTexture; //Texture which stores the stuff
             bool loaded;
             std::string fileLoc;
             int selection;

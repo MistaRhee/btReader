@@ -1,17 +1,6 @@
 #ifndef BTREADER_HPP
 #define BTREADER_HPP
 
-/*Notes to self (stuff I need to do later):
- *  - Reader
- *  - Multithreading (MUST DO)
- *  - Have the program also recognise parts of the main GUI as either buttons
- *  or images instead of only buttons for two and images for two
- *  - Have a file called updates or something, which allows the user to find
- *  out what happened recently (so basically a change log which will be an
- *  option)
- *  - Can download an external site translation onto user HD and open that HTML
- *  page with their default browser
- *  ************************************************************************/
 #ifdef _WIN32
 #include <windows.h>
 #endif

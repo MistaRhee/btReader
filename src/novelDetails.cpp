@@ -18,9 +18,10 @@ namespace beatOff{
         selection = 0;
         setPos(inRect->x, inRect->y);
         setSize(inRect->h, inRect->w); //Like all things, height is variable, its just the width that stays the same
+        mTexture = NULL;
     }
 
-    void cNovelDetails::openNovel(std::string sauce){
+    void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer){
         try{
             /* Grabbing Volume + Chapter list */
             std::vector<std::vector<std::pair<std::string, std::string> > > volumes;
@@ -48,6 +49,9 @@ namespace beatOff{
             loaded = 1;
             
             /* TIME TO RENDER TO A TEXTURE !!! */
+            SDL_SetRenderTarget(mRenderer, mTexture);
+
+            int currentY = 0;
             
             /* Set default starting pos to 0, 0 */
             sauceRect.x = 0;
