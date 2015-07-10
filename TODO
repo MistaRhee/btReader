@@ -21,6 +21,19 @@ Reader ():
     - Implement EVERYTHING
     - Nothing has been done on this 
 
+*IMPORTANT* Remove novels after they've been removed from site():
+    - If we don't implement this and the BT site people find out, we'll all get
+      FUCKED in the ass.
+
+    - There is an implied one which was "sort-of" implemented (it *should*
+      work) however, I doubt it's reliable. MAKE THIS HAPPEN!
+
+Mouse Integration():
+    - Currently EVERYTHING is controlled from keyboard. This involves scrolling
+      around, selection. EVERYTHING. Mouse detection is a PITA (which is why it
+      hasn't been implemented), however, if that can be impoemented, it would
+      me AMAZING
+
 Improved WikiParser ():
     - Currently the wiki parser is hard coded to only work for the majority of
       novels (and so if there is a different format which goes outside the
@@ -39,6 +52,16 @@ Improved WikiParser ():
 settings - In general, there is no file for this yet ():
     - Change font size/zoom
     - Change the foreground/background colour
+
+Downloaded Section():
+    - tl;dr have a section of the BT reader which will display all the
+      chapters/volumes/novels that have been downloaded (present it nicely to
+      the user) and maybe give them the option to clean out the cache(?)
+
+Favourites Section():
+    - Give the users option to "favourite" something. After that automatically
+      check for updates on the "favourited" novel/chapter/volume and
+      automatically download the updated version (daily or something)
 
 MultiThreaded downloads():
     - This shouldn't be a very large revamp. 
