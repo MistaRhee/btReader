@@ -81,6 +81,11 @@ Generally:
     $ git pull origin master
 
 to grab the changes from repos (ALWAYS do this before you start any work)
+Create your own branch to do work on with:
+
+    $ git checkout -b <YOUR BRANCH NAME HERE>
+
+Then:
     
     $ git add -u 
 
@@ -96,10 +101,13 @@ add all changes)
 to commit your changes. Please leave an intelligent fucking message (not my
 shitty ones)
 
-    $ git push origin master
+Then push to your branch:
 
-to send all your changes to the server (ALWAYS DO THIS WHEN YOU FINISH!!!). You
-need to add -> commit -> push before the server updates to your version.
+    $ git push origin <YOUR BRANCH NAME HERE>
+
+Then finally when it's okay to merge shit:
+
+    $ git merge <YOUR BRANCH NAME HERE>
 
 Have a look at:
 
