@@ -40,6 +40,7 @@ namespace beatOff{
             textA = 255;
             boxA = 255;
             drawBox = 1;
+            centered = 0;
         }
         selected = 0;
         showBox();
@@ -71,6 +72,7 @@ namespace beatOff{
             textA = 255;
             boxA = 255;
             drawBox = 1;
+            centered = 0;
             setPos(inX, inY);
             setText(inText);
             setSize(0, inW);

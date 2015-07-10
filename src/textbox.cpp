@@ -57,6 +57,7 @@ namespace beatOff{
             textA = 255;
             boxA = 255;
             drawBox = 1;
+            centered = 0;
         }
     }
 
@@ -87,6 +88,7 @@ namespace beatOff{
             textA = 255;
             boxA = 255;
             drawBox = 1;
+            centered = 0;
             setPos(inX, inY);
             setText(inText);
             setSize(inH, inW);
@@ -94,6 +96,10 @@ namespace beatOff{
             setTextSize(inSize);
         }
     }
+
+    bool isCentered() return centered;
+
+    void centre() centered = !(centered);
 
     cTextBox::~cTextBox() {}
 
@@ -253,11 +259,18 @@ namespace beatOff{
             }
             h = TTF_FontHeight(mFont);
             for(int i = 0, j = lines.size(); i < j; i++){
-                TTF_SizeText(mFont, lines[i].c_str(), &w, &h);
-                dRect.h = h;
-                dRect.w = w;
-                dRect.x = x;
+                TTF_SizeText(mFont, lines[i].c_str(), &tempW, &h);
+
+                if(centered){
+                    dRect.x = x + (w-tempw)/2; //It'll favour shifting towards the left by one pixel. w/e
+                }
+                else{
+                    dRect.x = x;
+                }
                 dRect.y = y+(i*lineSkip);
+                dRect.h = h;
+                dRect.w = tempW;
+
                 mSurface = TTF_RenderText_Solid(mFont, lines[i].c_str(), mColour);
                 mTexture = SDL_CreateTextureFromSurface(mRenderer, mSurface);
                 SDL_RenderCopy(mRenderer, mTexture, NULL, &dRect);

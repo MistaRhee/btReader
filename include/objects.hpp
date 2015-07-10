@@ -48,6 +48,8 @@ namespace beatOff{
             bool canFit(int); //Given the height (the rest of the stuff is kept the same), checks if the text can actually fit within the height
             std::string getText();
             void render(SDL_Renderer*);
+            void centre();
+            bool isCentered();
         protected:
             std::string text;
             std::string font;
@@ -55,6 +57,7 @@ namespace beatOff{
             int textR, textG, textB, textA;
             int boxR, boxG, boxB, boxA;
             bool drawBox;
+            bool centered; //If set, this will make any non-width filling line (wrapped or unwrapped) centered.
 
     };
 
