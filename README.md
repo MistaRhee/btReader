@@ -68,7 +68,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Not that I really mind if you take stuff from here... just be nice and you
 know, acknowledge me a bit. Maybe even donate money to charity if you really
-feel guilty about taking the intellectual property from a kid off the internet.
+feel guilty about taking the intellectual property from a kid off the internet
+without paying.
 
 Compiling
 ---------
@@ -100,5 +101,4 @@ I found this pretty nifty library for parsing XML,
 
 http://www.applied-mathematics.net/tools/xmlParser.html
 
-It is nice. I like it. Would rate 10/10 would use again. Sorry pugixml, but
-that was too complicated for my simplistic project.
+Pretty handy. Would rate 10/10.

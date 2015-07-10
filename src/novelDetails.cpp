@@ -52,7 +52,7 @@ namespace beatOff{
             SDL_SetRenderTarget(mRenderer, mTexture);
 
             int currentY = 0;
-            cTextBox titleText(
+            cTextBox titleText(title.c_str(), font.c_str(), );
             
             /* Set default starting pos to 0, 0 */
             sauceRect.x = 0;

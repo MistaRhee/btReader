@@ -55,7 +55,7 @@ cMain::cMain(){
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
             printf("%s: [btReader.cpp] - SDL could not initialize! SDL_Error: %s \n",currentDateTime().c_str(), SDL_GetError());
         }
-        mWindow = SDL_CreateWindow("btReader - By MistaRhee and NoOne2246", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 600, SDL_WINDOW_SHOWN);
+        mWindow = SDL_CreateWindow("btReader - By MistaRhee and NoOne2246", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 1024, SDL_WINDOW_SHOWN);
         mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
         currThreads = 1;
         getObjects();
