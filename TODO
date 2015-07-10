@@ -33,11 +33,15 @@ Improved WikiParser ():
       lot of space. We really don't want that, so maybe come up with some
       databasing system to deal with it.
 
+    - Mebbe try to use a python/lua script to decode teh data grabbed from the
+      website
+
 settings - In general, there is no file for this yet ():
     - Change font size/zoom
     - Change the foreground/background colour
 
 MultiThreaded downloads():
+    - This shouldn't be a very large revamp. 
     - Optimize/change the program so that everything runs on one thread, and
       when a user initiates a download, it starts a new thread.
 

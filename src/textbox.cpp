@@ -60,7 +60,7 @@ namespace beatOff{
         }
     }
 
-    cTextBox::cTextBox(std::string inText, std::string fontLoc, int inX, int inY, int inW, int inH, int inSize){
+    cTextBox::cTextBox(std::string inText, std::string fontLoc, int fontSize, int inX, int inY, int inW, int inH){
         if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
             std::string mError = currentDateTime() + ": ";
             mError += "[textbox.cpp] - SDL couldn't initialise (SDL Error: ";

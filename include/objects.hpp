@@ -35,15 +35,15 @@ namespace beatOff{
     class cTextBox : public cObject{
         public:
             cTextBox(); //Initialise
-            cTextBox(std::string, std::string, int, int, int, int, int); //Initialise while setting text, xPos, yPos, width, height, fontSize. (Height can be left as -1 if you want it to be calculated in the actual function, otherwise, it will be the height of the bounding box.
+            cTextBox(std::string contesnts, std::string fontLoc, int fontSize, int inX, int inY, int inW, int inH = -1);
             ~cTextBox();
             void setText(std::string);
             void setTextSize(int);
             void showBox();
             void hideBox();
             void setFont(std::string); //Font must be set before using the following functions - canFit, render
-            void setTextCol(int, int, int, int);
-            void setBoxCol(int, int, int, int);
+            void setTextCol(int, int, int, int); //RGBA
+            void setBoxCol(int, int, int, int); //RGBA
             int wrappedHeight(); //Returns the expected height of the rendering
             bool canFit(int); //Given the height (the rest of the stuff is kept the same), checks if the text can actually fit within the height
             std::string getText();
@@ -62,7 +62,7 @@ namespace beatOff{
         /* To leave the image at its original size, set height and width to -1 */
         public:
             cImage(); //Initialise
-            cImage(std::string, int, int, int, int);//Initialise while setting location, xPos, yPos, height, width (-1 height and width to make image height)
+            cImage(std::string inLoc, int inx, int iny, int inh = -1, int inw = -1);
             void setPicLoc(std::string);
             void render(SDL_Renderer*);
             std::pair<int, int> getSize(); //Will only work if location is set
@@ -74,7 +74,7 @@ namespace beatOff{
     class cButton : public cTextBox {
         public:
             cButton(); //Initialise
-            cButton(std::string, std::string, int, int, int, int); //Initialise while setting text, xPos, yPos, width, fontSize. Height is calculated within the render function
+            cButton(std::string inText, std::string fontLoc, int inX, int inY, int inW, int inSize);
             void select();
             void deselect();
         private:
