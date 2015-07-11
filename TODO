@@ -137,7 +137,12 @@ Then push to your branch:
 
 Then finally when it's okay to merge shit:
 
+    $ git checkout master //Switching to the master branch
     $ git merge <YOUR BRANCH NAME HERE>
+
+If you don't need the branch anymore
+    
+    $ git branch -d <YOUR BRANCH NAME HERE>
 
 Have a look at:
 
