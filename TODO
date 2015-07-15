@@ -9,6 +9,13 @@ Novel Details (MistaRhee):
     - Get something on the screen
     - Make it look pretty
 
+Mouse Integration(MistaRhee): (Doing this first because it makes EVERYTHING easier)
+    - Currently EVERYTHING is controlled from keyboard. This involves scrolling
+      around, selection. EVERYTHING. Mouse detection is a PITA (which is why it
+      hasn't been implemented), however, if that can be impoemented, it would
+      me AMAZING
+
+
 Red Links ():
     - This is quite a trivial bit of work, but I just never got around to doing
       it. Basically check the chapters we add and ensure that they aren't "red
@@ -34,12 +41,6 @@ Reader ():
 
     - There is an implied one which was "sort-of" implemented (it *should*
       work) however, I doubt it's reliable. MAKE THIS HAPPEN!
-
-Mouse Integration():
-    - Currently EVERYTHING is controlled from keyboard. This involves scrolling
-      around, selection. EVERYTHING. Mouse detection is a PITA (which is why it
-      hasn't been implemented), however, if that can be impoemented, it would
-      me AMAZING
 
 Improved WikiParser ():
     - Currently the wiki parser is hard coded to only work for the majority of
