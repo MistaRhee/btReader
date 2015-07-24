@@ -13,12 +13,23 @@ std::string currentDateTime() {
 
 namespace beatOff{
 
-    cNovelDetails::cNovelDetails(SDL_Rect* inRect){
+    cNovelDetails::cNovelDetails(std::string config){
+        configLoc = config;
+        loadConfig();
+    }
+
+    cNovelDetails::cNovelDetails(SDL_Rect* inRect, std::string config){
         loaded = 0;
         selection = 0;
         setPos(inRect->x, inRect->y);
         setSize(inRect->h, inRect->w); //Like all things, height is variable, its just the width that stays the same
         mTexture = NULL;
+        configLoc = config;
+        loadConfig();
+    }
+
+    void cNovelDetails::loadConfig(){
+        
     }
 
     void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer, std::string font){

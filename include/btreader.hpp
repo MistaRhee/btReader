@@ -65,7 +65,9 @@ class cMain{
         bool hasNew(const std::string); //Request title (checks revIds)
         bool run();
 //        void update();
-//        void processEvents();
+        void processEvents();
+        void handleUserKey(SDL_Key*, bool);
+        void handleUserMouse(int, int, int, bool); //x, y, mouse type, is down
         void render();
         void getObjects();
         std::string getError();

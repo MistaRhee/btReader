@@ -98,15 +98,17 @@ namespace beatOff{
             SDL_Color backColour;
     };
 
-    class cNovelList : public cContent{
+    class cNovelList : public cContent{ //MUST HAVE A CONFIG -> defaulting it to system/listDisp.xml
         public:
-            cNovelList();
-            cNovelList(SDL_Rect*); //Sets the position start and the rendered size of the object
+            cNovelList(std::string config = "system/listDisp.xml");
+            cNovelList(SDL_Rect* inRect, std::string config = "system/listDisp.xml");
             void addNovel(std::string);
             void moveSelection(int);
             std::string getSelected();
             void render(SDL_Renderer*);
+
         private:
+            std::string configLoc;
             const int novelHeight = 50; //Subject to change
             std::vector<cTextBox> mNovels;
             int selected;
@@ -132,6 +134,11 @@ namespace beatOff{
             void move(int, int); //Moves the image around (dx, dy). Should only require to move dy (scrolling)
             std::string getSelected();
         private:
+            /* Private grabbing config function. It should only be called in
+             * constructor
+             * */
+            void loadConfig();
+
             SDL_Texture* mTexture; //Texture which stores the stuff
             bool loaded;
             std::string fileLoc;
