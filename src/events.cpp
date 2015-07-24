@@ -6,7 +6,7 @@ void cMain::processEvents(){
         switch(e.type){
             case SDL_KEYBOARD:
                 handleUserKey(
-                        e.key.keysym, 
+                        e.key.keysym.sym, 
                         e.key.type==SDL_KEYDOWN
                         );
                 break;
@@ -24,4 +24,27 @@ void cMain::processEvents(){
                 break;
         }
     }
+}
+
+void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers){
+    /* Just a stub at the moment */
+    switch(mKey){
+        case keyMapping["up"]:
+            //The key for up had an action
+            break;
+        default:
+            break;
+    }
+}
+
+void cMain::handleUserMouse(int x, int y, unsigned int button, bool isDown){
+    /* Just a stub at the moment */
+    switch(button){
+        case SDL_BUTTON_LEFT:
+            //Left mouse action
+            break;
+        default:
+            break;
+    }
+    
 }

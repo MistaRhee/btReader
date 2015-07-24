@@ -58,49 +58,75 @@ class cWikiParser{
 
 class cMain{
     public:
+        /* Initializers and deconstructors */
         cMain();
         ~cMain();
         bool checkDependencies();
         void preComp();
         bool hasNew(const std::string); //Request title (checks revIds)
+        void getObjects();
+
+        /* General 'helper' functions */
+        std::string convTitle(std::string);
+        std::string generateRandomName(int len);
+
+        /* The main loop */
         bool run();
 //        void update();
         void processEvents();
-        void handleUserKey(SDL_Key*, bool);
-        void handleUserMouse(int, int, int, bool); //x, y, mouse type, is down
         void render();
-        void getObjects();
-        std::string getError();
-        std::string convTitle(std::string);
-        std::string generateRandomName(int len);
-        std::pair<std::string, std::string> getNovelDetails(std::string);
+
+        /* Event handling */
+        void handleUserKey(SDL_Keycode, bool, unsigned int); //key pressed, is it down, keyModifiers
+        void handleUserMouse(int, int, int, bool); //x, y, mouse type, is down
+
+        /* Database operations */
         bool readDatabase();
         void createDatabase();
         void updateDatabase();
         void replaceDatabase();
+        std::pair<std::string, std::string> getNovelDetails(std::string); //Returns name and location
+
+        /* Error Handling */
         void setError(std::string);
+        std::string getError();
     private:
+        /* URL constant strings */
         const std::string tempLoc = "data/temp/";
         const std::string domain = "http://baka-tsuki.org/project/api.php?action=";
         const std::string novelList = "query&list=categorymembers&cmtitle=Category:Light_novel_(English)&cmlimit=500&format=xml";
         const std::string pageDetail = "parse&prop=wikitext|revid&format=xml&page="; //Add novel name after this (NAME_TITLE_ETC/CHAPTER_NAME)
         const std::string revID = "query&format=xml&prop=revisions&revlimit=1&titles="; //Add titles after this
+
+        /* System storage */
         const std::string systemLoc = "system/";
         const std::string systemImagesLoc = "system/images/";
+
+        /* Main program control */
         places_t whereAt;
         int currThreads;
         int startRunTime;
         std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title, place to read from
         std::string error;
+
+        /* Graphics */
         SDL_Window* mWindow;
         SDL_Renderer* mRenderer;
+
+        /* Storage */
         std::map<std::string, beatOff::cImage> images;
         std::map<std::string, beatOff::cButton> buttons;
         std::map<std::string, std::string> fonts;
         std::map<std::string, SDL_Color> colours;
+
+        /* Different Screens */
         beatOff::cNovelList mNovelList;
 //        beatOff::cReader* mReader;
         beatOff::cNovelDetails mNovelDetails;
+
+        /* User stuff */
+        std::map<std::string, SDL_Keycode> keyMapping;
+//        std::map<std::string, void*> userProfile; just a random idea
 };
 
 #endif //BTREADER_HPP
