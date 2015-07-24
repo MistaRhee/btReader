@@ -79,6 +79,7 @@ class cMain{
         /* Event handling */
         void handleUserKey(SDL_Keycode, bool, unsigned int); //key pressed, is it down, keyModifiers
         void handleUserMouse(int, int, int, bool); //x, y, mouse type, is down
+        void handleUserScroll(int, int); //dx, dy
 
         /* Database operations */
         bool readDatabase();
@@ -112,6 +113,7 @@ class cMain{
         /* Graphics */
         SDL_Window* mWindow;
         SDL_Renderer* mRenderer;
+        SDL_Rect* 
 
         /* Storage */
         std::map<std::string, beatOff::cImage> images;

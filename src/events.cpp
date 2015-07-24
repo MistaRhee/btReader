@@ -19,6 +19,13 @@ void cMain::processEvents(){
                         );
                 break;
 
+            case SDL_MOUSEWHEEL:
+                handleScroll(
+                        e.wheel.x,
+                        e.wheel.y
+                        );
+                break;
+
             default:
                 /* Not handling other events at the moment */
                 break;
@@ -31,6 +38,8 @@ void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers)
     switch(mKey){
         case keyMapping["up"]:
             //The key for up had an action
+            break;
+        case keyMapping["down"]:
             break;
         default:
             break;
@@ -47,4 +56,10 @@ void cMain::handleUserMouse(int x, int y, unsigned int button, bool isDown){
             break;
     }
     
+}
+
+void cMain::handleUserScroll(int dx, int dy){
+    int mx = -1, my = -1;
+    SDL_GetMouseState(&x, &y);
+
 }
