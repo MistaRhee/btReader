@@ -154,16 +154,7 @@
     #define TRUE 1
 #endif /* TRUE */
 
-/// Creation of an exception to custom hold errors
-struct mException : public std::exception{
-    mException(std::string in){
-        this->message = in;
-    }
-    std::string message;
-    const char* what() const throw(){
-        return message.c_str();
-    }
-};
+#include "mException.h"
 
 /// Enumeration for XML parse errors.
 typedef enum XMLError

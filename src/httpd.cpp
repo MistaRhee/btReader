@@ -11,16 +11,6 @@ std::string currentDateTime() {
     return buf;
 }
 
-struct mException : public std::exception {
-    mException(std::string in){
-        this->message = in;
-    }
-    std::string message;
-    const char * what() const throw(){
-        return message.c_str();
-    }
-};
-
 size_t write_data(void* ptr, size_t size, size_t nmemb, FILE* stream){
     size_t written;
     written = fwrite(ptr, size, nmemb, stream);

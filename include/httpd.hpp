@@ -46,7 +46,8 @@
 #include <cstdlib>
 #include <string>
 #include <cstring>
-#include <exception>
+
+#include "mException.h"
 
 class cHttpd{
     public:

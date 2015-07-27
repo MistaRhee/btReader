@@ -19,6 +19,7 @@
 #include <string>
 #include <cstring>
 #include <exception>
+
 #include "xmlParser.h" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
 #include "httpd.hpp" //For website retreival
 #include "objects.hpp" //For SDL Objects
@@ -38,7 +39,7 @@ enum places_t{
 class cGetImage{
     public:
         std::string getImage(const std::string); //File name, returns file saved location
-        std::string generateRandomName(int);
+        std::string generateRandomName(int len);
     private:
         std::string sanatize(const std::string);
         const std::string imageQuery = "http://www.baka-tsuki.org/project/api.php?action=query&prop=imageinfo&iiprop=url&format=xml&titles=";
@@ -113,7 +114,7 @@ class cMain{
         /* Graphics */
         SDL_Window* mWindow;
         SDL_Renderer* mRenderer;
-        SDL_Rect* 
+        SDL_Rect* contentLoc;
 
         /* Storage */
         std::map<std::string, beatOff::cImage> images;
