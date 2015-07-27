@@ -62,14 +62,25 @@ class cMain{
         /* Initializers and deconstructors */
         cMain();
         ~cMain();
-        bool checkDependencies();
-        void preComp();
-        bool hasNew(const std::string); //Request title (checks revIds)
-        void getObjects();
 
         /* General 'helper' functions */
         std::string convTitle(std::string);
         std::string generateRandomName(int len);
+
+        /* Error Handling */
+        void setError(std::string);
+        std::string getError();
+    private:
+        /* Initialization functions */
+        bool checkDependencies();
+        void preComp();
+        void getObjects();
+        void getUserProfile();
+
+        /* Event handling */
+        void handleUserKey(SDL_Keycode, bool, unsigned int); //key pressed, is it down, keyModifiers
+        void handleUserMouse(int, int, int, bool); //x, y, mouse type, is down
+        void handleUserScroll(int, int); //dx, dy
 
         /* The main loop */
         bool run();
@@ -77,22 +88,14 @@ class cMain{
         void processEvents();
         void render();
 
-        /* Event handling */
-        void handleUserKey(SDL_Keycode, bool, unsigned int); //key pressed, is it down, keyModifiers
-        void handleUserMouse(int, int, int, bool); //x, y, mouse type, is down
-        void handleUserScroll(int, int); //dx, dy
-
         /* Database operations */
+        bool hasNew(const std::string); //Request title (checks revIds)
         bool readDatabase();
         void createDatabase();
         void updateDatabase();
         void replaceDatabase();
         std::pair<std::string, std::string> getNovelDetails(std::string); //Returns name and location
 
-        /* Error Handling */
-        void setError(std::string);
-        std::string getError();
-    private:
         /* URL constant strings */
         const std::string tempLoc = "data/temp/";
         const std::string domain = "http://baka-tsuki.org/project/api.php?action=";
@@ -108,7 +111,6 @@ class cMain{
         places_t whereAt;
         int currThreads;
         int startRunTime;
-        std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title, place to read from
         std::string error;
 
         /* Graphics */
@@ -121,6 +123,7 @@ class cMain{
         std::map<std::string, beatOff::cButton> buttons;
         std::map<std::string, std::string> fonts;
         std::map<std::string, SDL_Color> colours;
+        std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title, place to read from
 
         /* Different Screens */
         beatOff::cNovelList mNovelList;
@@ -128,7 +131,7 @@ class cMain{
         beatOff::cNovelDetails mNovelDetails;
 
         /* User stuff */
-        std::map<std::string, SDL_Keycode> keyMapping;
+        beatOff::cKeyMap mKeys;
 //        std::map<std::string, void*> userProfile; just a random idea
 };
 

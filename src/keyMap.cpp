@@ -34,4 +34,21 @@ SDL_Keycode cKeyMap::getKey(std::string name){
     return mKeys[name];
 }
 
+bool cKeyMap::exists(std::string id){
+    bool rVal = 0;
+    if(mKeys.count(id)){
+        rVal = 1;
+    }
+    return rVal;
+}
+
+bool cKeyMap::keyMapped(SDL_Keycode mKey){ //ONLY COUNTS ONE INSTANCE!!!
+    bool rVal = 0;
+    for(auto it = mKeys.begin(); it != mKeys.end(); ++it){
+        if(it->second == mKey){
+            rVal = 1;
+            break;
+        }
+    }
+    return rVal;
 }

@@ -65,6 +65,7 @@ cMain::cMain(){
         mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
         currThreads = 1;
         getObjects();
+        getUserProfile();
     }
     startRunTime = SDL_GetTicks();
 }
@@ -87,7 +88,14 @@ void cMain::preComp(){
     /* Setting default colours! (will be overwritten by the XML file if it
      * exists
      */
+    /* Clearing the maps, just in case data is leaked (shouldn't though) */
+    images.clear();
+    buttons.clear();
+    fonts.clear();
+    colours.clear();
     replaceDatabase();
+
+    /* Creating a colour map */
     SDL_Colour temp;
     temp.r = 255;
     temp.g = 255;
@@ -152,6 +160,29 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
         }
     }
     return rVal;
+}
+
+void cMain::getUserProfile(){
+    if(!fileExists("system/user.profile")){
+        /* No existing profile exists create new one using default settings */
+    }
+    else{
+        try{
+            XMLNode mainNode = XMLNode::openFileHelper("system/user.profile", "profile");
+            XMLNode currChild = mainNode.getChildNode("keyBindings");
+            for(int i = 0, j = currChild.nChildNode("key"); i < j; i++){
+                XMLNode currNode = currChild.getChildNode("key", i);
+                
+            }
+        }
+        catch(mException& e){
+            std::string mError = currentDateTime() + ": ";
+            mError += "[btReader.cpp] - getUserProfile Error: ";
+            mError += mException.what();
+            setError(mError);
+            printf("%s \n", mError.c_str());;
+        }
+    }
 }
 
 void cMain::setError(std::string mError){
