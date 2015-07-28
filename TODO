@@ -16,7 +16,7 @@ Mouse Integration(MistaRhee): (Doing this first because it makes EVERYTHING easi
       me AMAZING
 
 
-Red Links ():
+Red Links (NoOne):
     - This is quite a trivial bit of work, but I just never got around to doing
       it. Basically check the chapters we add and ensure that they aren't "red
       links" (i.e. the page doesn't exist). This can be done by adding links to
@@ -57,7 +57,7 @@ Improved WikiParser ():
     - Mebbe try to use a python/lua script to decode teh data grabbed from the
       website
 
-settings - In general, there is no file for this yet ():
+settings - In general, there is no file for this yet (Mistarhee):
     - Change font size/zoom
     - Change the foreground/background colour
 
