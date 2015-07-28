@@ -71,6 +71,9 @@ cMain::cMain(){
 }
 
 cMain::~cMain(){
+    for(auto it = userProfile.begin(); it != userProfile.end(); ++it){
+        free(it->second);
+    }
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
     SDL_Quit();
@@ -172,7 +175,22 @@ void cMain::getUserProfile(){
             XMLNode currChild = mainNode.getChildNode("keyBindings");
             for(int i = 0, j = currChild.nChildNode("key"); i < j; i++){
                 XMLNode currNode = currChild.getChildNode("key", i);
+                if(!exists(currNode.getAttribute("id")))
+                    mKeys.addBinding(
+                        currNode.getAttribute("id"), 
+                        atoi(currNode.getAttribute("code"))
+                        );
+                else{
+                    throw(mException("Attempted to add two keyBindings to the same ID"));
+                }
                 
+            }
+            currChild = mainNode.getChildNode("options");
+            for(int i = 0, j = currChild.nChildNode("set"); i < j; i++){
+                XMLNode currNode = currChild.getChildNode("set", i);
+                char* mString = (char*)malloc(sizeof(char)*strlen(currNode.getAttribute("value")));
+                strcpy(currNode.getAttribute("value"), mString);
+                userProfile.insert(std::make_pair(currNode.getAttribute("option"), (void*)mString));
             }
         }
         catch(mException& e){
@@ -318,7 +336,7 @@ void cMain::render(){
                 break;
 
             case reader:
-                //            mReader.render(mRenderer);
+//                mReader.render(mRenderer);
                 break;
 
             case dlList:

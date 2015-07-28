@@ -132,7 +132,7 @@ class cMain{
 
         /* User stuff */
         beatOff::cKeyMap mKeys;
-//        std::map<std::string, void*> userProfile; just a random idea
+        std::map<std::string, void*> userProfile;
 };
 
 #endif //BTREADER_HPP
