@@ -9,6 +9,11 @@ Novel Details (MistaRhee):
     - Get something on the screen
     - Make it look pretty
 
+settings - In general, there is no file for this yet (MistaRhee):
+    - Change font size/zoom
+    - Change the foreground/background colour
+
+
 Mouse Integration(MistaRhee): (Doing this first because it makes EVERYTHING easier)
     - Currently EVERYTHING is controlled from keyboard. This involves scrolling
       around, selection. EVERYTHING. Mouse detection is a PITA (which is why it
@@ -57,10 +62,13 @@ Improved WikiParser ():
     - Mebbe try to use a python/lua script to decode teh data grabbed from the
       website
 
+<<<<<<< HEAD
 settings - In general, there is no file for this yet (Mistarhee):
     - Change font size/zoom
     - Change the foreground/background colour
 
+=======
+>>>>>>> origin/master
 Downloaded Section():
     - tl;dr have a section of the BT reader which will display all the
       chapters/volumes/novels that have been downloaded (present it nicely to
