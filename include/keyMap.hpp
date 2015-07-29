@@ -18,7 +18,7 @@ class cKeyMap{
         bool exists(std::string); //CHecks if there is a mapping to an ID
         bool keyMapped(SDL_Keycode); //Checks if there is a mapping to a key
         SDL_Keycode getKey(std::string); //String to be queried
-        const SDL_Keycode &getKey(std::string) const; //I think... =.=
+        const SDL_Keycode& getKey(std::string) const; //I think... =.=
 
     private:
         std::map<std::string, SDL_Keycode> mKeys;

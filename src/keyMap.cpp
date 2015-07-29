@@ -34,6 +34,13 @@ SDL_Keycode cKeyMap::getKey(std::string name){
     return mKeys[name];
 }
 
+const SDL_Keycode& getKey(std::string name) const{
+    if(!mKeys.count(name)){
+        throw(mException("[keyMap.cpp] - Error! Name that was requested doesn't exist! \n"));
+    }
+    return mKeys[name];
+}
+
 bool cKeyMap::exists(std::string id){
     bool rVal = 0;
     if(mKeys.count(id)){

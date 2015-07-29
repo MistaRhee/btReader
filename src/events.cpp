@@ -45,11 +45,11 @@ void cMain::processEvents(){
 void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers){
     /* Just a stub at the moment */
     switch(mKey){
-        case keyMapping["up"]:
+        case mKeys.getKey("up"):
             //The key for up had an action
             break;
 
-        case keyMapping["down"]:
+        case mKeys.getKey("down"):
             break;
 
         default:
