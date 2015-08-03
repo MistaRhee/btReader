@@ -10,6 +10,8 @@
 #include <cstring>
 #include <string>
 
+#include "mException.h"
+
 namespace beatOff{
 
     class cObject{
@@ -90,6 +92,11 @@ namespace beatOff{
             void setFontSize(int);
             void setTextColour(SDL_Color);
             void setBackColour(SDL_Color);
+
+            /* Event Handling -> Keyboard ignored as it is handled in main
+             * event */
+            virtual void handleUserMouse(int, int, int, bool) {}
+            virtual void handleUserScroll(int, int) {}
         protected:
             bool changed, created;
             std::string fontLoc;
@@ -98,7 +105,7 @@ namespace beatOff{
             SDL_Color backColour;
     };
 
-    class cNovelList : public cContent{ //MUST HAVE A CONFIG -> defaulting it to system/listDisp.xml
+    class cNovelList : public cContent{ //Config part of user Profile
         public:
             cNovelList(std::string config = "system/listDisp.xml");
             cNovelList(SDL_Rect* inRect, std::string config = "system/listDisp.xml");
@@ -109,7 +116,6 @@ namespace beatOff{
 
         private:
             std::string configLoc;
-            const int novelHeight = 50; //Subject to change
             std::vector<cTextBox> mNovels;
             int selected;
     };
@@ -134,11 +140,6 @@ namespace beatOff{
             void move(int, int); //Moves the image around (dx, dy). Should only require to move dy (scrolling)
             std::string getSelected();
         private:
-            /* Private grabbing config function. It should only be called in
-             * constructor
-             * */
-            void loadConfig();
-
             SDL_Texture* mTexture; //Texture which stores the stuff
             bool loaded;
             std::string fileLoc;

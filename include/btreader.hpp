@@ -23,6 +23,7 @@
 #include "xmlParser.h" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
 #include "httpd.hpp" //For website retreival
 #include "objects.hpp" //For SDL Objects
+#include "mException.h" //For exception handling
 
 #define MAX_THREADS 5
 #define FPS_CAP 1000/60
@@ -132,7 +133,7 @@ class cMain{
 
         /* User stuff */
         beatOff::cKeyMap mKeys;
-        std::map<std::string, void*> userProfile;
+        std::map<std::string, std::string> userProfile;
 };
 
 #endif //BTREADER_HPP

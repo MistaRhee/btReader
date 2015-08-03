@@ -28,10 +28,6 @@ namespace beatOff{
         loadConfig();
     }
 
-    void cNovelDetails::loadConfig(){
-        
-    }
-
     void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer, std::string font){
         try{
             /* Grabbing Volume + Chapter list */
@@ -87,11 +83,11 @@ namespace beatOff{
         if(!loaded){
             std::string mError = currentDateTime() = ": ";
             mError += "[novelDetails.cpp] File wasn't loaded before calling render \n";
-            throw(mException(mError));
             printf("%s \n", mError);
+            throw(mException(mError));
         }
         else{
-            SDL_RenderCopy
+            SDL_RenderCopy(mRenderer, mTexture, &sauceRect, NULL);
         }
     }
 

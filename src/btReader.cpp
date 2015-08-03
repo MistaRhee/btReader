@@ -38,17 +38,6 @@ inline bool fileExists (const std::string& name) {
     }
 }
 
-// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-std::string currentDateTime() {
-    time_t now = time(0);
-    struct tm tstruct;
-    char buf[80];
-    tstruct = *localtime(&now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-
-    return buf;
-}
-
 cMain::cMain(){
     if(checkDependencies()){
         preComp();
@@ -71,9 +60,6 @@ cMain::cMain(){
 }
 
 cMain::~cMain(){
-    for(auto it = userProfile.begin(); it != userProfile.end(); ++it){
-        free(it->second);
-    }
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
     SDL_Quit();
@@ -188,9 +174,7 @@ void cMain::getUserProfile(){
             currChild = mainNode.getChildNode("options");
             for(int i = 0, j = currChild.nChildNode("set"); i < j; i++){
                 XMLNode currNode = currChild.getChildNode("set", i);
-                char* mString = (char*)malloc(sizeof(char)*strlen(currNode.getAttribute("value")));
-                strcpy(currNode.getAttribute("value"), mString);
-                userProfile.insert(std::make_pair(currNode.getAttribute("option"), (void*)mString));
+                userProfile.insert(std::make_pair(currNode.getAttribute("option"), currNode.getAttribute("value")));
             }
         }
         catch(mException& e){

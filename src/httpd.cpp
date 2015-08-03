@@ -1,16 +1,5 @@
 #include "httpd.hpp"
 
-// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-std::string currentDateTime() {
-    time_t now = time(0);
-    struct tm tstruct;
-    char buf[80];
-    tstruct = *localtime(&now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-
-    return buf;
-}
-
 size_t write_data(void* ptr, size_t size, size_t nmemb, FILE* stream){
     size_t written;
     written = fwrite(ptr, size, nmemb, stream);

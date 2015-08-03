@@ -13,7 +13,7 @@
     <options>
         
 <!-- Only tag is set -> It will set an option to a value -->
-        <set option="" value="" />
+        <set option="size" value="50" />
 
     </options>
 
