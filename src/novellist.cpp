@@ -24,7 +24,7 @@ namespace beatOff{
         cTextBox newText;
         newText.setText(in);
         newText.setPos(x, h);
-        newText.setSize(w, novelHeight);
+        newText.setSize(w, atoi(userProfile["NLsize"].c_str()));
         newText.setTextSize(fontSize);
         newText.showBox();
         newText.setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
