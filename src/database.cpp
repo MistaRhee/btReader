@@ -65,13 +65,21 @@ bool cMain::readDatabase(){
             novelDB[newEntry.getAttribute("title")] = std::make_pair(newEntry.getAttribute("location"), newEntry.getAttribute("revid"));
         }
         if(novelDB.size() != mainNode.nChildNode("novel")){
-            printf("%s: [database.cpp] - Mismatch in numbers! \nRebuilding the database from scratch! Size: %d NovelList Size: %d \n", currentDateTime.c_str(), novelDB.size(), mainNode.nChildNode("novel"));
+            std::string mWarning = currentDateTime();
+            mWarning +=  ": [database.cpp] - Mismatch in numers! \nRebuilding the database from scratch! Size: ";
+            mWarning += std::to_string(novelDB.size());
+            mWarning += " Novel List Size: ";
+            mWarning += std::to_string(mainNode.nChildNode("novel"));
+            printf("%s \n", mWarning.c_str());
             rVal = 0;
         }
     }
     catch(mException& e){
         setError(e.what());
-        printf("%s: Error - There was an exception! \n%s \n", currentDateTime(), e.what());
+        std::string mError = currentDateTime();
+        mError += ": Error - There was an exception! \n";
+        mError += e.what();
+        printf("%s \n", mError.c_str());
         rVal = 0;
     }
     return rVal;
@@ -95,14 +103,17 @@ bool cMain::hasNew(const std::string title){
     }
     catch(mException& e){
         setError(e.what());
-        printf("%s: Error - There was an exception! \n%s \n", currentDateTime().c_str(), e.what());
+        std::string mError = currentDateTime();
+        mError += ": Error - There was an exception \n";
+        mError += e.what();
+        printf("%s \n", mError.c_str());
         rVal = 0;
     }
     return rVal;
 }
 
 void cMain::updateDatabase(){
-    printf("Updating the database \n");
+    printf("Updating the database \n";
     cHttpd stream1;
     std::string tempFile = tempLoc+generateRandomName(50);
     while(fileExists(tempFile)){

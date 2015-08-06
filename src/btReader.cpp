@@ -118,7 +118,7 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
                     mError += "[btReader.cpp] - Check Dependencies Error: Essential Folder doesn't exist (";
                     mError += currNode.getAttribute("sauce");
                     mError += ")";
-                    setError(e);
+                    setError(mError);
                     printf("%s \n", mError.c_str());
                     rVal = 0;
                 }
@@ -161,11 +161,12 @@ void cMain::getUserProfile(){
             XMLNode currChild = mainNode.getChildNode("keyBindings");
             for(int i = 0, j = currChild.nChildNode("key"); i < j; i++){
                 XMLNode currNode = currChild.getChildNode("key", i);
-                if(!exists(currNode.getAttribute("id")))
-                    mKeys.addBinding(
+                if(!mKeys.exists(currNode.getAttribute("id"))){
+                    mKeys.addMapping(
                         currNode.getAttribute("id"), 
                         atoi(currNode.getAttribute("code"))
                         );
+                }
                 else{
                     throw(mException("Attempted to add two keyBindings to the same ID"));
                 }
@@ -180,7 +181,7 @@ void cMain::getUserProfile(){
         catch(mException& e){
             std::string mError = currentDateTime() + ": ";
             mError += "[btReader.cpp] - getUserProfile Error: ";
-            mError += mException.what();
+            mError += e.what();
             setError(mError);
             printf("%s \n", mError.c_str());;
         }
@@ -329,10 +330,10 @@ void cMain::render(){
 
             default:
                 std::string mError = currentDateTime() + ": ";
-                mError += "[btReader.cpp] - Stuck at renderer. Invalid WhereAt (Code: ";
+                mError += "[btReader.cpp] - Stuck at render. Invalid WhereAt (Code: ";
                 mError += std::to_string(whereAt);
                 setError(mError);
-                printf("Invalid menu object type! (Type: %s) \n", name.c_str());
+                printf("%s \n", mError.c_str());
                 break;
         }
         /* Draw the "interface" over the content. Interface will ALWAYS only
@@ -386,7 +387,7 @@ void cMain::render(){
             default:
                 std::string mError = currentDateTime() + ": ";
                 mError += "[btReader.cpp] - Stuck at render. Invalid WhereAt (Code: ";
-                mError += to_string(whereAt);
+                mError += std::to_string(whereAt);
                 setError(mError);
                 printf("%s \n", mError.c_str());
                 break;

@@ -24,6 +24,7 @@
 #include "httpd.hpp" //For website retreival
 #include "objects.hpp" //For SDL Objects
 #include "mException.h" //For exception handling
+#include "keyMap.hpp" //For keymap class
 
 #define MAX_THREADS 5
 #define FPS_CAP 1000/60
@@ -117,7 +118,7 @@ class cMain{
         /* Graphics */
         SDL_Window* mWindow;
         SDL_Renderer* mRenderer;
-        SDL_Rect* contentLoc;
+        SDL_Rect contentLoc;
 
         /* Storage */
         std::map<std::string, beatOff::cImage> images;

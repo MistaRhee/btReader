@@ -144,7 +144,7 @@ namespace beatOff{
             bool loaded;
             std::string fileLoc;
             int selection;
-    }
+    };
     
 }
 #endif //OBJECTS_HPP

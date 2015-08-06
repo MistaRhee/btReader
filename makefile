@@ -8,7 +8,7 @@ else
 
 endif
 SDIR=src
-SAUCES=btReader.cpp button.cpp content.cpp database.cpp getImage.cpp httpd.cpp image.cpp main.cpp novellist.cpp object.cpp textbox.cpp wikiParser.cpp xmlParser.cpp novelDetails.cpp reader.cpp events.cpp 
+SAUCES=btReader.cpp button.cpp content.cpp database.cpp getImage.cpp httpd.cpp image.cpp main.cpp novellist.cpp object.cpp textbox.cpp wikiParser.cpp xmlParser.cpp novelDetails.cpp reader.cpp events.cpp keyMap.cpp
 SOURCES=$(patsubst %,$(SDIR)/%,$(SAUCES))
 OBJECTS=$(SOURCES:.cpp=.o)
 
