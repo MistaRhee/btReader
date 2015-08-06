@@ -113,7 +113,7 @@ bool cMain::hasNew(const std::string title){
 }
 
 void cMain::updateDatabase(){
-    printf("Updating the database \n";
+    printf("Updating the database \n");
     cHttpd stream1;
     std::string tempFile = tempLoc+generateRandomName(50);
     while(fileExists(tempFile)){
@@ -211,8 +211,11 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         return std::make_pair(novelStore, revID);
     }
     catch(mException& e){
+        std::string mError = currentDateTime();
+        mError += ": [database.cpp] - ";
+        mError += e.what();
         setError(e.what());
-        printf("%s: [database.cpp] - %s\n", currentDateTime().c_str(), e.what().c_str());
+        printf("%s\n", mError.c_str());
         return std::make_pair("", "");
     }
 }

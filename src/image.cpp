@@ -56,7 +56,7 @@ namespace beatOff{
                 e += IMG_GetError();
                 e = ")";
                 setError(e);
-                printf("%s \n", e);
+                printf("%s \n", e.c_str());
                 rVal = std::make_pair(-1, -1);
             }
             else{

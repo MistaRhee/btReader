@@ -100,7 +100,7 @@ std::string cHttpd::qDownload(const std::string url, int nameLen){
             std::string mError = currentDateTime() + ": ";
             mError += "[httpd.cpp] curl_easy_perform error: ";
             mError += curl_easy_strerror(res);
-            throw (mException(e));
+            throw (mException(mError));
         }
         fclose(fin);
         return fileName;

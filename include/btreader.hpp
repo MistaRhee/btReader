@@ -65,6 +65,9 @@ class cMain{
         cMain();
         ~cMain();
 
+        /* The "running" command */
+        bool run();
+
         /* General 'helper' functions */
         std::string convTitle(std::string);
         std::string generateRandomName(int len);
@@ -85,7 +88,6 @@ class cMain{
         void handleUserScroll(int, int); //dx, dy
 
         /* The main loop */
-        bool run();
 //        void update();
         void processEvents();
         void render();
