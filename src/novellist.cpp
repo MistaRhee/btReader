@@ -1,10 +1,10 @@
-#include "objects.hpp"
+#include "contents.hpp"
 
 namespace beatOff{
     
-    cNovelList::cNovelList(SDL_Rect* inRect){
-        setPos(inRect->x, inRect->y);
-        setSize(inRect->h, inRect->w);
+    cNovelList::cNovelList(SDL_Rect inRect){
+        setPos(inRect.x, inRect.y);
+        setSize(inRect.h, inRect.w);
         selected = 0;
         /* Setting "defaults" just in case I forget to set them beforehand */
         fontSize = 25;
@@ -20,11 +20,11 @@ namespace beatOff{
         setFontSize(20);
     }
 
-    void cNovelList::addNovel(std::string in){
+    void cNovelList::addNovel(std::string in, int novelHeight){
         cTextBox newText;
         newText.setText(in);
         newText.setPos(x, h);
-        newText.setSize(w, atoi(userProfile["NLsize"].c_str()));
+        newText.setSize(w, novelHeight);
         newText.setTextSize(fontSize);
         newText.showBox();
         newText.setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);

@@ -1,20 +1,14 @@
-#include "objects.hpp"
+#include "contents.hpp"
 
 namespace beatOff{
 
-    cNovelDetails::cNovelDetails(std::string config){
-        configLoc = config;
-        loadConfig();
-    }
-
-    cNovelDetails::cNovelDetails(SDL_Rect* inRect, std::string config){
+    cNovelDetails::cNovelDetails(SDL_Rect inRect){
         loaded = 0;
         selection = 0;
+        sauceRect = inRect;
         setPos(inRect->x, inRect->y);
         setSize(inRect->h, inRect->w); //Like all things, height is variable, its just the width that stays the same
         mTexture = NULL;
-        configLoc = config;
-        loadConfig();
     }
 
     void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer, std::string font){
@@ -22,9 +16,9 @@ namespace beatOff{
             /* Grabbing Volume + Chapter list */
             std::vector<std::vector<std::pair<std::string, std::string> > > volumes;
             XMLNode mainNode = XMLNode::openFileHelper(sauce.c_str(), "novel");
-            title = mainNode.getChildNode("info").getAttribute("title");
-            author = mainNode.getChildNode("info").getAttribute("author");
-            synopsis = mainNode.getChildNode("synopsis").getText();
+            std::string title = mainNode.getChildNode("info").getAttribute("title");
+            std::string author = mainNode.getChildNode("info").getAttribute("author");
+            std::string synopsis = mainNode.getChildNode("synopsis").getText();
 
             /* Grab the image location to render 
              * This only grabs the cover image from the first volume. I could
@@ -46,10 +40,10 @@ namespace beatOff{
             
             /* TIME TO RENDER TO A TEXTURE !!! */
             SDL_SetRenderTarget(mRenderer, mTexture);
-
+/*
             int currentY = 0;
             cTextBox titleText(title.c_str(), font.c_str(), );
-            
+*/            
             /* Set default starting pos to 0, 0 */
             sauceRect.x = 0;
             sauceRect.y = 0;
@@ -72,7 +66,7 @@ namespace beatOff{
         if(!loaded){
             std::string mError = currentDateTime() = ": ";
             mError += "[novelDetails.cpp] File wasn't loaded before calling render \n";
-            printf("%s \n", mError);
+            printf("%s \n", mError.c_str());
             throw(mException(mError));
         }
         else{

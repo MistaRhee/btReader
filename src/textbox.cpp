@@ -82,13 +82,17 @@ namespace beatOff{
             setText(inText);
             setSize(inH, inW);
             setFont(fontLoc);
-            setTextSize(inSize);
+            setTextSize(fontSize);
         }
     }
 
-    bool isCentered() return centered;
+    bool cTextBox::isCentered(){
+        return centered;
+    }
 
-    void centre() centered = !(centered);
+    void cTextBox::centre(){
+        centered = !(centered);
+    }
 
     cTextBox::~cTextBox() {}
 
@@ -251,7 +255,7 @@ namespace beatOff{
                 TTF_SizeText(mFont, lines[i].c_str(), &tempW, &h);
 
                 if(centered){
-                    dRect.x = x + (w-tempw)/2; //It'll favour shifting towards the left by one pixel. w/e
+                    dRect.x = x + (w-tempW)/2; //It'll favour shifting towards the left by one pixel. w/e
                 }
                 else{
                     dRect.x = x;
