@@ -35,6 +35,15 @@ Nicer Error Checking():
         - tl;dr it should be something like:
             $ if(verbose > 0) printf(...); //Blah
 
+    - It would also be nice to standardize the way I do error reporting even 
+      further, so instead of just dumping information whenever I want to, it
+      would be nice to either dump all the time (maybe in very verbose (-vv)
+      mode) or not at all (non-verbose mode)
+
+    - Also, I would like to make the variables that report the errors have same
+      names (so sometimes I use e, other times mError etc.) I would like this
+      fixed.
+
 Novel List ():
     - Finish implementing the scroll down method for it. The selection and all
       the other back-end stuff are done, just rendering left to do
