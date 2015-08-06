@@ -28,6 +28,13 @@ Red Links (NoOne):
       the novel detail query and then checking if the attribute exists is set
       then updating something in the data store (maybe a bool flag?)
 
+Nicer Error Checking():
+    - This is another quick and dirty patch on top of the existing template, 
+      basically, this should only printf() nice errors if the flag verbose (-v)
+      is set from command line, otherwise it won't need to do anything.
+        - tl;dr it should be something like:
+            $ if(verbose > 0) printf(...); //Blah
+
 Novel List ():
     - Finish implementing the scroll down method for it. The selection and all
       the other back-end stuff are done, just rendering left to do
