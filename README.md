@@ -89,7 +89,7 @@ Dependencies
 - SDL2
 - SDL_Image
 - SDL_TTF
-- libCurl
+- libCurl (Tested on v7.40.0, but should work on later versions)
 
 Maybe more stuff later, but I'll be adding to it. No funny business here. Sorry
 to disappoint.
