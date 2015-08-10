@@ -23,6 +23,7 @@
 #include "xmlParser.h" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
 #include "httpd.hpp" //For website retreival
 #include "objects.hpp" //For SDL Objects
+#include "contents.hpp" //For content objects
 #include "mException.h" //For exception handling
 #include "keyMap.hpp" //For keymap class
 

@@ -1,4 +1,4 @@
-#ifndef OBJEcTS_HPP
+#ifndef OBJECTS_HPP
 #define OBJECTS_HPP
 
 #include <SDL2/SDL.h>
