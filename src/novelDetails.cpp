@@ -5,13 +5,14 @@ namespace beatOff{
     cNovelDetails::cNovelDetails(){
         loaded = 0;
         selection = 0;
-        sauceRect = inRect;
         mTexture = NULL;
     }
 
     void cNovelDetails::setRect(SDL_Rect inRect){
-        setPos(inRect->x, inRect->y);
-        setSize(inRect->h, inRect->w); //Like all things, height is variable, its just the width that stays the same
+        sauceRect = inRect;
+        setPos(0, 0); //Just to ensure we aren't already not focused
+        /* Like all things, height is variable, its just the width that stays the same */
+        setSize(inRect.h, inRect.w); 
     }
 
     void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer, std::string font){

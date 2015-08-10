@@ -1,3 +1,5 @@
 *.o
 *.tmp
 *.swp
+noteToSelf
+notesToSelf

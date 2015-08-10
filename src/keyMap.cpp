@@ -1,4 +1,4 @@
-#include "keymap.hpp"
+#include "keyMap.hpp"
 
 namespace beatOff{
 
@@ -10,14 +10,14 @@ cKeyMap::~cKeyMap(){
     /* Still nothing to see here */
 }
 
-void cKeyMap::addMapping(std::string name, SDL_KeyCode key){ 
+void cKeyMap::addMapping(std::string name, SDL_Keycode key){ 
     /* Assuming there is no existing key mapping. If there is, it'll overwrite
      * */
     mKeys[name] = key;
 }
 
-void cKeyMap::editMapping(std::string name, SDL_KeyCode newKey){
-    /* This assumes that there is no previous mapping for the SDL_KeyCode. Will
+void cKeyMap::editMapping(std::string name, SDL_Keycode newKey){
+    /* This assumes that there is no previous mapping for the SDL_Keycode. Will
      * throw an exception if name doesn't exist */
     if(mKeys.count(name)){
         mKeys[name] = newKey;
@@ -34,7 +34,7 @@ SDL_Keycode cKeyMap::getKey(std::string name){
     return mKeys[name];
 }
 
-const SDL_Keycode& getKey(std::string name) const{
+const SDL_Keycode cKeyMap::getKey(std::string name) const{
     if(!mKeys.count(name)){
         throw(mException("[keyMap.cpp] - Error! Name that was requested doesn't exist! \n"));
     }
@@ -58,4 +58,6 @@ bool cKeyMap::keyMapped(SDL_Keycode mKey){ //ONLY COUNTS ONE INSTANCE!!!
         }
     }
     return rVal;
+}
+
 }

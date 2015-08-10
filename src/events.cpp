@@ -4,13 +4,23 @@ void cMain::processEvents(){
     SDL_Event e;
     while(SDL_PollEvent(&e)){
         switch(e.type){
-            case SDL_KEYBOARD:
+            case SDL_KEYDOWN:
                 handleUserKey(
                         e.key.keysym.sym, 
-                        e.key.type==SDL_KEYDOWN
+                        e.key.type==SDL_KEYDOWN,
+                        e.key.keysym.mod
                         );
                 break;
-            case SDL_MOUSEBUTTON:
+                
+            case SDL_KEYUP:
+                handleUserKey(
+                        e.key.keysym.sym,
+                        e.key.type==SDL_KEYDOWN,
+                        e.key.keysym.mod
+                        );
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
                 handleUserMouse(
                         e.button.x, 
                         e.button.y, 
@@ -19,8 +29,17 @@ void cMain::processEvents(){
                         );
                 break;
 
+            case SDL_MOUSEBUTTONUP:
+                handleUserMouse(
+                        e.button.x,
+                        e.button.y,
+                        e.button.button,
+                        e.button.type==SDL_MOUSEBUTTONDOWN
+                        );
+                break;
+
             case SDL_MOUSEWHEEL:
-                handleScroll(
+                handleUserScroll(
                         e.wheel.x,
                         e.wheel.y
                         );
@@ -44,17 +63,15 @@ void cMain::processEvents(){
 
 void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers){
     /* Just a stub at the moment */
-    switch(mKey){
-        case mKeys.getKey("up"):
-            /* The key for up had an action */
-            break;
-
-        case mKeys.getKey("down"):
-            break;
-
-        default:
-            /* Unhandled key event */
-            break;
+    if(mKey == mKeys.getKey("up")){
+        /* The key for up had an action */
+        
+    }
+    else if(mKey == mKeys.getKey("down")){ //THe else to prevent double key spam
+        
+    }
+    else{
+        /* Unhandled key */
     }
 }
 
@@ -133,9 +150,9 @@ void cMain::handleUserMouse(int x, int y, int button, bool isDown){
 
 void cMain::handleUserScroll(int dx, int dy){
     int mx = -1, my = -1;
-    SDL_GetMouseState(&x, &y);
-    if(x >= contentLoc.x && x <= (contentLoc.x+contentLoc.w)){ //If the mouse is within the width of content rect
-        if(y >= contentLoc.y && y <= (contentLoc.y+contentLoc.h)){ //If the mouse is actually within the rectangle of contents
+    SDL_GetMouseState(&mx, &my);
+    if(mx >= contentLoc.x && mx <= (contentLoc.x+contentLoc.w)){ //If the mouse is within the width of content rect
+        if(my >= contentLoc.y && my <= (contentLoc.y+contentLoc.h)){ //If the mouse is actually within the rectangle of contents
             /* Send the event to the appropriate handler to update the program
              * state */
             switch(whereAt){
