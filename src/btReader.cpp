@@ -1,4 +1,4 @@
-#include "btreader.hpp"
+#include "btReader.hpp"
 
 #ifdef _WIN32
 inline bool dirExists(const std::string& dirName) {

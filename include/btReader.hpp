@@ -132,7 +132,7 @@ class cMain{
 
         /* Different Screens */
         beatOff::cNovelList mNovelList;
-//        beatOff::cReader* mReader;
+//        beatOff::cReader mReader;
         beatOff::cNovelDetails mNovelDetails;
 
         /* User stuff */

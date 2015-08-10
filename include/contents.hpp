@@ -39,7 +39,8 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
 
     class cNovelList : public cContent{ //Config part of user Profile
         public:
-            cNovelList(SDL_Rect inRect);
+            cNovelList();
+            void setDefaults(SDL_Rect inRect);
             void addNovel(std::string, int);
             void moveSelection(int);
             std::string getSelected();
@@ -54,7 +55,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
     class cReader : public cContent{
         public:
             cReader();
-            cReader(SDL_Rect); //Sets the dimensions of the rendered object (so the program won't get confused)
+            void setRect(SDL_Rect); //Sets the dimensions of the rendered object (so the program won't get confused)
             void render(SDL_Renderer*);
             void getContent(std::string); //Gets the content from a file and then renders it to a texture
         private:
@@ -64,7 +65,8 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
 
     class cNovelDetails : public cContent{
         public:
-            cNovelDetails(SDL_Rect); //Only care about the rectangle's xPos and yPos and width
+            cNovelDetails();
+            void setRect(SDL_Rect); //Only care about the rectangle's xPos and yPos and width
             void openNovel(std::string, SDL_Renderer*, std::string); //Opens up a novel from XML and then renders it to a texture
             void render(SDL_Renderer*); //Draws a section of the texture
             void move(int, int); //Moves the image around (dx, dy). Should only require to move dy (scrolling)
