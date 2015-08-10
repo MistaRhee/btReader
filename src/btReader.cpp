@@ -246,12 +246,9 @@ void cMain::getObjects(){
             mRect.h = atoi(curr.getAttribute("h"));
             mRect.w = atoi(curr.getAttribute("w"));
             contentLoc = mRect;
-            mNovelList.setPos(mRect.x, mRect.y);
-            mNovelList.setPos(mRect.x, mRect.y);
-//            mNovelReader.setSize(mRect.h, mRect.w);
-//            mNovelReader.setSize(mRect.h, mRect.w);
-            mNovelDetails.setPos(mRect.x, mRect.y);
-            mNovelDetails.setSize(mRect.h, mRect.w);
+            mNovelList.setRect(contentLoc);
+//            mNovelReader.setRect(contentLoc);
+            mNovelDetails.setRect(contentLoc);
 
         }
         else if(name.compare("colour") == 0){

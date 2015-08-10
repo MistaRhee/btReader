@@ -40,7 +40,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
     class cNovelList : public cContent{ //Config part of user Profile
         public:
             cNovelList();
-            void setDefaults(SDL_Rect inRect);
+            void setRect(SDL_Rect);
             void addNovel(std::string, int);
             void moveSelection(int);
             std::string getSelected();

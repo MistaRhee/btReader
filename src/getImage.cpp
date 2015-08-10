@@ -1,4 +1,4 @@
-#include "btreader.hpp"
+#include "btReader.hpp"
 
 inline bool fileExists (const std::string& name) {
     if (FILE *file = fopen(name.c_str(), "r")) {

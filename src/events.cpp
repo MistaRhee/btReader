@@ -1,4 +1,4 @@
-#include "btreader.hpp"
+#include "btReader.hpp"
 
 void cMain::processEvents(){
     SDL_Event e;

@@ -1,4 +1,4 @@
-#include "btreader.hpp"
+#include "btReader.hpp"
 
 static const int EXIT = -1;
 static const int SYNOPSIS = 0;
