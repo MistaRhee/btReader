@@ -17,6 +17,12 @@ namespace beatOff{
 
     void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer, std::string font){
         try{
+            /* Clearing out old textures */
+            if(mTexture){
+                SDL_DestroyTexture(mTexture);
+                mTexture = NULL;
+            }
+
             /* Grabbing Volume + Chapter list */
             std::vector<std::vector<std::pair<std::string, std::string> > > volumes;
             XMLNode mainNode = XMLNode::openFileHelper(sauce.c_str(), "novel");
@@ -43,11 +49,26 @@ namespace beatOff{
             loaded = 1;
             
             /* TIME TO RENDER TO A TEXTURE !!! */
+
+            /* Calculate the height beforehand, because texture height must be
+             * declared beforehand */
+
+            /* Create the texture first */
+            mTexture = SDL_CreateTexture(
+                    mRenderer,
+                    SDL_PIXELFORMAT_UNKNOWN,
+                    SDL_TEXTUREACCESS_TARGET,
+                    w,
+                    mHeight //Height is variable though so I had to pre-calc it =.=
+                    );
             SDL_SetRenderTarget(mRenderer, mTexture);
 /*
             int currentY = 0;
             cTextBox titleText(title.c_str(), font.c_str(), );
 */            
+            /* Return the renderer to render to the window again */
+            SDL_SetRenderTarget(mRenderer, NULL);
+
             /* Set default starting pos to 0, 0 */
             sauceRect.x = 0;
             sauceRect.y = 0;

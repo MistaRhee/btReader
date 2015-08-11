@@ -55,6 +55,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             std::vector<cTextBox> mNovels;
             int selected;
             int novelHeight;
+            bool taextureGen;
     };
     
     class cReader : public cContent{

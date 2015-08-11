@@ -16,6 +16,10 @@ namespace beatOff{
         backColour.a = 255;
         setFont("system/fonts/droidsansfallback.ttf");
         setFontSize(20);
+
+        /* Handles the texturing of the novel list */
+        mTexture = NULL;
+        textureGen = 0;
     }
     
     void cNovelList::setRect(SDL_Rect inRect){
@@ -69,6 +73,7 @@ namespace beatOff{
     }
 
     void cNovelList::moveSelection(int ds){
+        textureGen = 0;
         mNovels[selected].setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
         mNovels[selected].setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);
         selected += ds;
@@ -79,7 +84,13 @@ namespace beatOff{
          * such that it is */
         int reqY = 0; //Required value of Y to make the novel be see-able (is this a word?)
         reqY += novelHeight*(selection+1);
-        reqY -= 
+        reqY -= h-novelHeight; //I'm displaying a bunch of other stuff anyway
+        sauceRect.y = reqY;
+        genTexture();
+    }
+
+    void cNovelList::genTexture(){
+        SDL_DestroyTexture(mTexture);
     }
 
     std::string cNovelList::getSelected(){
@@ -87,17 +98,25 @@ namespace beatOff{
     }
 
     void cNovelList::render(SDL_Renderer* mRenderer){
-        for(int i = 0, j = mNovels.size(); i < j; i++){
-            mNovels[i].render(mRenderer);
-        }
+        if(!textureGen) genTexture();
+        SDL_Rect dRect;
+        dRect.x = x;
+        dRect.y = y;
+        dRect.h = h;
+        dRect.w = w;
+        /* Sauce rect h and w should be equal to dRect */
+        SDL_RenderCopy(mRenderer, mTexture, &sauceRect, &dRect);
     }
 
     void cNovelList::handleUserScroll(int dx, int dy){
-        move(0, dy);
+        move(0, dy); //No horizontal scrolling
     }
 
     void cNovelList::handleUserMouse(int x, int y, int mouseType, bool isPressed){
-        /* Time to do funky math to work out what they clicked */
+        /* Time to do funky math to work out what they clicked/hovering over
+         * right now */
+        /* Note to self: if mouseType = -1, then this is a mouse MOTION event
+         * */
 
     }
 
