@@ -13,39 +13,45 @@ cKeyMap::~cKeyMap(){
 void cKeyMap::addMapping(std::string name, SDL_Keycode key){ 
     /* Assuming there is no existing key mapping. If there is, it'll overwrite
      * */
-    mKeys[name] = key;
+    if(!mKeys.count(name))
+        mKeys.insert(std::make_pair(name, key));
+    
+    else
+        mKeys[name] = key;
 }
 
 void cKeyMap::editMapping(std::string name, SDL_Keycode newKey){
     /* This assumes that there is no previous mapping for the SDL_Keycode. Will
      * throw an exception if name doesn't exist */
-    if(mKeys.count(name)){
-        mKeys[name] = newKey;
-    }
-    else{
+    if(mKeys.count(name))
+        mKeys.insert(std::make_pair(name, newKey));
+    
+    else
         throw(mException("[keyMap.cpp] - Error! name for editMapping doesn't exist \n"));
-    }
+    
 }
 
-SDL_Keycode cKeyMap::getKey(std::string name){
-    if(!mKeys.count(name)){
+SDL_Keycode& cKeyMap::getKey(std::string name){
+    if(!mKeys.count(name))
         throw(mException("[keyMap.cpp] - Error! Name that was requested doesn't exist! \n"));
-    }
-    return mKeys[name];
+    
+    auto found = mKeys.find(name);
+    return found->second;
 }
 
-const SDL_Keycode cKeyMap::getKey(std::string name) const{
-    if(!mKeys.count(name)){
+const SDL_Keycode& cKeyMap::getKey(std::string name) const{
+    if(!mKeys.count(name))
         throw(mException("[keyMap.cpp] - Error! Name that was requested doesn't exist! \n"));
-    }
-    return mKeys[name];
+    
+    auto found = mKeys.find(name);
+    return found->second;
 }
 
 bool cKeyMap::exists(std::string id){
     bool rVal = 0;
-    if(mKeys.count(id)){
+    if(mKeys.count(id))
         rVal = 1;
-    }
+    
     return rVal;
 }
 
