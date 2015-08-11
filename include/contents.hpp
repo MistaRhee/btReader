@@ -47,11 +47,14 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void handleUserMouse(int, int, int, bool);
             void handleUserScroll(int, int);
             void render(SDL_Renderer*);
-
+            void genTexture();
         private:
+            SDL_Texture* mTexture;
+            SDL_Rect sauceRect;
             std::string configLoc;
             std::vector<cTextBox> mNovels;
             int selected;
+            int novelHeight;
     };
     
     class cReader : public cContent{

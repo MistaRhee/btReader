@@ -9,8 +9,8 @@ namespace beatOff{
     }
 
     void cNovelDetails::setRect(SDL_Rect inRect){
-        sauceRect = inRect;
-        setPos(0, 0); //Just to ensure we aren't already not focused
+        sauceRect = inRect; //The "viewport" of the texture
+        setPos(inRect.x, inRect.y); //The position to render to on screen
         /* Like all things, height is variable, its just the width that stays the same */
         setSize(inRect.h, inRect.w); 
     }

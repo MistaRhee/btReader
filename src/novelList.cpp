@@ -19,6 +19,7 @@ namespace beatOff{
     }
     
     void cNovelList::setRect(SDL_Rect inRect){
+        sauceRect = inRect;
         setPos(inRect.x, inRect.y);
         setSize(inRect.h, inRect.w);
     }
@@ -26,6 +27,7 @@ namespace beatOff{
     void cNovelList::addNovel(std::string in, int novelHeight){
         /* Variable height makes my OCD go insane */
         cTextBox newText;
+        this->novelHeight = novelHeight;
         newText.setText(in);
         newText.setTextSize(fontSize);
         newText.setPos(x, h);
@@ -48,9 +50,13 @@ namespace beatOff{
                 /* If I can't squeeze it in by making the font smaller, cut the
                  * title off to make it fit */
                 newText.setTextSize(fontSize);
+                in.erase(in.end()-3, in.end());
+                in += "...";
                 while(true){
-                    in.pop(); //Erase the back character
+                    in.erase(in.end()-4); //Erase the back character (that isn't elipsis
+                    if(newText.canFit(novelHeight)) break;
                 }
+                newText.setText(in);
             }
         }
         newText.showBox();
@@ -72,9 +78,8 @@ namespace beatOff{
         /* Check to see if selection is on screen, if it isn't, move screen
          * such that it is */
         int reqY = 0; //Required value of Y to make the novel be see-able (is this a word?)
-        for(int i = 0; i < selected; i++){
-            
-        }
+        reqY += novelHeight*(selection+1);
+        reqY -= 
     }
 
     std::string cNovelList::getSelected(){
