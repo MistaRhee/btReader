@@ -44,6 +44,8 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void addNovel(std::string, int);
             void moveSelection(int);
             std::string getSelected();
+            void handleUserMouse(int, int, int, bool);
+            void handleUserScroll(int, int);
             void render(SDL_Renderer*);
 
         private:
