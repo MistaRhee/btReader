@@ -105,7 +105,7 @@ class cMain{
         const std::string tempLoc = "data/temp/";
         const std::string domain = "http://baka-tsuki.org/project/api.php?action=";
         const std::string novelList = "query&list=categorymembers&cmtitle=Category:Light_novel_(English)&cmlimit=500&format=xml";
-        const std::string pageDetail = "parse&prop=wikitext|revid&format=xml&page="; //Add novel name after this (NAME_TITLE_ETC/CHAPTER_NAME)
+        const std::string pageDetail = "parse&prop=wikitext|revid|links&format=xml&page="; //Add novel name after this (NAME_TITLE_ETC/CHAPTER_NAME)
         const std::string revID = "query&format=xml&prop=revisions&revlimit=1&titles="; //Add titles after this
 
         /* System storage */

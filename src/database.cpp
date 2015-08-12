@@ -208,6 +208,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         printf("%s: [database.cpp] - Cleaned page stored in %s. \n", currentDateTime().c_str(), novelStore.c_str());
         printf("%s: [database.cpp] - Deleting temp file \n", currentDateTime().c_str());
         remove (tempFile.c_str());
+        remove (tempFile2.c_str());
         return std::make_pair(novelStore, revID);
     }
     catch(mException& e){
