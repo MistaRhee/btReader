@@ -274,4 +274,47 @@ namespace beatOff{
         }
     }
 
+    void cTextBox::renderWikiText(SDL_Renderer* mRenderer){
+        /* Wiki Text rules:
+         *  Rendering word by word instead of line by line
+         *
+         *  - tl;dr It's basically the same as normal rendering, just watch out
+         *  for special things (the triple quotes etc..)
+         *  '''WORD''' -> Bold (I think)
+         *  ''WORD'' -> Italic (I think)
+         *  '''''WORD''''' -> Bold+Italic (Guaranteed)
+         *  =WORD= -> Heading (so like 2x size + bold?)
+         *  
+         *  To make life easier, I'll assume that making something bold doesn't
+         *  increase the width (otherwise it'll become rather non-trivial to
+         *  do)
+         *
+         *  TTF Styles:
+         *      TTF_STYLE_BOLD | TTF_STYLE_ITALIC | TTF_STYLE_UNDERLINE |
+         *      TTF_STYLE_STRIKETHROUGH | TTF_STYLE_NORMAL
+         *
+         *      TTF_SetFontStyle(mFont, BITMASK);
+         */
+        if(!fileExists(font)){
+            std::string mError = currentDateTime() + ": ";
+            mError += "cTextBox Error - Font doesn't exist (Font location = ";
+            mError += font;
+            mError += ")";
+            setError(mError); //Now its an error if you try to render without a font
+            printf("%s\n", mError.c_str());
+        }
+        else{
+            std::vector<std::string> mWords;
+            std::string tempStr;
+
+            /* For safety */
+            tempStr.clear();
+            mWords.clear();
+
+            for(int i = 0, j = text.size(); i < j; i++){
+                /* Spltting text into word chunks */
+            }
+        }
+    }
+
 }
