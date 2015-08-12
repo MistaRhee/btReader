@@ -20,6 +20,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
 
     class cContent : public cObject{
         public:
+            /* Setting functions */
             void setFont(std::string);
             void setFontSize(int);
             void setTextColour(SDL_Color);
@@ -30,7 +31,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             virtual void handleUserMouse(int, int, int, bool) {}
             virtual void handleUserScroll(int, int) {}
         protected:
-            bool changed, created;
+//            bool changed, created; //Not sure why these are here....
             std::string fontLoc;
             int fontSize;
             SDL_Color textColour;
@@ -39,23 +40,40 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
 
     class cNovelList : public cContent{ //Config part of user Profile
         public:
+            /* Init and starting defines */
             cNovelList();
             void setRect(SDL_Rect);
+
+            /* "User" interactions */
             void addNovel(std::string, int);
             void moveSelection(int);
             std::string getSelected();
+
+            /* Event handling */
             void handleUserMouse(int, int, int, bool);
             void handleUserScroll(int, int);
+
+            /* Rendering to stuffs */
             void render(SDL_Renderer*);
-            void genTexture();
         private:
+            /* Internal functions */
+            void genTexture(SDL_Renderer*);
+
+            /* Settings constants */
+            int novelHeight;
+            std::string configLoc;
+            int selected;
+
+            /* Rendering objects */
             SDL_Texture* mTexture;
             SDL_Rect sauceRect;
-            std::string configLoc;
+
+            /* Storage */
             std::vector<cTextBox> mNovels;
-            int selected;
-            int novelHeight;
-            bool taextureGen;
+
+            /* Flags flags fags... */
+            bool textureGen;
+            bool mouseMoved;
     };
     
     class cReader : public cContent{

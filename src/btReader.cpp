@@ -248,7 +248,7 @@ void cMain::getObjects(){
             contentLoc = mRect;
             mNovelList.setRect(contentLoc);
 //            mNovelReader.setRect(contentLoc);
-            mNovelDetails.setRect(contentLoc);
+//            mNovelDetails.setRect(contentLoc);
 
         }
         else if(name.compare("colour") == 0){

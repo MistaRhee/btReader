@@ -53,6 +53,8 @@ namespace beatOff{
             /* Calculate the height beforehand, because texture height must be
              * declared beforehand */
 
+            int mHeight = 0;
+
             /* Create the texture first */
             mTexture = SDL_CreateTexture(
                     mRenderer,

@@ -73,6 +73,9 @@ namespace beatOff{
     }
 
     void cNovelList::moveSelection(int ds){
+        /* Check if the mouse has moved -> if it has, change selection based
+         * off absolute mouse position, rather than old selection position
+         */
         textureGen = 0;
         mNovels[selected].setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
         mNovels[selected].setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);
@@ -83,14 +86,33 @@ namespace beatOff{
         /* Check to see if selection is on screen, if it isn't, move screen
          * such that it is */
         int reqY = 0; //Required value of Y to make the novel be see-able (is this a word?)
-        reqY += novelHeight*(selection+1);
+        reqY += novelHeight*(selected+1);
         reqY -= h-novelHeight; //I'm displaying a bunch of other stuff anyway
         sauceRect.y = reqY;
-        genTexture();
     }
 
-    void cNovelList::genTexture(){
+    void cNovelList::genTexture(SDL_Renderer* mRenderer){
         SDL_DestroyTexture(mTexture);
+        /* Calculate the required height of the texture */
+        int mHeight = novelHeight*mNovels.size();
+
+        /* Render shit to a texture */
+        SDL_SetRenderTarget(mRenderer, mTexture);
+        mTexture = SDL_CreateTexture(
+                mRenderer,
+                SDL_PIXELFORMAT_UNKNOWN,
+                SDL_TEXTUREACCESS_TARGET,
+                w,
+                mHeight
+                );
+        for(auto it = mNovels.begin(); it != mNovels.end(); ++it){
+            /* This is so bad/lazy */
+            it->render(mRenderer);
+        }
+
+        /* Return renderer to render to the window again */
+        SDL_SetRenderTarget(mRenderer, NULL);
+        textureGen = 1;
     }
 
     std::string cNovelList::getSelected(){
@@ -98,7 +120,7 @@ namespace beatOff{
     }
 
     void cNovelList::render(SDL_Renderer* mRenderer){
-        if(!textureGen) genTexture();
+        if(!textureGen) genTexture(mRenderer);
         SDL_Rect dRect;
         dRect.x = x;
         dRect.y = y;
