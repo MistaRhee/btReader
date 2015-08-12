@@ -264,7 +264,7 @@ namespace beatOff{
                 dRect.h = h;
                 dRect.w = tempW;
 
-                mSurface = TTF_RenderText_Solid(mFont, lines[i].c_str(), mColour);
+                mSurface = TTF_RenderText_Blended(mFont, lines[i].c_str(), mColour);
                 mTexture = SDL_CreateTextureFromSurface(mRenderer, mSurface);
                 SDL_RenderCopy(mRenderer, mTexture, NULL, &dRect);
                 SDL_FreeSurface(mSurface);
