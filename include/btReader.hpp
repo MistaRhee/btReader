@@ -58,6 +58,7 @@ class cWikiParser{
     private:
         std::string error;
         void setError(std::string);
+        std::string titleClean(const std::string);
 };
 
 class cMain{

@@ -22,6 +22,18 @@ inline bool fileExists (const std::string& name) {
     }   
 }
 
+std::string titleClean(const std::string title){
+    std::string cleaned;
+    for(int i = 0, j = title.size(); i<j; i++){
+        if(title[i] == ' '){
+            cleaned += '_';
+        }else{
+            cleaned += title[i];
+        }
+    }
+    return cleaned;
+}
+
 std::string cWikiParser::generateRandomName(int length){ 
     srand(time(NULL));     
     const char aCharacters[] = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";       
@@ -67,6 +79,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                 break;
             }
         }
+        volStr = titleClean(volStr);
         printf("%s is %i\n", volStr.c_str(), availInt);
 		availMap[volStr] = availInt;			//move data into map
         volStr.clear();
@@ -233,7 +246,8 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         chapterNode.addAttribute("dl", "no");
                                         chapterNode.addAttribute("revid", "");
 										//check whether the link is available.
-										auto it = availMap.find(chapName);
+										chapName = titleClean(chapName);
+                                        auto it = availMap.find(chapName);
 										if(it != availMap.end()){
 											if(it->second==1){
                                                 chapterNode.addAttribute("available", "1");
