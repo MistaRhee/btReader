@@ -7,6 +7,7 @@ static const int VOLUMES = 1;
 enum splitter_t{
     locate,
 	description,
+    spacer,
 	novTitle,
     leave	
     //
@@ -174,7 +175,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                     fgets(buffer, 4096, fin);
                                     std::string title;
                                     std::string chapName;
-                                    char availability;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
                                         printf("Adding Chapter! \n");
                                         splitter_t grabbing = locate;
@@ -187,12 +187,24 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 													break;
 												case description:
 													if(buffer[i] == '|'){
-														grabbing = novTitle;
+														grabbing = spacer;
 													}
+                                                    else if (buffer[i]==']'){
+                                                        title = chapName;
+                                                        grabbing = leave;
+                                                    }
 													else{
 														chapName += buffer[i];
 													}
 													break;
+                                                case spacer:
+                                                    if(buffer[i]==' '){
+                                                        while(buffer[i]==' '){
+                                                            i++;
+                                                        }
+                                                    }
+                                                    title += buffer[i];
+                                                    grabbing = novTitle;
 												case novTitle:
 													if(buffer[i] == ']'){
 														grabbing = leave;
