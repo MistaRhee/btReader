@@ -67,6 +67,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                 break;
             }
         }
+        printf("%s is %i\n", volStr.c_str(), availInt);
 		availMap[volStr] = availInt;			//move data into map
         volStr.clear();
 	}
@@ -240,7 +241,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                                 chapterNode.addAttribute("available", "0");
 											}
 										}else{
-											//printf("%s:[wikiParser.cpp] - Unable to locate %s within map. Set as not avilable for now\n", currentDateTime().c_str(), chapName.c_str());										
+											printf("%s:[wikiParser.cpp] - Unable to locate %s within map. Set as not avilable for now\n", currentDateTime().c_str(), chapName.c_str());		//just to make sure error is fixed								
                                             chapterNode.addAttribute("available", "0");
 										}
                                     }
