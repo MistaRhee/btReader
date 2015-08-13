@@ -127,6 +127,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                     if(tempStr[i] == '(' or tempStr[i] == '='){
                                         newVolume.addAttribute("title", volumeTitle.c_str());
                                         volumeTitle.clear();
+                                        break;
                                     }
                                     else{
                                         volumeTitle += tempStr[i];
