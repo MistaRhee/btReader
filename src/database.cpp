@@ -213,7 +213,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
 			else{
 				exist = 0;//link does not exist
 			}
-			fprintf(fexist, "%s|%i", parseNode.getChildNode("pl", i).getText(), exist); //dump the list of chapter and the array into a table
+			fprintf(fexist, "%s|%i\n", linksNode.getChildNode("pl", i).getText(), exist); //dump the list of chapter and the array into a table
 		}
 		fclose(fexist);
         printf("%s: [database.cpp] - Extraction complete! \n", currentDateTime().c_str());

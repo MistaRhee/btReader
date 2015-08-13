@@ -42,17 +42,34 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
     int status = SYNOPSIS;
     bool found = 0;
     bool processed = 1;
-	
+	bool getting = 1;
+
     //get data out of fexist
     int numLinks = 0;
 	fscanf(fexist, "%i", &numLinks);	//get the max number of links to pull out
-	std::string volStr;					//temporary storage of string
 	int availInt;
 	std::map<std::string, int> availMap;//map with the string and availability
 	
 	for(int i = 0; i<numLinks;i++){				//pull string and info out
-		fscanf(fexist, "%s|%i", volStr, &availInt);
+        fgets(buffer, 4096, fexist);
+        printf("%s\n", buffer);
+	    std::string volStr;					//temporary storage of string
+        getting = true;
+        for(int i = 0, j = strlen(buffer); i < j; i++){
+            if(getting==true){
+                if(buffer[i]!='|'){
+                    volStr += buffer[i];
+                }else{
+                    getting = false;
+                }
+            }else{
+                availInt = atoi(&buffer[i]);
+                break;
+            }
+        }
+        printf("%s is %i\n", volStr.c_str(), availInt);
 		availMap[volStr] = availInt;			//move data into map
+        volStr.clear();
 	}
     
     while(true){
@@ -159,7 +176,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                     fgets(buffer, 4096, fin);
                                     std::string title;
                                     std::string chapName;
-                                    char available;
+                                    char availability;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
                                         printf("Adding Chapter! \n");
                                         splitter_t grabbing = locate;
@@ -204,19 +221,19 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 										auto it = availMap.find(chapName);
 										if(it != availMap.end()){
 											if(it->second==1){
-												available = '1';
+												availability = '1';
 											}else{
-												available = '0';
+												availability = '0';
 											}
 										}else{
 											printf("%s:[wikiParser.cpp] - Unable to locate %s within map. Set as not avilable for now\n", currentDateTime().c_str(), chapName.c_str());										
-                                            available = '1';
+                                            availability = '0';
 										}
 
                                         chapterNode.addAttribute("location", title.c_str()); //The chapter will be saved here, it doesn't mean that it will actually have content stored there... That will come later.
                                         chapterNode.addAttribute("dl", "no");
                                         chapterNode.addAttribute("revid", "");
-                                        chapterNode.addAttribute("available", &available);
+                                        chapterNode.addAttribute("available", &availability);
                                     }
                                     else if(buffer[0] == '['){
                                         /* There is a link without indentataion
