@@ -7,8 +7,8 @@ static const int VOLUMES = 1;
 enum splitter_t{
     locate,
 	description,
-	title,
-	exit
+	novTitle,
+    leave	
     //
 };
 
@@ -31,7 +31,7 @@ std::string cWikiParser::generateRandomName(int length){
     return rVal;       
 }
 
-void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile){
+void cWikiParser::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile){
     FILE*fin = fopen(inFile.c_str(), "r");
 	FILE*fexist = fopen(existFile.c_str(), "r");
     FILE*fout = fopen(outFile.c_str(), "w+");
@@ -44,13 +44,14 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
     bool processed = 1;
 	
     //get data out of fexist
+    int numLinks = 0;
 	fscanf(fexist, "%i", &numLinks);	//get the max number of links to pull out
 	std::string volStr;					//temporary storage of string
 	int availInt;
 	std::map<std::string, int> availMap;//map with the string and availability
 	
 	for(int i = 0; i<numLinks;i++){				//pull string and info out
-		fscanf(fexist, "%s|%i", volStr, availInt);
+		fscanf(fexist, "%s|%i", volStr, &availInt);
 		availMap[volStr] = availInt;			//move data into map
 	}
     
@@ -157,12 +158,11 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                     XMLNode chapterNode = newVolume.addChild("chapter");
                                     fgets(buffer, 4096, fin);
                                     std::string title;
-                                    dtd::string chapName;
-                                    bool available;
+                                    std::string chapName;
+                                    char available;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
                                         printf("Adding Chapter! \n");
                                         splitter_t grabbing = locate;
-                                        bool grabbing = 0;
                                         for(int i = 1, j = strlen(buffer); i < j; i++){
                                             switch(grabbing){
 												case locate:
@@ -172,15 +172,15 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
 													break;
 												case description:
 													if(buffer[i] == '|'){
-														grabbing = title;
+														grabbing = novTitle;
 													}
 													else{
 														chapName += buffer[i];
 													}
 													break;
-												case title:
+												case novTitle:
 													if(buffer[i] == ']'){
-														grabbing = exit;
+														grabbing = leave;
 													}
 													else{
 														title += buffer[i];
@@ -189,7 +189,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
 												default:
 													printf("%s:[wikiParser.cpp] - enum error entered into default somehow.\n", currentDateTime().c_str());
                                             }
-											if(grabbing == exit){
+											if(grabbing == leave){
 												break;
 											}
                                         }
@@ -204,18 +204,19 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
 										auto it = availMap.find(chapName);
 										if(it != availMap.end()){
 											if(it->second==1){
-												available = true;
+												available = '1';
 											}else{
-												available = false;
+												available = '0';
 											}
 										}else{
-											printf("%s:[wikiParser.cpp] - Unable to locate %s within map.\n", currentDateTime().c_str(), chapName.c_str());										
+											printf("%s:[wikiParser.cpp] - Unable to locate %s within map. Set as not avilable for now\n", currentDateTime().c_str(), chapName.c_str());										
+                                            available = '1';
 										}
 
                                         chapterNode.addAttribute("location", title.c_str()); //The chapter will be saved here, it doesn't mean that it will actually have content stored there... That will come later.
                                         chapterNode.addAttribute("dl", "no");
                                         chapterNode.addAttribute("revid", "");
-                                        chapterNode.addAttribute("available", available);
+                                        chapterNode.addAttribute("available", &available);
                                     }
                                     else if(buffer[0] == '['){
                                         /* There is a link without indentataion
