@@ -22,7 +22,7 @@ inline bool fileExists (const std::string& name) {
     }   
 }
 
-std::string titleClean(const std::string title){
+std::string cWikiParser::titleClean(const std::string title){
     std::string cleaned;
     for(int i = 0, j = title.size(); i<j; i++){
         if(title[i] == ' '){
