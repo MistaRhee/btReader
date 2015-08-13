@@ -44,6 +44,7 @@ class cGetImage{
         std::string getImage(const std::string); //File name, returns file saved location
         std::string generateRandomName(int len);
     private:
+        bool isFromBT(std::string);
         std::string sanatize(const std::string);
         const std::string imageQuery = "http://www.baka-tsuki.org/project/api.php?action=query&prop=imageinfo&iiprop=url&format=xml&titles=";
         const std::string imageStore = "data/images/";

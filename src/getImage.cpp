@@ -35,10 +35,15 @@ std::string cGetImage::generateRandomName(int length){
     return rVal;   
 }
 
+bool cGetImage::isFromBT(std::string){
+    
+}
+
 std::string cGetImage::getImage(const std::string fileName){
     if(fileName.size() > 0){
         std::string sauce = sanitize(fileName);
         try{
+            if(!isFromBT(fileName)) throw("IMAGE URL NOT FROM BT PANIC!!!");
             printf("Grabbing image %s\n", sauce.c_str());
             std::string imageInfo = imageQuery+sauce+"&";
             cHttpd mDownload;
@@ -64,7 +69,8 @@ std::string cGetImage::getImage(const std::string fileName){
             }
         }
         catch(mException& e){
-            printf("%s: [getImage.cpp] %s\n", currentDateTime().c_str(), e.what());
+            std::string mDT = currentDateTime();
+            printf("%s: [getImage.cpp] %s\n", mDT.c_str(), e.what());
             return "system/images/notHere.jpg";
         }
     }

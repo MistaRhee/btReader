@@ -133,7 +133,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                     }
                                 }
                                 while(true){
-                                    XMLNode chapterNode = newVolume.addChild("chapter");
                                     fgets(buffer, 4096, fin);
                                     std::string title;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
@@ -152,6 +151,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                                 grabbing = 1;
                                             }
                                         }
+                                        XMLNode chapterNode = newVolume.addChild("chapter"); //Moved here so it will only create a new chapter node if there is atually something worth grabbing
                                         chapterNode.addAttribute("title", title.c_str());
                                         title.clear();
                                         title = "data/novels/"+generateRandomName(50);
@@ -217,7 +217,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
             break;
         }
     }
-    char *t=mainNode.createXMLString(true);
+    char* t = mainNode.createXMLString(true);
     fprintf(fout, "%s \n", t);
     fclose(fout);
     free(t);
