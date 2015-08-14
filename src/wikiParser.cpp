@@ -22,7 +22,7 @@ inline bool fileExists (const std::string& name) {
     }   
 }
 
-std::string cWikiParser::titleClean(const std::string title){
+std::string cWikiParser::space2Undersc(const std::string title){
     std::string cleaned;
     for(int i = 0, j = title.size(); i<j; i++){
         if(title[i] == ' '){
@@ -79,7 +79,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                 break;
             }
         }
-        volStr = titleClean(volStr);
+        volStr = space2Undersc(volStr);
 		availMap[volStr] = availInt;			//move data into map
         volStr.clear();
 	}
@@ -246,7 +246,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         chapterNode.addAttribute("dl", "no");
                                         chapterNode.addAttribute("revid", "");
 										//check whether the link is available.
-										chapName = titleClean(chapName);
+										chapName = space2Undersc(chapName);
                                         auto it = availMap.find(chapName);
 										if(it != availMap.end()){
 											if(it->second==1){

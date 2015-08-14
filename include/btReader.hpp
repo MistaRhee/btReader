@@ -58,7 +58,7 @@ class cWikiParser{
     private:
         std::string error;
         void setError(std::string);
-        std::string titleClean(const std::string);
+        std::string space2Undersc(const std::string);
 };
 
 class cMain{
