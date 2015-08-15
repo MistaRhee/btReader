@@ -34,6 +34,44 @@ std::string cWikiParser::space2Undersc(const std::string title){
     return cleaned;
 }
 
+std::string cwikiParser::cleanTitle(std::string original){
+    std::string clean;
+   //remove all '+' and ' 'signs at the q
+   int i = 0;
+   int j = originsl.size();
+   int count = 0;
+   while(original[i] == ' ') i++;
+   while(original[i] == '=') i++;
+   while(original[i] == ' ') i++;
+   //and at the end
+   while(original[j-count] == ' ') count++;
+   while(original[j-count] == '=') count++;
+   while(original[j-count] == ' ') count++;
+   for(i; i<(j-count);i++){
+       clean += original[i];
+   }
+   //remove all stuff from '([' until '])'
+   original = clean;
+   clean.clear();
+   for(i = 0, j = original.size(); i<j;i++){
+       if(original[i] == '(' && original[i+1] == '['){
+           i++;
+           while(original[i] != ']' && original[i+1] != ')'){
+               i++;
+           }
+           i++;
+       }
+       else {
+           clean += original[i];
+       }
+   }
+
+   //remove all "Full Text" in string
+   //remove all spaces between remaing braces
+   //remove all braces without anything in them.
+   return clean;
+}
+
 std::string cWikiParser::generateRandomName(int length){ 
     srand(time(NULL));     
     const char aCharacters[] = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";       
