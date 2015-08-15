@@ -52,13 +52,14 @@ class cGetImage{
 
 class cWikiParser{
     public:
-        void cleanNovel(const std::string, const std::string); //Title of file to clean, title of location to save to
+        void cleanNovel(const std::string, const std::string, const std::string); //Title of file to clean, title of location to save to
         void cleanChapter(const std::string, const std::string); //Title of the file to clean, title of the location to save to
         std::string getError();
         std::string generateRandomName(int len);
     private:
         std::string error;
         void setError(std::string);
+        std::string titleClean(const std::string);
 };
 
 class cMain{
@@ -106,7 +107,7 @@ class cMain{
         const std::string tempLoc = "data/temp/";
         const std::string domain = "http://baka-tsuki.org/project/api.php?action=";
         const std::string novelList = "query&list=categorymembers&cmtitle=Category:Light_novel_(English)&cmlimit=500&format=xml";
-        const std::string pageDetail = "parse&prop=wikitext|revid&format=xml&page="; //Add novel name after this (NAME_TITLE_ETC/CHAPTER_NAME)
+        const std::string pageDetail = "parse&prop=wikitext|revid|links&format=xml&page="; //Add novel name after this (NAME_TITLE_ETC/CHAPTER_NAME)
         const std::string revID = "query&format=xml&prop=revisions&revlimit=1&titles="; //Add titles after this
 
         /* System storage */
