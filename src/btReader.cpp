@@ -1,4 +1,4 @@
-#include "btreader.hpp"
+#include "btReader.hpp"
 
 #ifdef _WIN32
 inline bool dirExists(const std::string& dirName) {
@@ -38,27 +38,23 @@ inline bool fileExists (const std::string& name) {
     }
 }
 
-// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-std::string currentDateTime() {
-    time_t now = time(0);
-    struct tm tstruct;
-    char buf[80];
-    tstruct = *localtime(&now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-
-    return buf;
-}
-
 cMain::cMain(){
     if(checkDependencies()){
         preComp();
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
             printf("%s: [btReader.cpp] - SDL could not initialize! SDL_Error: %s \n",currentDateTime().c_str(), SDL_GetError());
         }
-        mWindow = SDL_CreateWindow("btReader - By MistaRhee and NoOne2246", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 1024, SDL_WINDOW_SHOWN);
+        mWindow = SDL_CreateWindow(
+                "btReader - By MistaRhee and NoOne2246", 
+                SDL_WINDOWPOS_CENTERED, 
+                SDL_WINDOWPOS_CENTERED, 
+                600, 1024, 
+                SDL_WINDOW_SHOWN
+                );
         mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
         currThreads = 1;
         getObjects();
+        getUserProfile();
     }
     startRunTime = SDL_GetTicks();
 }
@@ -81,7 +77,14 @@ void cMain::preComp(){
     /* Setting default colours! (will be overwritten by the XML file if it
      * exists
      */
+    /* Clearing the maps, just in case data is leaked (shouldn't though) */
+    images.clear();
+    buttons.clear();
+    fonts.clear();
+    colours.clear();
     replaceDatabase();
+
+    /* Creating a colour map */
     SDL_Colour temp;
     temp.r = 255;
     temp.g = 255;
@@ -95,7 +98,7 @@ void cMain::preComp(){
     colours.insert(std::make_pair("text", temp));
     getObjects();
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
-        mNovelList.addNovel(i->first);
+        mNovelList.addNovel(i->first, atoi(userProfile["NLSize"].c_str()));
     }
 }
 
@@ -115,7 +118,7 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
                     mError += "[btReader.cpp] - Check Dependencies Error: Essential Folder doesn't exist (";
                     mError += currNode.getAttribute("sauce");
                     mError += ")";
-                    setError(e);
+                    setError(mError);
                     printf("%s \n", mError.c_str());
                     rVal = 0;
                 }
@@ -146,6 +149,43 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
         }
     }
     return rVal;
+}
+
+void cMain::getUserProfile(){
+    if(!fileExists("system/user.profile")){
+        /* No existing profile exists create new one using default settings */
+    }
+    else{
+        try{
+            XMLNode mainNode = XMLNode::openFileHelper("system/user.profile", "profile");
+            XMLNode currChild = mainNode.getChildNode("keyBindings");
+            for(int i = 0, j = currChild.nChildNode("key"); i < j; i++){
+                XMLNode currNode = currChild.getChildNode("key", i);
+                if(!mKeys.exists(currNode.getAttribute("id"))){
+                    mKeys.addMapping(
+                        currNode.getAttribute("id"), 
+                        atoi(currNode.getAttribute("code"))
+                        );
+                }
+                else{
+                    throw(mException("Attempted to add two keyBindings to the same ID"));
+                }
+                
+            }
+            currChild = mainNode.getChildNode("options");
+            for(int i = 0, j = currChild.nChildNode("set"); i < j; i++){
+                XMLNode currNode = currChild.getChildNode("set", i);
+                userProfile.insert(std::make_pair(currNode.getAttribute("option"), currNode.getAttribute("value")));
+            }
+        }
+        catch(mException& e){
+            std::string mError = currentDateTime() + ": ";
+            mError += "[btReader.cpp] - getUserProfile Error: ";
+            mError += e.what();
+            setError(mError);
+            printf("%s \n", mError.c_str());;
+        }
+    }
 }
 
 void cMain::setError(std::string mError){
@@ -183,8 +223,18 @@ void cMain::getObjects(){
             auto boxCol = colours.find("back");
             newButton.setText(curr.getAttribute("text"));
             newButton.setTextSize(atoi(curr.getAttribute("size")));
-            newButton.setTextCol(textCol->second.r, textCol->second.g, textCol->second.b, textCol->second.a);
-            newButton.setBoxCol(boxCol->second.r, boxCol->second.g, boxCol->second.b, boxCol->second.a);
+            newButton.setTextCol(
+                    textCol->second.r, 
+                    textCol->second.g, 
+                    textCol->second.b, 
+                    textCol->second.a
+                    );
+            newButton.setBoxCol(
+                    boxCol->second.r, 
+                    boxCol->second.g, 
+                    boxCol->second.b, 
+                    boxCol->second.a
+                    );
             newButton.setFont(curr.getAttribute("font"));
             buttons.insert(std::make_pair(id, std::move(newButton)));
         }
@@ -195,12 +245,11 @@ void cMain::getObjects(){
             mRect.y = atoi(curr.getAttribute("y"));
             mRect.h = atoi(curr.getAttribute("h"));
             mRect.w = atoi(curr.getAttribute("w"));
-            mNovelList.setPos(mRect.x, mRect.y);
-            mNovelList.setPos(mRect.x, mRect.y);
-//            mNovelReader.setSize(mRect.h, mRect.w);
-//            mNovelReader.setSize(mRect.h, mRect.w);
-            mNovelDetails.setPos(mRect.x, mRect.y);
-            mNovelDetails.setSize(mRect.h, mRect.w);
+            contentLoc = mRect;
+            mNovelList.setRect(contentLoc);
+//            mNovelReader.setRect(contentLoc);
+//            mNovelDetails.setRect(contentLoc);
+
         }
         else if(name.compare("colour") == 0){
             id = curr.getAttribute("name");
@@ -232,7 +281,7 @@ bool cMain::run(){
         else{
             startTick = SDL_GetTicks();
 //            while(SDL_GetTicks() < startTick+FPS_CAP){
-//                processEvents();
+                processEvents();
 //                update();
 //            }
             render();
@@ -247,6 +296,7 @@ void cMain::update(){
     
 }
 */
+
 void cMain::render(){
     /* Clear the screen with the background colour */
     auto found = colours.find("clear");
@@ -268,7 +318,7 @@ void cMain::render(){
                 break;
 
             case reader:
-                //            mReader.render(mRenderer);
+//                mReader.render(mRenderer);
                 break;
 
             case dlList:
@@ -277,10 +327,10 @@ void cMain::render(){
 
             default:
                 std::string mError = currentDateTime() + ": ";
-                mError += "[btReader.cpp] - Stuck at renderer. Invalid WhereAt (Code: ";
+                mError += "[btReader.cpp] - Stuck at render. Invalid WhereAt (Code: ";
                 mError += std::to_string(whereAt);
                 setError(mError);
-                printf("Invalid menu object type! (Type: %s) \n", name.c_str());
+                printf("%s \n", mError.c_str());
                 break;
         }
         /* Draw the "interface" over the content. Interface will ALWAYS only
@@ -334,7 +384,7 @@ void cMain::render(){
             default:
                 std::string mError = currentDateTime() + ": ";
                 mError += "[btReader.cpp] - Stuck at render. Invalid WhereAt (Code: ";
-                mError += to_string(whereAt);
+                mError += std::to_string(whereAt);
                 setError(mError);
                 printf("%s \n", mError.c_str());
                 break;

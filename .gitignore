@@ -1,3 +1,7 @@
 *.o
 *.tmp
-
+*.swp
+noteToSelf
+notesToSelf
+reader
+data/

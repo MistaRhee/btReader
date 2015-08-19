@@ -1,4 +1,4 @@
-#include "btreader.hpp"
+#include "btReader.hpp"
 
 inline bool fileExists (const std::string& name) {
     if (FILE *file = fopen(name.c_str(), "r")) {
@@ -8,17 +8,6 @@ inline bool fileExists (const std::string& name) {
         return false;
     }   
 }
-
-// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-std::string currentDateTime() {
-    time_t now = time(0);
-    struct tm tstruct;
-    char buf[80];
-    tstruct = *localtime(&now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-    return buf;
-}
-
 
 std::string sanitize(const std::string filename){
     std::string newString;
@@ -46,10 +35,35 @@ std::string cGetImage::generateRandomName(int length){
     return rVal;   
 }
 
+bool cGetImage::isFromBT(std::string sauce){
+    /* Should only have one http:// so I'll use this as base and if this isn't
+     * good enough, I'll improve it */
+    std::string locSauce = sauce;
+    bool seenHTTP = 0, rVal = 1;
+    for(int i = 0, j = sauce.size(); i < j; i++){
+        if(locSauce[0] != 'h') locSauce.erase(locSauce.begin());
+        else{
+            if( locSauce[1] == 't' &&
+                locSauce[2] == 't' &&
+                locSauce[3] == 'p'
+              ){
+                if(!seenHTTP) seenHTTP = 1;
+                else{
+                    rVal = 0;
+                    break;
+                }
+            }
+
+        }
+    }
+    return rVal;
+}
+
 std::string cGetImage::getImage(const std::string fileName){
     if(fileName.size() > 0){
         std::string sauce = sanitize(fileName);
         try{
+            if(!isFromBT(fileName)) throw("IMAGE URL NOT FROM BT PANIC!!!");
             printf("Grabbing image %s\n", sauce.c_str());
             std::string imageInfo = imageQuery+sauce+"&";
             cHttpd mDownload;
@@ -75,7 +89,8 @@ std::string cGetImage::getImage(const std::string fileName){
             }
         }
         catch(mException& e){
-            printf("%s: [getImage.cpp] %s\n", currentDateTime().c_str(), e.what());
+            std::string mDT = currentDateTime();
+            printf("%s: [getImage.cpp] %s\n", mDT.c_str(), e.what());
             return "system/images/notHere.jpg";
         }
     }

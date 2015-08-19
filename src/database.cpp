@@ -1,15 +1,4 @@
-#include "btreader.hpp"
-
-// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-std::string currentDateTime() {
-    time_t now = time(0);
-    struct tm tstruct;
-    char buf[80];
-    tstruct = *localtime(&now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-
-    return buf;
-}
+#include "btReader.hpp"
 
 inline bool fileExists (const std::string& name) {
     if (FILE *file = fopen(name.c_str(), "r")) {
@@ -76,13 +65,21 @@ bool cMain::readDatabase(){
             novelDB[newEntry.getAttribute("title")] = std::make_pair(newEntry.getAttribute("location"), newEntry.getAttribute("revid"));
         }
         if(novelDB.size() != mainNode.nChildNode("novel")){
-            printf("%s: [database.cpp] - Mismatch in numbers! \nRebuilding the database from scratch! Size: %d NovelList Size: %d \n", currentDateTime.c_str(), novelDB.size(), mainNode.nChildNode("novel"));
+            std::string mWarning = currentDateTime();
+            mWarning +=  ": [database.cpp] - Mismatch in numers! \nRebuilding the database from scratch! Size: ";
+            mWarning += std::to_string(novelDB.size());
+            mWarning += " Novel List Size: ";
+            mWarning += std::to_string(mainNode.nChildNode("novel"));
+            printf("%s \n", mWarning.c_str());
             rVal = 0;
         }
     }
     catch(mException& e){
         setError(e.what());
-        printf("%s: Error - There was an exception! \n%s \n", currentDateTime(), e.what());
+        std::string mError = currentDateTime();
+        mError += ": Error - There was an exception! \n";
+        mError += e.what();
+        printf("%s \n", mError.c_str());
         rVal = 0;
     }
     return rVal;
@@ -106,7 +103,10 @@ bool cMain::hasNew(const std::string title){
     }
     catch(mException& e){
         setError(e.what());
-        printf("%s: Error - There was an exception! \n%s \n", currentDateTime().c_str(), e.what());
+        std::string mError = currentDateTime();
+        mError += ": Error - There was an exception \n";
+        mError += e.what();
+        printf("%s \n", mError.c_str());
         rVal = 0;
     }
     return rVal;
@@ -179,40 +179,62 @@ void cMain::replaceDatabase(){
 std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ //Returning the filename in combination with the revID
     try{
         std::string tempFile;
+        std::string tempFile2;
         std::string novelStore;
         std::string revID;
         std::string progress;
+        int exist;
         printf("%s: [database.cpp] - Getting Novel Details for %s. \n", currentDateTime().c_str(), title.c_str());
         cHttpd mDownload;
         cWikiParser mParser;
         tempFile = "data/temp/"+generateRandomName(50);
-        while(fileExists(tempFile)){
+		tempFile2 = tempFile + "2";
+        while(fileExists(tempFile)||fileExists(tempFile2)){
             tempFile = "data/temp/"+generateRandomName(50);
+			tempFile2 = tempFile + "2";
         }
         mDownload.download(domain+pageDetail+title, tempFile);
         printf("%s: [database.cpp] - Page saved to %s. \n", currentDateTime().c_str(), tempFile.c_str());
         printf("%s: [database.cpp] - Extracting wiki text... \n", currentDateTime().c_str());
         XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
         XMLNode parseNode = mainNode.getChildNode("parse");
+		XMLNode linksNode = parseNode.getChildNode("links");
         revID = parseNode.getAttribute("revid");
         FILE*fout = fopen(tempFile.c_str(), "w+");
+		FILE*fexist = fopen(tempFile2.c_str(), "w+");
         fprintf(fout, "%s", parseNode.getChildNode("wikitext").getText());
         fclose(fout);
+		int links = linksNode.nChildNode("pl");	//get the number of links and send it through.	
+		fprintf(fexist, "%i", links);
+		for(int i = 0; i<links; i++){
+			if(linksNode.getChildNode("pl", i).isAttributeSet("exists")){
+				exist = 1;//link exists
+			}
+			else{
+				exist = 0;//link does not exist
+			}
+			fprintf(fexist, "%s|%i\n", linksNode.getChildNode("pl", i).getText(), exist); //dump the list of chapter and the array into a table
+		}
+		fclose(fexist);
         printf("%s: [database.cpp] - Extraction complete! \n", currentDateTime().c_str());
         novelStore = "data/novels/"+generateRandomName(50);
         while(fileExists(novelStore)){
             novelStore = "data/novels/"+generateRandomName(50);
         }
         printf("%s: [database.cpp] - Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n", currentDateTime().c_str());
-        mParser.cleanNovel(tempFile, novelStore);
+        mParser.cleanNovel(tempFile, tempFile2, novelStore);
         printf("%s: [database.cpp] - Cleaned page stored in %s. \n", currentDateTime().c_str(), novelStore.c_str());
         printf("%s: [database.cpp] - Deleting temp file \n", currentDateTime().c_str());
         remove (tempFile.c_str());
+        remove (tempFile2.c_str());
         return std::make_pair(novelStore, revID);
     }
     catch(mException& e){
+        std::string mError = currentDateTime();
+        mError += ": [database.cpp] - ";
+        mError += e.what();
         setError(e.what());
-        printf("%s: [database.cpp] - %s\n", currentDateTime().c_str(), e.what().c_str());
+        printf("%s\n", mError.c_str());
         return std::make_pair("", "");
     }
 }

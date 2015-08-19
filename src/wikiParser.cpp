@@ -1,8 +1,17 @@
-#include "btreader.hpp"
+#include "btReader.hpp"
 
 static const int EXIT = -1;
 static const int SYNOPSIS = 0;
 static const int VOLUMES = 1;
+
+enum splitter_t{
+    locate,
+	description,
+    spacer,
+	novTitle,
+    leave	
+    //
+};
 
 inline bool fileExists (const std::string& name) {
     if (FILE *file = fopen(name.c_str(), "r")) {
@@ -11,6 +20,18 @@ inline bool fileExists (const std::string& name) {
     } else {
         return false;
     }   
+}
+
+std::string cWikiParser::titleClean(const std::string title){
+    std::string cleaned;
+    for(int i = 0, j = title.size(); i<j; i++){
+        if(title[i] == ' '){
+            cleaned += '_';
+        }else{
+            cleaned += title[i];
+        }
+    }
+    return cleaned;
 }
 
 std::string cWikiParser::generateRandomName(int length){ 
@@ -23,8 +44,9 @@ std::string cWikiParser::generateRandomName(int length){
     return rVal;       
 }
 
-void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile){
+void cWikiParser::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile){
     FILE*fin = fopen(inFile.c_str(), "r");
+	FILE*fexist = fopen(existFile.c_str(), "r");
     FILE*fout = fopen(outFile.c_str(), "w+");
     char buffer[4096];
     XMLNode mainNode = XMLNode::createXMLTopNode("novel");
@@ -33,6 +55,36 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
     int status = SYNOPSIS;
     bool found = 0;
     bool processed = 1;
+	bool getting = 1;
+
+    //get data out of fexist
+    int numLinks = 0;
+	fscanf(fexist, "%i", &numLinks);	//get the max number of links to pull out
+	int availInt;
+	std::map<std::string, int> availMap;//map with the string and availability
+	
+	for(int i = 0; i<numLinks;i++){				//pull string and info out
+        fgets(buffer, 4096, fexist);
+	    std::string volStr;					//temporary storage of string
+        getting = true;
+        for(int i = 0, j = strlen(buffer); i < j; i++){
+            if(getting==true){
+                if(buffer[i]!='|'){
+                    volStr += buffer[i];
+                }else{
+                    getting = false;
+                }
+            }else{
+                availInt = atoi(&buffer[i]);
+                break;
+            }
+        }
+        volStr = titleClean(volStr);
+        printf("%s is %i\n", volStr.c_str(), availInt);
+		availMap[volStr] = availInt;			//move data into map
+        volStr.clear();
+	}
+    
     while(true){
         if(feof(fin)){
             break;
@@ -127,40 +179,86 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
                                     if(tempStr[i] == '(' or tempStr[i] == '='){
                                         newVolume.addAttribute("title", volumeTitle.c_str());
                                         volumeTitle.clear();
+                                        break;
                                     }
                                     else{
                                         volumeTitle += tempStr[i];
                                     }
                                 }
                                 while(true){
-                                    XMLNode chapterNode = newVolume.addChild("chapter");
                                     fgets(buffer, 4096, fin);
                                     std::string title;
+                                    std::string chapName;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
                                         printf("Adding Chapter! \n");
-                                        bool grabbing = 0;
+                                        splitter_t grabbing = locate;
                                         for(int i = 1, j = strlen(buffer); i < j; i++){
-                                            if(grabbing){
-                                                if(buffer[i] == ']'){
-                                                    break;
-                                                }
-                                                else{
+                                            switch(grabbing){
+												case locate:
+													if(buffer[i] == '['&&buffer[i+1] != '['){
+														grabbing = description;
+													}
+													break;
+												case description:
+													if(buffer[i] == '|'){
+														grabbing = spacer;
+													}
+                                                    else if (buffer[i]==']'){
+                                                        title = chapName;
+                                                        grabbing = leave;
+                                                    }
+													else{
+														chapName += buffer[i];
+													}
+													break;
+                                                case spacer:
+                                                    if(buffer[i]==' '){
+                                                        while(buffer[i]==' '){
+                                                            i++;
+                                                        }
+                                                    }
                                                     title += buffer[i];
-                                                }
+                                                    grabbing = novTitle;
+												case novTitle:
+													if(buffer[i] == ']'){
+														grabbing = leave;
+													}
+													else{
+														title += buffer[i];
+													}
+													break;
+												default:
+													printf("%s:[wikiParser.cpp] - enum error entered into default somehow.\n", currentDateTime().c_str());
                                             }
-                                            if(buffer[i] == '|'){
-                                                grabbing = 1;
-                                            }
+											if(grabbing == leave){
+												break;
+											}
                                         }
+                                        XMLNode chapterNode = newVolume.addChild("chapter"); //Moved here so it will only create a new chapter node if there is atually something worth grabbing
                                         chapterNode.addAttribute("title", title.c_str());
                                         title.clear();
                                         title = "data/novels/"+generateRandomName(50);
                                         while(fileExists(title)){
                                             title = "data/novels/"+generateRandomName(50);
                                         }
+
+
                                         chapterNode.addAttribute("location", title.c_str()); //The chapter will be saved here, it doesn't mean that it will actually have content stored there... That will come later.
                                         chapterNode.addAttribute("dl", "no");
                                         chapterNode.addAttribute("revid", "");
+										//check whether the link is available.
+										chapName = titleClean(chapName);
+                                        auto it = availMap.find(chapName);
+										if(it != availMap.end()){
+											if(it->second==1){
+                                                chapterNode.addAttribute("available", "1");
+											}else{
+                                                chapterNode.addAttribute("available", "0");
+											}
+										}else{
+											printf("%s:[wikiParser.cpp] - Unable to locate %s within map. Set as not avilable for now\n", currentDateTime().c_str(), chapName.c_str());		//just to make sure error is fixed								
+                                            chapterNode.addAttribute("available", "0");
+										}
                                     }
                                     else if(buffer[0] == '['){
                                         /* There is a link without indentataion
@@ -217,9 +315,10 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
             break;
         }
     }
-    char *t=mainNode.createXMLString(true);
+    char* t = mainNode.createXMLString(true);
     fprintf(fout, "%s \n", t);
     fclose(fout);
+    fclose(fexist);
     free(t);
 }
 

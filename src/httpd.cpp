@@ -1,26 +1,5 @@
 #include "httpd.hpp"
 
-// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-std::string currentDateTime() {
-    time_t now = time(0);
-    struct tm tstruct;
-    char buf[80];
-    tstruct = *localtime(&now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-
-    return buf;
-}
-
-struct mException : public std::exception {
-    mException(std::string in){
-        this->message = in;
-    }
-    std::string message;
-    const char * what() const throw(){
-        return message.c_str();
-    }
-};
-
 size_t write_data(void* ptr, size_t size, size_t nmemb, FILE* stream){
     size_t written;
     written = fwrite(ptr, size, nmemb, stream);
@@ -121,7 +100,7 @@ std::string cHttpd::qDownload(const std::string url, int nameLen){
             std::string mError = currentDateTime() + ": ";
             mError += "[httpd.cpp] curl_easy_perform error: ";
             mError += curl_easy_strerror(res);
-            throw (mException(e));
+            throw (mException(mError));
         }
         fclose(fin);
         return fileName;

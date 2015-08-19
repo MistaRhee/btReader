@@ -1,5 +1,5 @@
 #include "objects.hpp"
-
+/*
 namespace beatOff{
     
     cReader::cReader(SDL_Rect* in){
@@ -16,3 +16,4 @@ namespace beatOff{
     }
 
 }
+*/

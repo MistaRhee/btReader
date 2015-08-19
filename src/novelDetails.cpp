@@ -1,34 +1,34 @@
-#include "objects.hpp"
-
-// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-std::string currentDateTime() {
-    time_t now = time(0);
-    struct tm tstruct;
-    char buf[80];
-    tstruct = *localtime(&now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-
-    return buf;
-}
+#include "contents.hpp"
 
 namespace beatOff{
 
-    cNovelDetails::cNovelDetails(SDL_Rect* inRect){
+    cNovelDetails::cNovelDetails(){
         loaded = 0;
         selection = 0;
-        setPos(inRect->x, inRect->y);
-        setSize(inRect->h, inRect->w); //Like all things, height is variable, its just the width that stays the same
         mTexture = NULL;
+    }
+
+    void cNovelDetails::setRect(SDL_Rect inRect){
+        sauceRect = inRect; //The "viewport" of the texture
+        setPos(inRect.x, inRect.y); //The position to render to on screen
+        /* Like all things, height is variable, its just the width that stays the same */
+        setSize(inRect.h, inRect.w); 
     }
 
     void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer, std::string font){
         try{
+            /* Clearing out old textures */
+            if(mTexture){
+                SDL_DestroyTexture(mTexture);
+                mTexture = NULL;
+            }
+
             /* Grabbing Volume + Chapter list */
             std::vector<std::vector<std::pair<std::string, std::string> > > volumes;
             XMLNode mainNode = XMLNode::openFileHelper(sauce.c_str(), "novel");
-            title = mainNode.getChildNode("info").getAttribute("title");
-            author = mainNode.getChildNode("info").getAttribute("author");
-            synopsis = mainNode.getChildNode("synopsis").getText();
+            std::string title = mainNode.getChildNode("info").getAttribute("title");
+            std::string author = mainNode.getChildNode("info").getAttribute("author");
+            std::string synopsis = mainNode.getChildNode("synopsis").getText();
 
             /* Grab the image location to render 
              * This only grabs the cover image from the first volume. I could
@@ -49,11 +49,28 @@ namespace beatOff{
             loaded = 1;
             
             /* TIME TO RENDER TO A TEXTURE !!! */
-            SDL_SetRenderTarget(mRenderer, mTexture);
 
+            /* Calculate the height beforehand, because texture height must be
+             * declared beforehand */
+
+            int mHeight = 0;
+
+            /* Create the texture first */
+            mTexture = SDL_CreateTexture(
+                    mRenderer,
+                    SDL_PIXELFORMAT_UNKNOWN,
+                    SDL_TEXTUREACCESS_TARGET,
+                    w,
+                    mHeight //Height is variable though so I had to pre-calc it =.=
+                    );
+            SDL_SetRenderTarget(mRenderer, mTexture);
+/*
             int currentY = 0;
             cTextBox titleText(title.c_str(), font.c_str(), );
-            
+*/            
+            /* Return the renderer to render to the window again */
+            SDL_SetRenderTarget(mRenderer, NULL);
+
             /* Set default starting pos to 0, 0 */
             sauceRect.x = 0;
             sauceRect.y = 0;
@@ -76,11 +93,11 @@ namespace beatOff{
         if(!loaded){
             std::string mError = currentDateTime() = ": ";
             mError += "[novelDetails.cpp] File wasn't loaded before calling render \n";
+            printf("%s \n", mError.c_str());
             throw(mException(mError));
-            printf("%s \n", mError);
         }
         else{
-            SDL_RenderCopy
+            SDL_RenderCopy(mRenderer, mTexture, &sauceRect, NULL);
         }
     }
 

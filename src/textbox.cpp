@@ -1,16 +1,5 @@
 #include "objects.hpp"
 
-// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-std::string currentDateTime() {
-    time_t now = time(0);
-    struct tm tstruct;
-    char buf[80];
-    tstruct = *localtime(&now);
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-
-    return buf;
-}
-
 inline bool fileExists (const std::string& name) {
     if (FILE *file = fopen(name.c_str(), "r")) {
         fclose(file);
@@ -93,13 +82,17 @@ namespace beatOff{
             setText(inText);
             setSize(inH, inW);
             setFont(fontLoc);
-            setTextSize(inSize);
+            setTextSize(fontSize);
         }
     }
 
-    bool isCentered() return centered;
+    bool cTextBox::isCentered(){
+        return centered;
+    }
 
-    void centre() centered = !(centered);
+    void cTextBox::centre(){
+        centered = !(centered);
+    }
 
     cTextBox::~cTextBox() {}
 
@@ -262,7 +255,7 @@ namespace beatOff{
                 TTF_SizeText(mFont, lines[i].c_str(), &tempW, &h);
 
                 if(centered){
-                    dRect.x = x + (w-tempw)/2; //It'll favour shifting towards the left by one pixel. w/e
+                    dRect.x = x + (w-tempW)/2; //It'll favour shifting towards the left by one pixel. w/e
                 }
                 else{
                     dRect.x = x;
@@ -271,13 +264,56 @@ namespace beatOff{
                 dRect.h = h;
                 dRect.w = tempW;
 
-                mSurface = TTF_RenderText_Solid(mFont, lines[i].c_str(), mColour);
+                mSurface = TTF_RenderText_Blended(mFont, lines[i].c_str(), mColour);
                 mTexture = SDL_CreateTextureFromSurface(mRenderer, mSurface);
                 SDL_RenderCopy(mRenderer, mTexture, NULL, &dRect);
                 SDL_FreeSurface(mSurface);
                 SDL_DestroyTexture(mTexture);
             }
             TTF_CloseFont(mFont);
+        }
+    }
+
+    void cTextBox::renderWikiText(SDL_Renderer* mRenderer){
+        /* Wiki Text rules:
+         *  Rendering word by word instead of line by line
+         *
+         *  - tl;dr It's basically the same as normal rendering, just watch out
+         *  for special things (the triple quotes etc..)
+         *  '''WORD''' -> Bold (I think)
+         *  ''WORD'' -> Italic (I think)
+         *  '''''WORD''''' -> Bold+Italic (Guaranteed)
+         *  =WORD= -> Heading (so like 2x size + bold?)
+         *  
+         *  To make life easier, I'll assume that making something bold doesn't
+         *  increase the width (otherwise it'll become rather non-trivial to
+         *  do)
+         *
+         *  TTF Styles:
+         *      TTF_STYLE_BOLD | TTF_STYLE_ITALIC | TTF_STYLE_UNDERLINE |
+         *      TTF_STYLE_STRIKETHROUGH | TTF_STYLE_NORMAL
+         *
+         *      TTF_SetFontStyle(mFont, BITMASK);
+         */
+        if(!fileExists(font)){
+            std::string mError = currentDateTime() + ": ";
+            mError += "cTextBox Error - Font doesn't exist (Font location = ";
+            mError += font;
+            mError += ")";
+            setError(mError); //Now its an error if you try to render without a font
+            printf("%s\n", mError.c_str());
+        }
+        else{
+            std::vector<std::string> mWords;
+            std::string tempStr;
+
+            /* For safety */
+            tempStr.clear();
+            mWords.clear();
+
+            for(int i = 0, j = text.size(); i < j; i++){
+                /* Spltting text into word chunks */
+            }
         }
     }
 

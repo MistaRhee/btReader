@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstring>
-#include "btreader.hpp"
+
+#include "btReader.hpp"
 
 int main(int argc, char* argv[]){
     cMain mProg;

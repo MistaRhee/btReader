@@ -1,4 +1,4 @@
-#ifndef OBJEcTS_HPP
+#ifndef OBJECTS_HPP
 #define OBJECTS_HPP
 
 #include <SDL2/SDL.h>
@@ -9,6 +9,8 @@
 #include <vector>
 #include <cstring>
 #include <string>
+
+#include "mException.h"
 
 namespace beatOff{
 
@@ -48,6 +50,7 @@ namespace beatOff{
             bool canFit(int); //Given the height (the rest of the stuff is kept the same), checks if the text can actually fit within the height
             std::string getText();
             void render(SDL_Renderer*);
+            void renderWikiText(SDL_Renderer*);
             void centre();
             bool isCentered();
         protected:
@@ -84,59 +87,5 @@ namespace beatOff{
             bool selected;
     };
 
-    class cContent : public cObject{
-        public:
-            void setFont(std::string);
-            void setFontSize(int);
-            void setTextColour(SDL_Color);
-            void setBackColour(SDL_Color);
-        protected:
-            bool changed, created;
-            std::string fontLoc;
-            int fontSize;
-            SDL_Color textColour;
-            SDL_Color backColour;
-    };
-
-    class cNovelList : public cContent{
-        public:
-            cNovelList();
-            cNovelList(SDL_Rect*); //Sets the position start and the rendered size of the object
-            void addNovel(std::string);
-            void moveSelection(int);
-            std::string getSelected();
-            void render(SDL_Renderer*);
-        private:
-            const int novelHeight = 50; //Subject to change
-            std::vector<cTextBox> mNovels;
-            int selected;
-    };
-    
-    class cReader : public cContent{
-        public:
-            cReader();
-            cReader(SDL_Rect*); //Sets the dimensions of the rendered object (so the program won't get confused)
-            void render(SDL_Renderer*);
-            void getContent(std::string); //Gets the content from a file and then renders it to a texture
-        private:
-            SDL_Texture* mTexture;
-            bool loaded;
-    };
-
-    class cNovelDetails : public cContent{
-        public:
-            cNovelDetails();
-            cNovelDetails(SDL_Rect*); //Only care about the rectangle's xPos and yPos and width
-            void openNovel(std::string, SDL_Renderer*); //Opens up a novel from XML and then renders it to a texture
-            void render(SDL_Renderer*); //Draws a section of the texture
-            void move(int, int); //Moves the image around (dx, dy). Should only require to move dy (scrolling)
-            std::string getSelected();
-        private:
-            SDL_Texture* mTexture; //Texture which stores the stuff
-            bool loaded;
-            std::string fileLoc;
-            int selection;
-    }
-    
 }
 #endif //OBJECTS_HPP
