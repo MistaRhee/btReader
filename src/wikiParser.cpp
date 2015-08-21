@@ -26,10 +26,12 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
     FILE*fin = fopen(inFile.c_str(), "r");
 	FILE*fexist = fopen(existFile.c_str(), "r");
     char buffer[4096];
-    int currentHeading;//so that we can label all the sub files correctky
-    int elementNumber = 0;//attribute with the order of each element;
-    headNames[1] = "title";
-    currentHeading = 1;
+    char prevType;
+
+    //create first entry
+    //set level to 1
+    //set type to "h"
+    //set text to "title"
 
     //get information on whether an internal link exist 
     int numLinks = 0;
@@ -87,18 +89,29 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
                 //define at heading
                 //set level to equal position
                 //put text in.
+                prevType = 'h';
                 break;
             case ':':       //found some sort of indent
+                //count number of indents
+                //determine if there is an * or some other list symbol.
+                //if yes, then it will check if there prevType was body, if
+                //yes, then it will set a blockquote markup;
+                //equal to number of ':' + 1;
                 break;
             case '*':
 
                 break;
             default:
                 //body text
+                if(prevType == 'b'){
+                    //add the buffer to the end of the old string.
+                }else{
+                    //create a new entry.
+                }
                 break;
         }
 
-
+    }
     fclose(fin);
     fclose(fexist);
 }
