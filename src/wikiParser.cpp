@@ -1,13 +1,5 @@
 #include "wikiParser.hpp"
 
-typedef struct _links_info{
-    bool link;
-    bool internal;
-    bool available;
-    std::string link;
-    std::string text;
-}links_info;
-
 
 std::string cWikiParser::space2Undersc(const std::string title){
     std::string cleaned;
@@ -27,21 +19,20 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
 	FILE*fexist = fopen(existFile.c_str(), "r");
     char buffer[4096];
     char prevType;
+    
+    int counter = 0;
 
-    //create first entry
-    //set level to 1
-    //set type to "h"
-    //set text to "title"
+    database.push_back({"h", 1, "title"});
 
     //get information on whether an internal link exist 
     int numLinks = 0;
-	fscanf(fexist, "%i", &numLinks);	//get the max number of links to pull out
+	fscanf(fexist, "%i", &numLinks);	        //get the max number of links to pull out
 	int availInt;
-	std::map<std::string, int> availMap;//map with the string and availability
-	
+	std::map<std::string, int> availMap;        //map with the string and availability
+    std::string information;                    //variable forwhich the text is stored into.
 	for(int i = 0; i<numLinks;i++){				//pull string and info out
         fgets(buffer, 4096, fexist);
-	    std::string volStr;					//temporary storage of string
+	    std::string volStr;					    //temporary storage of string
         getting = true;
         for(int i = 0, j = strlen(buffer); i < j; i++)  //split the string into title and availability{
             if(getting==true){
@@ -75,42 +66,75 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
         while(buffer[0]==' '){
             buffer.erase(0);
         }
+        //ensure we are not on a blank line in the case of a single \n or <br
+        //tag.
+        if(buffer[0] != '\n' ||(buffer[0] == '<' && buffer[1] == 'b' && buffer[2] == 'r')){
 
-        //look for any of the following symbols':', '='or "*'
-        int position = 0;
-        switch(buffer[position]){
-            case '=':       //found some sort of heading, whether main or sub.
-                do{
-                    position++;
-                }while(buffer[position]=='=')
-                //get data
-                //clean the string
-                //create new reqistry item
-                //define at heading
-                //set level to equal position
-                //put text in.
-                prevType = 'h';
-                break;
-            case ':':       //found some sort of indent
-                //count number of indents
-                //determine if there is an * or some other list symbol.
-                //if yes, then it will check if there prevType was body, if
-                //yes, then it will set a blockquote markup;
-                //equal to number of ':' + 1;
-                break;
-            case '*':
+            //look for any of the following symbols':', '='or "*'
+            int position = 0;
+            for(int i = 0, j = strlen(buffer); i<j; i++){
+            switch(buffer[position]){
+                case '=':       //found some sort of heading, whether main or sub.
+                    do{
+                        position++;
+                    }while(buffer[position]=='=')
+                    //create new reqistry item
+                    database.push_back(Wikitext());
+                    //define at heading
+                    database[counter].type = 'h';
+                    //set level to equal position
+                    database[counter].level = position;
+                    //get data
+                    //clean the string
+                        switch(buffer[i]){
+                            case '[':
 
-                break;
-            default:
-                //body text
-                if(prevType == 'b'){
-                    //add the buffer to the end of the old string.
-                }else{
-                    //create a new entry.
-                }
-                break;
+                                break;
+                            case ''':
+
+                                break;
+                            case '{':                   //remove template;
+                                while(buffer[i] != '}'){
+                                    i++;
+                                }
+                                information += buffer[i];
+                                break;
+                            default:
+                                information += buffer[i];
+                                break;
+                        }
+                    }
+
+                    //put text in.
+                    database[counter].text = information;
+    
+                    //increment so that next one can add information correctly.
+                    counter++;
+                    break;
+                case ':':       //found some sort of indent
+                    //count number of indents
+                    //determine if there is an * or some other list symbol.
+                    //if yes, then it will check if there prevType was body, if
+                    //yes, then it will set a blockquote markup;
+                    //equal to number of ':' + 1;
+                    break;
+                case '*':
+
+                    break;
+                default:
+                    //body text
+                    //get text into variable information and clean;
+    
+                    //put it into correct data entry.
+                    if(databse[counter-1].type == 'b'){
+                        database[counter-1].text = database[counter-1] + information;
+                    }else{
+                        database.push_back({"b", 1, information});
+                        counter++;
+                    }
+                    break;
+            }
         }
-
     }
     fclose(fin);
     fclose(fexist);
