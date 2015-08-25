@@ -66,42 +66,70 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
         while(buffer[0]==' '){
             buffer.erase(0);
         }
-        //ensure we are not on a blank line in the case of a single \n or <br
-        //tag.
-        if(buffer[0] != '\n' ||(buffer[0] == '<' && buffer[1] == 'b' && buffer[2] == 'r')){
+		
+		int level = 0; //counts level the heading or body or information is under.
 
             //look for any of the following symbols':', '='or "*'
-            int position = 0;
-            for(int i = 0, j = strlen(buffer); i<j; i++){
-            switch(buffer[position]){
-                case '=':       //found some sort of heading, whether main or sub.
+        for(int position = 0, length = strlen(buffer); position<length; position++){
+            switch(buffer[0]){
+                case '<':
+					if (buffer[1] == 'b' && buffer[2] == 'r'){
+						while(buffer[position] != '>'){
+							position++;
+						}
+					}
+				case ' ':
+					break;
+				case '=':       //found some sort of heading, whether main or sub.
                     do{
                         position++;
+						level++;
                     }while(buffer[position]=='=')
                     //create new reqistry item
                     database.push_back(Wikitext());
                     //define at heading
                     database[counter].type = 'h';
                     //set level to equal position
-                    database[counter].level = position;
+                    database[counter].level = level;
                     //get data
                     //clean the string
-                        switch(buffer[i]){
+					for(position < length; position++);//check this if statement as I do not know whether position or something is needed as first arguement.
+                        switch(buffer[position]){
                             case '[':
 
                                 break;
-                            case ''':
-
+                            case '':	//how do I check for apostrophe symbol????
+								level = 0;
+								do{
+									position++;
+									level++;
+								}while(buffer[position] == '&apos');
+								switch (level){
+									case 0:
+										information += '&lsquo'; //put in left quotes
+										break;
+									case 1:
+										information += '<i>';//italicise the text
+										break;
+									case 2:
+										information += '<b>';//bold text
+										break;
+									case 3:
+										information += '<ib>';//bold and italicise
+										break;
+									default:
+										printf("wtf did the person writing their page do? put bold or italicised apostrophes???");
+										break;
+								}
                                 break;
                             case '{':                   //remove template;
-                                while(buffer[i] != '}'){
-                                    i++;
+                                while(buffer[position] != '}'){
+                                    position++;
                                 }
-                                information += buffer[i];
                                 break;
-                            default:
-                                information += buffer[i];
-                                break;
+							default:
+								information += buffer[position];
+                            break;
                         }
                     }
 
