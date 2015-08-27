@@ -15,10 +15,10 @@
 #include <exception>
 
 
-typedef struct _links_info{
-    bool link;
+typedef struct Links{
     bool internal;
     bool available;
+    bool page;          //true for page, false for file/image
     std::string link;
     std::string text;
 }links_info;
@@ -43,4 +43,7 @@ class cWikiParser{
 
         //storage of information for later use
         std::vector<WikiText> database;
+        std::vector<Links> linkDB;
+        std::map<std::string, std::pair<int, int>> searchDB;
+
 };

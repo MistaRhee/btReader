@@ -1,5 +1,10 @@
 #include "wikiParser.hpp"
 
+struct {
+    bool bold = false;
+    bool italic = false;
+}charStates;
+        
 
 std::string cWikiParser::space2Undersc(const std::string title){
     std::string cleaned;
@@ -13,8 +18,98 @@ std::string cWikiParser::space2Undersc(const std::string title){
     return cleaned;
 }
 
+std::string cWikiParser::textCleaner(const std::string original){
+    std::string cleaned;
+    std::string temp;
+    int i = 0;
+    int counter = 0;
+    int j = strlen(original);
+    for(;i<j; i++){
+        switch(original[i]){
+            case '[':                                       //found beginning of bracket, check next few if it is a internal or external link
+                if(original[i+1] =='['){                    //check if external link
+                    i += 2;
+                    while(original[i] != ']' && original[i+1] != ']'){              //read link into temp
+                        temp += original[i];
+                        i++;
+                    }
+                    i++;
+                    cleaned += '{' + cWikiParser::internalLink(temp) + '}';         //writes UID in
+                    temp.clear();                                                   //clears temp
+
+                }else if(original[1] == 'h' && original[i+2]=='t' && original[i+3] == 't' && original[i+4] == 'p'){
+                                                                        //http link means external
+                    i++;
+                   while(original[i] != ']'){                           //get information
+                        temp += original[i];
+                        i++;
+                    }
+                    cleaned += '{' + externalLink(temp) + '}';          //put into string
+                    temp.clear();
+                }else{                                                  //not a string
+                    cleaned += original[i];
+                }
+                break;
+/*            case '':	//how do I check for apostrophe symbol????
+				level = 0;
+				do{
+					i++;
+					level++;
+				}while(buffer[i] == '&apos');
+				switch (level){
+					case 0:
+						information += '&lsquo'; //put in left quotes
+						break;
+					case 1:
+						if (charStates.italic == true){
+                            information += '</i>';//italicise the text
+                        }else{
+                            information += '<i>';//italicise the text
+                        }
+                        charStates.italic = !charStates.italic;
+						break;
+					case 2:
+						if (charStates.bold == true){
+						    information += '</b>';//bold text
+                        }else{
+						    information += '<b>';//bold text
+                        }
+                        charStates.bold = !charStates.bold;
+						break;
+					case 3:                 //change both bold and italics
+						if (charStates.italic == true){
+                            information += '</i>';//italicise the text
+                        }else{
+                            information += '<i>';//italicise the text
+                        }
+                        charStates.italic = !charStates.italic;
+						if (charStates.bold == true){
+						    information += '</b>';//bold text
+                        }else{
+						    information += '<b>';//bold text
+                        }
+                        charStates.bold = !charStates.bold;
+						break;
+					default:
+						printf("wtf did the person writing their page do? put bold or italicised apostrophes???");
+						break;
+				}
+                break;*/
+            case '{':                   //remove template;
+            	while(buffer[position] != '}'){
+                	position++;
+                }
+                break;
+			default:
+				cleaned += buffer[position];
+                break;
+		}
+    }
+    return cleaned;
+}
 
 void cWikiParser::open(const std::string inFile, const std::string existFile){
+    cWikiParser::close;
     FILE*fin = fopen(inFile.c_str(), "r");
 	FILE*fexist = fopen(existFile.c_str(), "r");
     char buffer[4096];
@@ -93,43 +188,8 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
                     database[counter].level = level;
                     //get data
                     //clean the string
-					for(position < length; position++);//check this if statement as I do not know whether position or something is needed as first arguement.
+					for(;position < length; position++);//check this if statement as I do not know whether position or something is needed as first arguement.
                         switch(buffer[position]){
-                            case '[':
-
-                                break;
-                            case '':	//how do I check for apostrophe symbol????
-								level = 0;
-								do{
-									position++;
-									level++;
-								}while(buffer[position] == '&apos');
-								switch (level){
-									case 0:
-										information += '&lsquo'; //put in left quotes
-										break;
-									case 1:
-										information += '<i>';//italicise the text
-										break;
-									case 2:
-										information += '<b>';//bold text
-										break;
-									case 3:
-										information += '<ib>';//bold and italicise
-										break;
-									default:
-										printf("wtf did the person writing their page do? put bold or italicised apostrophes???");
-										break;
-								}
-                                break;
-                            case '{':                   //remove template;
-                                while(buffer[position] != '}'){
-                                    position++;
-                                }
-                                break;
-							default:
-								information += buffer[position];
-                            break;
                         }
                     }
 
@@ -169,28 +229,19 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
 }
 
 void cWikiParser::close(){
+    //clear maps and database;
+    availMap.clear();
+    database.clear();
+    linkDB.clear();
 }
 
 
-std::string cWikiParser::textMarkUp(const std::string original){
-    std::string cleaned;
-    //parse text to markup links and images with unique ID
-    //markup to rmove {}
-    //also put markup for italics and bold
-}
-
-struct cWikiParser::linksChecker(std::string original){{
+int cWikiParser::internalLink(std::string original){{
     /* std::string site;
     std::string text;
     bool link;
     bool internal;
-    bool available;*/
-    while(original[i]!='['){         //get the link checker togo up to the [ at the begging, this should be automatic, but just in case{
-        i++;
-    }
-    while(original[i] =='['){       //goes to the first character of the string/
-        i++;
-    }
+    bool available;
     if(original[i] == 'h' && original[i+1]=='t' && original[i+2] == 't' && original[i+3] == 'p'){
         links_info.link = true;
         links_info.internal = false;
@@ -205,44 +256,62 @@ struct cWikiParser::linksChecker(std::string original){{
             i++;
         }
         else{
-            int j= original.size();
-            while(original[i] == ' '){
-                j--;
-             }
-             while(original[j] == ']'){
-                j--;
-             }
-             while(original[j] != '|' || original[j] != '['){
-                links_info.text = original[j] + links_info.text;
-                j--;
-             }
-             if(original == '['){
-                links_info.link = false;
-                links_info.internal = false;
-                links_info.available = false;
-            }else{
-                links_info.link = true;
-                links_info.internal = true;
-                j--;
-                while(original[j] != '['){
-                    links_info.site = original[j] + links_info.site;
-                    j--;
-                }
-                links_info.site = space2Undersc(links_info.site);
-                auto it = availMap.find(chapName);
-                if(it != availMap.end()){
-                    if(it->second==1){
-                        links_info.available = true
-                    }else{
-                        links_info.availbale = false;
-            	    }
-                }else{
-	                printf("%s:[wikiParser.cpp] - Unable to locate %s within map. Set as not avilable for now\n", currentDateTime().c_str(), chapName.c_str());		//just to make sure error is fixed								
-                    available = false;//this could indicate images.
-                }
-            }
+*/
+
+
+    //begin code;
+            
+    //get to the pipe
+    //check if image
+    //if image store,
+    //else get after pipe and ckeck avail
+    std::string link;       //store the link information pulled;
+    std::string text;
+    linkDB.push_back(Links());
+    
+    int UID = linkDB.size()-1;                  //size will get number of elements so the first one is linkDB[0] while size is 1
+
+    int i = 0;
+    while(original[i] ==' '){                   //remove space at front, probs redundant unless someone fucked up.
+        i++;
+    }
+
+    int j = original.size();                    //figure out space at the end
+    while(original[j] == ' '){
+        j--;
+    }
+
+    //for(;i<j;i++){
+    while(original[i] != '|'){      //get link up to the first grep;
+        link += original[i];
+    }
+    
+    while(original[j] != |){        //get words from end such as the words in the link or the words under an image
+        text += original[j] + text;
+        j--;
+    }
+
+    link = space2Undersc(link);
+    if(link[0] == 'i' && link[1] == 'm' && link[2] == 'a' && link[3] == 'g' && link[4] == 'e'){
+        linkDB[UID].page = false; 
+        linkDB[UID].available = true;
+    }else{
+        linkDB[UID].page = true;
+        auto it = availMap.find(link);
+        if(it != availMap.end()){
+            if(it->second==1){
+                linkDB[UID].available = true
+             }else{
+                linkDB[UID].availbale = false;
+        	}
+        }else{
+            printf("%s:[wikiParser.cpp] - Unable to locate %s within map. Set as not avilable for now\n", currentDateTime().c_str(), chapName.c_str());		//just to make sure error is fixed								
+            linkDB[UID].available = false;
         }
     }
+    linkDB[UID].link = link;
+    linkDB[UID].text = text;
+    return UID;
 }
  
 
