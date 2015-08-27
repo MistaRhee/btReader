@@ -50,58 +50,21 @@ std::string cWikiParser::textCleaner(const std::string original){
                     cleaned += original[i];
                 }
                 break;
-/*            case '':	//how do I check for apostrophe symbol????
-				level = 0;
-				do{
-					i++;
-					level++;
-				}while(buffer[i] == '&apos');
-				switch (level){
-					case 0:
-						information += '&lsquo'; //put in left quotes
-						break;
-					case 1:
-						if (charStates.italic == true){
-                            information += '</i>';//italicise the text
-                        }else{
-                            information += '<i>';//italicise the text
+            case '<':                                                   //remove html comments
+                    if (original[i+1] == '!' && original[i+2] == '-' && original[i+3] =='-'){
+                        while(original[i] != '-' && original[i+1] != '-' && original[i+2] != '>'){
+                            i++;
                         }
-                        charStates.italic = !charStates.italic;
-						break;
-					case 2:
-						if (charStates.bold == true){
-						    information += '</b>';//bold text
-                        }else{
-						    information += '<b>';//bold text
-                        }
-                        charStates.bold = !charStates.bold;
-						break;
-					case 3:                 //change both bold and italics
-						if (charStates.italic == true){
-                            information += '</i>';//italicise the text
-                        }else{
-                            information += '<i>';//italicise the text
-                        }
-                        charStates.italic = !charStates.italic;
-						if (charStates.bold == true){
-						    information += '</b>';//bold text
-                        }else{
-						    information += '<b>';//bold text
-                        }
-                        charStates.bold = !charStates.bold;
-						break;
-					default:
-						printf("wtf did the person writing their page do? put bold or italicised apostrophes???");
-						break;
-				}
-                break;*/
+                    }else{
+                        cleaned += original[i];
+                break;
             case '{':                   //remove template;
-            	while(buffer[position] != '}'){
-                	position++;
+            	while(original[i] != '}'){
+                	i++;
                 }
                 break;
 			default:
-				cleaned += buffer[position];
+				cleaned += original[i];
                 break;
 		}
     }
