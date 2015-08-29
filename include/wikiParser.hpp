@@ -39,7 +39,8 @@ class cWikiParser{
         std::string query(const std::string, const int);//query the ith element under the text = string.
     private:
         std::string cWikiParser::textMarkup(std::string);   //cleans texts of links and images replacing with UID as well as marks up bold and italic fonts.
-        struct cWikiParser::linksChecker(std::string);      //checks if links are available and other things to do with images and links.
+        int cWikiParser::externalLink(std::string);         //check and fill in the external links, I might put it all into one, but putting the splitter into link, but the splitter also filters out non-links.
+        int cWikiParser::internalLink(std::string);
 
         //storage of information for later use
         std::vector<WikiText> database;

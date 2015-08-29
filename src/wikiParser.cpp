@@ -1,4 +1,23 @@
+//This is a wikiParser specifically for Media Wiki formatting as used by a
+//mojority of wiki pages, however there are other forms of wiki formatting sets
+//available like the one on github who uses a markdown style where the symbols
+//use a different format. This code is written trusting that nobody will change
+//the entire wiki site of Baka-Tsuki which uses MediaWiki formatting.
+//
+//
+//This copde is written as is and users use this code at their own discretion.
+//You may edit or update code as you wish as long as you reference this
+//opriginal code. In terms of processional and commercial use, well this code
+//is written by a random person without a given name, so you are free to use at
+//your own risk I guess, I cbf sueing anyone over something that I wrote while
+//travelling to and from uni.
+//
+//Code Written by NoOne2246.
+
+
 #include "wikiParser.hpp"
+
+
 
 struct {
     bool bold = false;
@@ -24,6 +43,9 @@ std::string cWikiParser::textCleaner(const std::string original){
     int i = 0;
     int counter = 0;
     int j = strlen(original);
+    while(original[i] == ' '){                              //remove all spaces at beginning of the line.
+        i++;
+    }
     for(;i<j; i++){
         switch(original[i]){
             case '[':                                       //found beginning of bracket, check next few if it is a internal or external link
@@ -51,17 +73,28 @@ std::string cWikiParser::textCleaner(const std::string original){
                 }
                 break;
             case '<':                                                   //remove html comments
-                    if (original[i+1] == '!' && original[i+2] == '-' && original[i+3] =='-'){
-                        while(original[i] != '-' && original[i+1] != '-' && original[i+2] != '>'){
-                            i++;
-                        }
-                    }else{
-                        cleaned += original[i];
+                if (original[i+1] == '!' && original[i+2] == '-' && original[i+3] =='-'){
+                    while(original[i] != '-' && original[i+1] != '-' && original[i+2] != '>'){
+                        i++;
+                    }
+                    i += 2;
+                }else if(original[i+1] == 'b' && original[i+2] == 'r' && original[i+3] ==' '){      //remove break lines and put in \n
+                    while(original[i] != '>'){
+                        i++;
+                    }
+                    cleaned += '\n';
+                }else{
+                    cleaned += original[i];
+                }
                 break;
             case '{':                   //remove template;
-            	while(original[i] != '}'){
-                	i++;
-                }
+                if(original[i+1] == '{'){
+                	while(original[i] != '}' && original[i+1] != '}'){
+                    	i++;
+                    }
+                    i++;
+                }else{
+                    cleaned += original[i];
                 break;
 			default:
 				cleaned += original[i];
@@ -72,15 +105,13 @@ std::string cWikiParser::textCleaner(const std::string original){
 }
 
 void cWikiParser::open(const std::string inFile, const std::string existFile){
-    cWikiParser::close;
-    FILE*fin = fopen(inFile.c_str(), "r");
-	FILE*fexist = fopen(existFile.c_str(), "r");
+    cWikiParser::close();                           //clears all the global maps and vectors and other random variables
+    FILE*fin = fopen(inFile.c_str(), "r");          //opens the text imnformation file that you got from alling the website AP
+	FILE*fexist = fopen(existFile.c_str(), "r");    //opens the file containting whether or not a page exist, you will find in Database.cpp, this page is generated from the XML call.
     char buffer[4096];
-    char prevType;
     
-    int counter = 0;
 
-    database.push_back({"h", 1, "title"});
+    database.push_back({"h", 1, "title"});           //well the title is ignored in this anyways, so might put this entry in so you can get stuff immediately under the title.
 
     //get information on whether an internal link exist 
     int numLinks = 0;
@@ -128,63 +159,71 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
 		int level = 0; //counts level the heading or body or information is under.
 
             //look for any of the following symbols':', '='or "*'
-        for(int position = 0, length = strlen(buffer); position<length; position++){
-            switch(buffer[0]){
-                case '<':
-					if (buffer[1] == 'b' && buffer[2] == 'r'){
-						while(buffer[position] != '>'){
-							position++;
-						}
+        int position = 0;
+        switch(buffer[position]){
+            case '<':                                               //only deal with breaks
+				if (buffer[1] == 'b' && buffer[2] == 'r'){
+					while(buffer[position] != '>'){
+						position++;
 					}
-				case ' ':
-					break;
-				case '=':       //found some sort of heading, whether main or sub.
-                    do{
-                        position++;
-						level++;
-                    }while(buffer[position]=='=')
-                    //create new reqistry item
-                    database.push_back(Wikitext());
-                    //define at heading
-                    database[counter].type = 'h';
-                    //set level to equal position
-                    database[counter].level = level;
-                    //get data
-                    //clean the string
-					for(;position < length; position++);//check this if statement as I do not know whether position or something is needed as first arguement.
-                        switch(buffer[position]){
-                        }
-                    }
-
-                    //put text in.
-                    database[counter].text = information;
+                }
+                database[database.size()-1].text += "\n "; //check this line
+                break;
+			case ' ':
+                position++;     //should not be needed, but in case of some stuff up.
+				break;
+			case '=':       //found some sort of heading, whether main or sub.
+                do{
+                    position++;
+					level++;
+                }while(buffer[position]=='=');
+                //create new reqistry item
+                database.push_back(Wikitext());
+                int counter = database.size()-1;
+                //define at heading
+                database[counter].type = 'h';
+                //set level to equal position
+                database[counter].level = level;
+                //get data
+                //clean the string
+                buffer.erase(0, position);
+                //put text in.
+                database[counter].text = cWikiParser::textCleaner(buffer);
     
-                    //increment so that next one can add information correctly.
-                    counter++;
-                    break;
-                case ':':       //found some sort of indent
+                break;
+            case ':':       //found some sort of indent
                     //count number of indents
                     //determine if there is an * or some other list symbol.
                     //if yes, then it will check if there prevType was body, if
                     //yes, then it will set a blockquote markup;
                     //equal to number of ':' + 1;
-                    break;
-                case '*':
+                 break;
+            case '*':
+                 do{
+                     position++;
+                     level++;
+                 }while(buffer[position] == '*');
+                 buffer.erase(0, position);
+                 database.push_back({'l', level, cWikiParser::textCleaner(buffer)});
 
-                    break;
+                break;
+            case '{':                   //remove template;
+                if(original[i+1] == '{'){
+                	while(original[i] != '}' && original[i+1] != '}'){
+                    	i++;
+                    }
+                    i++;
+                }else{
                 default:
-                    //body text
-                    //get text into variable information and clean;
-    
+                    //figure out current type 
+                    counter = database.size()-1;
                     //put it into correct data entry.
-                    if(databse[counter-1].type == 'b'){
-                        database[counter-1].text = database[counter-1] + information;
+                    if(databse[counter].type == 'b' && database[counter].level == 1){
+                        database[counter].text += cWikiParser::textCleaner(buffer);
                     }else{
                         database.push_back({"b", 1, information});
-                        counter++;
                     }
                     break;
-            }
         }
     }
     fclose(fin);
@@ -198,8 +237,42 @@ void cWikiParser::close(){
     linkDB.clear();
 }
 
+int cWikiParser::externalLink(std::string original){
+    std::string link;
+    std::string text;
+    
+    linkDB.push_back(Links());
+    int UID = linkDB.size()-1;                  //size will get number of elements so the first one is linkDB[0] while size is 1
 
-int cWikiParser::internalLink(std::string original){{
+    int i = 0;
+    while(original[i] ==' '){                   //remove space at front, probs redundant unless someone fucked up.
+        i++;
+    }
+
+    int j = original.size();                    //figure out space at the end
+    while(original[j] == ' '){
+        j--;
+    }
+
+    while(original[i] != ' '){
+        link += original[i];
+        i++;
+    }
+    while(original[i] == ' '){
+        i++;
+    }
+    for(;i<j; i++){
+        text += original[i];
+    }
+    linkDB[UID].link = link;
+    linkDB[UID].text = text;
+    linkDB[UID].internal = false;
+    linkDB[UID].available = true;
+    linkDB[UID].page = true;
+    return UID;
+}
+
+int cWikiParser::internalLink(std::string original){
     /* std::string site;
     std::string text;
     bool link;
@@ -245,17 +318,17 @@ int cWikiParser::internalLink(std::string original){{
     }
 
     //for(;i<j;i++){
-    while(original[i] != '|'){      //get link up to the first grep;
+    while(original[i] != '|' || original[i] != ']'){      //get link up to the first grep;
         link += original[i];
     }
     
-    while(original[j] != |){        //get words from end such as the words in the link or the words under an image
+    while(original[j] != '|' || original[j] != '['){        //get words from end such as the words in the link or the words under an image
         text += original[j] + text;
         j--;
     }
 
     link = space2Undersc(link);
-    if(link[0] == 'i' && link[1] == 'm' && link[2] == 'a' && link[3] == 'g' && link[4] == 'e'){
+    if((link[0] == 'i' && link[1] == 'm' && link[2] == 'a' && link[3] == 'g' && link[4] == 'e')||(link[0] == 'f' && link[1] =='i' && link[2] == 'l' && link[3] == 'e'){
         linkDB[UID].page = false; 
         linkDB[UID].available = true;
     }else{
@@ -276,5 +349,3 @@ int cWikiParser::internalLink(std::string original){{
     linkDB[UID].text = text;
     return UID;
 }
- 
-
