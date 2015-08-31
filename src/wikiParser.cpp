@@ -56,7 +56,7 @@ std::string cWikiParser::textCleaner(const std::string original){
                         i++;
                     }
                     i++;
-                    cleaned += '{' + cWikiParser::internalLink(temp) + '}';         //writes UID in
+                    cleaned += '{' + internalLink(temp) + '}';         //writes UID in
                     temp.clear();                                                   //clears temp
 
                 }else if(original[1] == 'h' && original[i+2]=='t' && original[i+3] == 't' && original[i+4] == 'p'){
@@ -156,12 +156,11 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
             buffer.erase(0);
         }
 		
-		int level = 0; //counts level the heading or body or information is under.
 
             //look for any of the following symbols':', '='or "*'
         int position = 0;
-        bool exit = true;
         do{
+	    	int level = 0; //counts level the heading or body or information is under.
             switch(buffer[position]){
                 case '<':                                               //only deal with breaks
 		    		if (buffer[1] == 'b' && buffer[2] == 'r'){
@@ -170,11 +169,9 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
 					    }
                     }
                     database[database.size()-1].text += "\n "; //check this line
-                    exit = false;
                     break;
 			    case ' ':
                     position++;     //should not be needed, but in case of some stuff up.
-                    exit = false;
 	    			break;
 		    	case '=':       //found some sort of heading, whether main or sub.
                     do{
@@ -192,11 +189,11 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
                     //clean the string
                     buffer.erase(0, position);
                     //put text in.
-                    database[counter].text = cWikiParser::textCleaner(buffer);
+                    database[counter].text = textCleaner(buffer);
                     break;
                 case ':':       //found some sort of indent
                     //count number of indents
-                    do(
+                    do{
                         level++;
                         position++; 
                     }while(buffer[position] == ':');
@@ -204,10 +201,10 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
                     //if yes, then it will check if there prevType was body, if
                     if(buffer[position] != '*'){
                         buffer.erase(0, position);
-                        database.push_back({'b', level, cWikiParser::textCleaner(buffer)});
+                        database.push_back({'b', level, textCleaner(buffer)});
                     }else{
                         buffer.erase(0, position);
-                        database.push_back({'l', level+1, cWikiParser::textCleaner(buffer)});
+                        database.push_back({'l', level+1, textCleaner(buffer)});
                     }
                     break;
                 case '*':
@@ -216,7 +213,7 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
                          level++;
                      }while(buffer[position] == '*');
                      buffer.erase(0, position-1);
-                     database.push_back({'l', level, cWikiParser::textCleaner(buffer)});
+                     database.push_back({'l', level, textCleaner(buffer)});
                     break;
                 case '{':                   //remove template;
                     if(original[position+1] == '{'){
@@ -224,10 +221,9 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
                         	position++;
                         }
                         position++;
-                        exit = false;
                     }else{
                         buffer.erase(0, position);
-                        database.push_back({'b', 1, cWikiParser::textCleaner(buffer)});
+                        database.push_back({'b', 1, textCleaner(buffer)});
                     }
                     break;
                 case '#':
@@ -236,19 +232,21 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
                          level++;
                      }while(buffer[position] == '#');
                      buffer.erase(0, position-1);
-                     database.push_back({'n', level, cWikiParser::textCleaner(buffer)});
+                     database.push_back({'n', level, textCleaner(buffer)});
                      break;
                 default:
                     //figure out current type 
                     counter = database.size()-1;
                     //put it into correct data entry.
+                    information = textCleaner(buffer);
                     if(databse[counter].type == 'b' && database[counter].level == 1){
-                        database[counter].text += cWikiParser::textCleaner(buffer);
+                        database[counter].text += information;
                     }else{
                         database.push_back({"b", 1, information});
                     }
                     break;
-        }
+            }
+        }while(position < buffer.size());
     }
     fclose(fin);
     fclose(fexist);
@@ -297,34 +295,6 @@ int cWikiParser::externalLink(std::string original){
 }
 
 int cWikiParser::internalLink(std::string original){
-    /* std::string site;
-    std::string text;
-    bool link;
-    bool internal;
-    bool available;
-    if(original[i] == 'h' && original[i+1]=='t' && original[i+2] == 't' && original[i+3] == 'p'){
-        links_info.link = true;
-        links_info.internal = false;
-        links_info.available = false;
-        while(original[i] != ' '){
-            links_info.link += original[i];
-            i++;
-        }
-        i++;
-        while(original[i] != ']'){
-            links_info.text += original[i];
-            i++;
-        }
-        else{
-*/
-
-
-    //begin code;
-            
-    //get to the pipe
-    //check if image
-    //if image store,
-    //else get after pipe and ckeck avail
     std::string link;       //store the link information pulled;
     std::string text;
     linkDB.push_back(Links());

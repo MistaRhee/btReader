@@ -186,7 +186,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         int exist;
         printf("%s: [database.cpp] - Getting Novel Details for %s. \n", currentDateTime().c_str(), title.c_str());
         cHttpd mDownload;
-        cWikiParser mParser;
+        cWikiInterpreter mParser;
         tempFile = "data/temp/"+generateRandomName(50);
 		tempFile2 = tempFile + "2";
         while(fileExists(tempFile)||fileExists(tempFile2)){

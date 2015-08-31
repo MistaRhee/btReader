@@ -22,7 +22,7 @@ inline bool fileExists (const std::string& name) {
     }   
 }
 
-std::string cWikiParser::space2Undersc(const std::string title){
+std::string cWikiInterpreter::space2Undersc(const std::string title){
     std::string cleaned;
     for(int i = 0, j = title.size(); i<j; i++){
         if(title[i] == ' '){
@@ -35,7 +35,7 @@ std::string cWikiParser::space2Undersc(const std::string title){
 }
 
 
-std::string cWikiParser::generateRandomName(int length){ 
+std::string cWikiInterpreter::generateRandomName(int length){ 
     srand(time(NULL));     
     const char aCharacters[] = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";       
     std::string rVal;      
@@ -45,7 +45,7 @@ std::string cWikiParser::generateRandomName(int length){
     return rVal;       
 }
 
-void cWikiParser::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile){
+void cWikiInterpreter::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile){
     FILE*fout = fopen(outFile.c_str(), "w+");
     char buffer[4096];
     std::string information;
@@ -54,7 +54,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
     XMLNode infoNode = mainNode.addChild("info");
     
     cWikiParser.open(inFile, existFile);                //open the text file as well as the links availability in the wikiparser.
-    
+  /*  
     //get the synopsis, incase someone decides to have headings under synopsis:
     information.clear();
     XMLNode synopsis = mainNode.addChild("synopsis");
@@ -86,14 +86,14 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
     cGetImage newImageGrab;
     std::string savedTo = newImageGrab.getImage(fileName);
     newVolume.addAttribute("image", savedTo.c_str());
-    
+    */
     char *t=mainNode.createXMLString(true);
     fprintf(fout, "%s \n", t);
     fclose(fout);
     free(t);
 }
 
-void cWikiParser::cleanChapter(const std::string in, const std::string out){
+void cWikiInterpreter::cleanChapter(const std::string in, const std::string out){
     FILE*fin = fopen(in.c_str(), "r");
     char buffer[1000000];
     std::string text;
@@ -128,10 +128,10 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
     fprintf(fopen(out.c_str(), "w+"), "%s \n", text.c_str());
 }
 
-std::string cWikiParser::getError(){
+std::string cWikiInterpreter::getError(){
     return error;
 }
 
-void cWikiParser::setError(std::string inError){
+void cWikiInterpreter::setError(std::string inError){
     error = inError;
 }
