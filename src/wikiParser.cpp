@@ -160,60 +160,84 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
 
             //look for any of the following symbols':', '='or "*'
         int position = 0;
-        switch(buffer[position]){
-            case '<':                                               //only deal with breaks
-				if (buffer[1] == 'b' && buffer[2] == 'r'){
-					while(buffer[position] != '>'){
-						position++;
-					}
-                }
-                database[database.size()-1].text += "\n "; //check this line
-                break;
-			case ' ':
-                position++;     //should not be needed, but in case of some stuff up.
-				break;
-			case '=':       //found some sort of heading, whether main or sub.
-                do{
-                    position++;
-					level++;
-                }while(buffer[position]=='=');
-                //create new reqistry item
-                database.push_back(Wikitext());
-                int counter = database.size()-1;
-                //define at heading
-                database[counter].type = 'h';
-                //set level to equal position
-                database[counter].level = level;
-                //get data
-                //clean the string
-                buffer.erase(0, position);
-                //put text in.
-                database[counter].text = cWikiParser::textCleaner(buffer);
-    
-                break;
-            case ':':       //found some sort of indent
+        bool exit = true;
+        do{
+            switch(buffer[position]){
+                case '<':                                               //only deal with breaks
+		    		if (buffer[1] == 'b' && buffer[2] == 'r'){
+			    		while(buffer[position] != '>'){
+				    		position++;
+					    }
+                    }
+                    database[database.size()-1].text += "\n "; //check this line
+                    exit = false;
+                    break;
+			    case ' ':
+                    position++;     //should not be needed, but in case of some stuff up.
+                    exit = false;
+	    			break;
+		    	case '=':       //found some sort of heading, whether main or sub.
+                    do{
+                        position++;
+					    level++;
+                    }while(buffer[position]=='=');
+                    //create new reqistry item
+                    database.push_back(Wikitext());
+                    int counter = database.size()-1;
+                    //define at heading
+                    database[counter].type = 'h';
+                    //set level to equal position
+                    database[counter].level = level;
+                    //get data
+                    //clean the string
+                    buffer.erase(0, position);
+                    //put text in.
+                    database[counter].text = cWikiParser::textCleaner(buffer);
+                    break;
+                case ':':       //found some sort of indent
                     //count number of indents
+                    do(
+                        level++;
+                        position++; 
+                    }while(buffer[position] == ':');
                     //determine if there is an * or some other list symbol.
                     //if yes, then it will check if there prevType was body, if
-                    //yes, then it will set a blockquote markup;
-                    //equal to number of ':' + 1;
-                 break;
-            case '*':
-                 do{
-                     position++;
-                     level++;
-                 }while(buffer[position] == '*');
-                 buffer.erase(0, position);
-                 database.push_back({'l', level, cWikiParser::textCleaner(buffer)});
-
-                break;
-            case '{':                   //remove template;
-                if(original[i+1] == '{'){
-                	while(original[i] != '}' && original[i+1] != '}'){
-                    	i++;
+                    if(buffer[position] != '*'){
+                        buffer.erase(0, position);
+                        database.push_back({'b', level, cWikiParser::textCleaner(buffer)});
+                    }else{
+                        buffer.erase(0, position);
+                        database.push_back({'l', level+1, cWikiParser::textCleaner(buffer)});
                     }
-                    i++;
-                }else{
+                    break;
+                case '*':
+                     do{
+                         position++;
+                         level++;
+                     }while(buffer[position] == '*');
+                     buffer.erase(0, position-1);
+                     database.push_back({'l', level, cWikiParser::textCleaner(buffer)});
+                    break;
+                case '{':                   //remove template;
+                    if(original[position+1] == '{'){
+                    	while(original[position] != '}' && original[position+1] != '}'){
+                        	position++;
+                        }
+                        position++;
+                        exit = false;
+                    }else{
+                        buffer.erase(0, position);
+                        database.push_back({'b', 1, cWikiParser::textCleaner(buffer)});
+                    }
+                    break;
+                case '#':
+                     do{
+                         position++;
+                         level++;
+                     }while(buffer[position] == '#');
+                     buffer.erase(0, position-1);
+                     database.push_back({'n', level, cWikiParser::textCleaner(buffer)});
+                     break;
                 default:
                     //figure out current type 
                     counter = database.size()-1;
