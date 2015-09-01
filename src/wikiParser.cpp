@@ -104,6 +104,57 @@ std::string cWikiParser::textCleaner(std::string original){
     return cleaned;
 }
 
+/*void open(const std::string link){
+    try{
+        std::string tempFile;
+        std::string novelStore;
+        std::string revID;
+        std::string progress;
+        int exist;
+        printf("%s: [database.cpp] - Getting Novel Details for %s. \n", currentDateTime().c_str(), title.c_str());
+        cHttpd mDownload;
+        tempFile = "data/temp/"+generateRandomName(50);
+        while(fileExists(tempFile)){
+            tempFile = "data/temp/"+generateRandomName(50);
+        }
+        mDownload.download(link, tempFile);
+        printf("%s: [database.cpp] - Page saved to %s. \n", currentDateTime().c_str(), tempFile.c_str());
+        printf("%s: [database.cpp] - Extracting wiki text... \n", currentDateTime().c_str());
+        XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
+        XMLNode parseNode = mainNode.getChildNode("parse");
+		XMLNode linksNode = parseNode.getChildNode("links");
+        revID = parseNode.getAttribute("revid");
+        fprintf(fout, "%s", parseNode.getChildNode("wikitext").getText());
+        fclose(fout);
+		int links = linksNode.nChildNode("pl");	//get the number of links and send it through.	
+		for(int i = 0; i<links; i++){
+			if(linksNode.getChildNode("pl", i).isAttributeSet("exists")){
+                availMap[space2Undersc(linksNode.getChildNode("pl",i).getText())] = 1;
+			}
+			else{
+                availMap[space2Undersc(linksNode.getChildNode("pl",i).getText())] = 1;
+			}
+		}
+        printf("%s: [database.cpp] - Extraction complete! \n", currentDateTime().c_str());
+        novelStore = "data/novels/"+generateRandomName(50);
+        while(fileExists(novelStore)){
+            novelStore = "data/novels/"+generateRandomName(50);
+        }
+        printf("%s: [database.cpp] - Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n", currentDateTime().c_str());
+        printf("%s: [database.cpp] - Cleaned page stored in %s. \n", currentDateTime().c_str(), novelStore.c_str());
+        printf("%s: [database.cpp] - Deleting temp file \n", currentDateTime().c_str());
+        remove (tempFile.c_str());
+        return std::make_pair(novelStore, revID);
+    }
+    catch(mException& e){
+        std::string mError = currentDateTime();
+        mError += ": [database.cpp] - ";
+        mError += e.what();
+        setError(e.what());
+        printf("%s\n", mError.c_str());
+        return std::make_pair("", "");
+    }
+}*/
 void cWikiParser::open(const std::string inFile, const std::string existFile){
     cWikiParser::close();                           //clears all the global maps and vectors and other random variables
     FILE*fin = fopen(inFile.c_str(), "r");          //opens the text imnformation file that you got from alling the website AP
