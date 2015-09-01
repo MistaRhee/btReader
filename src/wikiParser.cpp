@@ -37,7 +37,7 @@ std::string cWikiParser::space2Undersc(const std::string title){
     return cleaned;
 }
 
-std::string cWikiParser::textCleaner(const std::string original){
+std::string cWikiParser::textCleaner(std::string original){
     std::string cleaned;
     std::string temp;
     int i = 0;
@@ -322,7 +322,7 @@ int cWikiParser::internalLink(std::string original){
     }
 
     link = space2Undersc(link);
-    if((link[0] == 'i' && link[1] == 'm' && link[2] == 'a' && link[3] == 'g' && link[4] == 'e')||(link[0] == 'f' && link[1] =='i' && link[2] == 'l' && link[3] == 'e'){
+    if((link[0] == 'i' && link[1] == 'm' && link[2] == 'a' && link[3] == 'g' && link[4] == 'e')||(link[0] == 'f' && link[1] =='i' && link[2] == 'l' && link[3] == 'e')){
         linkDB[UID].page = false; 
         linkDB[UID].available = true;
     }else{

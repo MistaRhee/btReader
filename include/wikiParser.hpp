@@ -1,4 +1,4 @@
-# ifndef WKIPARSER_HPP
+#ifndef WIKIPARSER_HPP
 #define WIKIPARSER_HPP
 
 #include <cstdio>
@@ -15,7 +15,7 @@
 #include <exception>
 
 
-typedef struct Links{
+struct Links{
     bool internal;
     bool available;
     bool page;          //true for page, false for file/image
@@ -23,7 +23,7 @@ typedef struct Links{
     std::string text;
 }links_info;
 
-typedef struct Wikitext{
+struct WikiText{
     char type;
     int level;
     std::string text;
@@ -38,9 +38,10 @@ class cWikiParser{
         std::string query(const std::string);                   //query for the data in the withint the element with their text = string.
         std::string query(const std::string, const int);//query the ith element under the text = string.
     private:
-        std::string cWikiParser::textMarkup(std::string);   //cleans texts of links and images replacing with UID as well as marks up bold and italic fonts.
-        int cWikiParser::externalLink(std::string);         //check and fill in the external links, I might put it all into one, but putting the splitter into link, but the splitter also filters out non-links.
-        int cWikiParser::internalLink(std::string);
+        std::string space2Undersc(const std::string);   //cleans out strings to remove spaces and replace with underscore
+        std::string textCleaner(std::string);   //cleans texts of links and images replacing with UID as well as marks up bold and italic fonts.
+        int externalLink(std::string);         //check and fill in the external links, I might put it all into one, but putting the splitter into link, but the splitter also filters out non-links.
+        int internalLink(std::string);
 
         //storage of information for later use
         std::vector<WikiText> database;
@@ -48,3 +49,5 @@ class cWikiParser{
         std::map<std::string, std::pair<int, int>> searchDB;
 
 };
+
+#endif//WIKIPARSER_HPP

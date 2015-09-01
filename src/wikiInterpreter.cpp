@@ -1,4 +1,5 @@
 #include "btReader.hpp"
+#include "wikiParser.hpp"
 
 static const int EXIT = -1;
 static const int SYNOPSIS = 0;
@@ -53,7 +54,9 @@ void cWikiInterpreter::cleanNovel(const std::string inFile, const std::string ex
     XMLNode mainNode = XMLNode::createXMLTopNode("novel");
     XMLNode infoNode = mainNode.addChild("info");
     
-    cWikiParser.open(inFile, existFile);                //open the text file as well as the links availability in the wikiparser.
+    cWikiParser wParser;
+
+    wParser.open(inFile, existFile);                //open the text file as well as the links availability in the wikiparser.
   /*  
     //get the synopsis, incase someone decides to have headings under synopsis:
     information.clear();
