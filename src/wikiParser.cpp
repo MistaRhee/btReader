@@ -80,7 +80,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
             }
         }
         volStr = titleClean(volStr);
-        printf("%s is %i\n", volStr.c_str(), availInt);
 		availMap[volStr] = availInt;			//move data into map
         volStr.clear();
 	}
@@ -171,7 +170,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                         if(buffer[0] == '=' and buffer[1] == '='){
                             if(buffer[2] == '='){
                                 XMLNode newVolume = mainNode.addChild("volume");
-                                printf("Adding Volume \n");
                                 tempStr = buffer;
                                 tempStr.erase(0, 3);
                                 std::string volumeTitle;
@@ -190,7 +188,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                     std::string title;
                                     std::string chapName;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
-                                        printf("Adding Chapter! \n");
                                         splitter_t grabbing = locate;
                                         for(int i = 1, j = strlen(buffer); i < j; i++){
                                             switch(grabbing){
@@ -199,6 +196,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 														grabbing = description;
 													}
 													break;
+
 												case description:
 													if(buffer[i] == '|'){
 														grabbing = spacer;
@@ -211,6 +209,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 														chapName += buffer[i];
 													}
 													break;
+
                                                 case spacer:
                                                     if(buffer[i]==' '){
                                                         while(buffer[i]==' '){
@@ -219,6 +218,8 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                                     }
                                                     title += buffer[i];
                                                     grabbing = novTitle;
+                                                    break;
+
 												case novTitle:
 													if(buffer[i] == ']'){
 														grabbing = leave;
@@ -227,6 +228,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 														title += buffer[i];
 													}
 													break;
+
 												default:
 													printf("%s:[wikiParser.cpp] - enum error entered into default somehow.\n", currentDateTime().c_str());
                                             }
@@ -241,7 +243,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         while(fileExists(title)){
                                             title = "data/novels/"+generateRandomName(50);
                                         }
-
 
                                         chapterNode.addAttribute("location", title.c_str()); //The chapter will be saved here, it doesn't mean that it will actually have content stored there... That will come later.
                                         chapterNode.addAttribute("dl", "no");
@@ -265,18 +266,25 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                          * I'm just gonna assume its another
                                          * image
                                          */
-                                        printf("Adding Image! \n");
+                                        bool shouldGrab = 0;
                                         if(!newVolume.isAttributeSet("image")){
                                             for(int i = 1, j = strlen(buffer); i < j; i++){
                                                 if(buffer[i] == '['){
                                                     /* Ignore useless
                                                      * characters */
+                                                    shouldGrab = 1;
                                                 }
                                                 if(buffer[i] == '|'){
                                                     break;
                                                 }
-                                                else{
+                                                else if(shouldGrab){
                                                     fileName += buffer[i];
+                                                }
+                                                else{
+                                                    /* Is external link
+                                                     * (According to iss#13)
+                                                     */
+                                                    break;
                                                 }
                                             }
                                             cGetImage newImageGrab;
@@ -291,7 +299,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                          */
                                     }
                                     else{
-                                        printf("Exiting adding chapters with buffer: %s \n", buffer);
                                         processed = 0;
                                         break;
                                     }
