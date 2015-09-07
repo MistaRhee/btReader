@@ -64,7 +64,7 @@ std::string cGetImage::getImage(const std::string fileName){
         std::string sauce = sanitize(fileName);
         try{
             if(!isFromBT(fileName)) throw("IMAGE URL NOT FROM BT PANIC!!!");
-            printf("Grabbing image %s\n", sauce.c_str());
+            printf("%s: [getImage.cpp] Grabbing image: %s\n", currentDateTime().c_str(),sauce.c_str());
             std::string imageInfo = imageQuery+sauce+"&";
             cHttpd mDownload;
             std::string tempFile = "data/temp/"+generateRandomName(50);
