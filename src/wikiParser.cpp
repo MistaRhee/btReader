@@ -270,8 +270,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         if(!newVolume.isAttributeSet("image")){
                                             for(int i = 1, j = strlen(buffer); i < j; i++){
                                                 if(buffer[i] == '['){
-                                                    /* Ignore useless
-                                                     * characters */
+                                                    /* Iss 13 fix */
                                                     shouldGrab = 1;
                                                 }
                                                 if(buffer[i] == '|'){
@@ -287,9 +286,18 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                                     break;
                                                 }
                                             }
-                                            cGetImage newImageGrab;
-                                            std::string savedTo = newImageGrab.getImage(fileName);
-                                            newVolume.addAttribute("image", savedTo.c_str());
+                                            /* Check the first four characters
+                                             * of my image file is "File"
+                                             */
+                                            std::string tempString(filename.begin(), filename.begin()+4);
+                                            if(tempString == "File"){
+                                                cGetImage newImageGrab;
+                                                std::string savedTo = newImageGrab.getImage(fileName);
+                                                newVolume.addAttribute("image", savedTo.c_str());
+                                            }
+                                            else{
+                                                printf("%s:[wikiParser.cpp] - Invalid image name %s. Ignoring \n", currentDateTime().c_str(), tempString.c_str());
+                                            }
                                         }
                                     }
                                     else if(strlen(buffer) == 1 or buffer[0] == '<' or buffer[0] == '\'' or buffer[0] == '&'){
