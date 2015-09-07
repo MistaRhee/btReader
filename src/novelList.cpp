@@ -42,7 +42,7 @@ namespace beatOff{
             /* Scale font down so it can actually fit inside the requested
              * height */
             bool canSqueeze = 0;
-            for(int i = 1; i < fontSize/2; i++){
+            for(int i = 1; i < (fontSize*3)/4; i++){ //Only will scale down to 75%
                 newText.setTextSize(fontSize-i);
                 if(newText.canFit(novelHeight)){
                     newText.setSize(w, novelHeight);
@@ -139,6 +139,26 @@ namespace beatOff{
          * right now */
         /* Note to self: if mouseType = -1, then this is a mouse MOTION event
          * */
+        switch(mouseType){
+            case SDL_BUTTON_LEFT:
+                /* Left click -> Should be handled by main class*/
+                break;
+
+            case SDL_BUTTON_RIGHT:
+                /* Right click */
+                break;
+
+            case SDL_BUTTON_MIDDLE:
+                /* Middle mouse */
+                break;
+
+            case -1: //My non-button case i.e. Mouse Motion
+                break;
+
+            default:
+                /* Should only reach here on non-conventional mouse keys */
+                break;
+        }
 
     }
 

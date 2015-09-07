@@ -67,11 +67,11 @@ void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers)
         /* The key for up had an action */
         
     }
-    else if(mKey == mKeys.getKey("down")){ //THe else to prevent double key spam
+    else if(mKey == mKeys.getKey("down")){ //The else to prevent double key spam
         
     }
     else{
-        /* Unhandled key */
+        /* Unhandled keys */
     }
 }
 

@@ -53,7 +53,11 @@ namespace beatOff{
             /* Calculate the height beforehand, because texture height must be
              * declared beforehand */
 
+            cTextBox tempBox; //A temporary textbox that will only be used for the "wrapped height" method
+            tempBox.setFont(font); //Font will always be here
             int mHeight = 0;
+            tempBox.setText(title);
+//            tempBox.setTextSize();
 
             /* Create the texture first */
             mTexture = SDL_CreateTexture(
