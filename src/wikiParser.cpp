@@ -266,6 +266,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                          * I'm just gonna assume its another
                                          * image
                                          */
+                                        fileName.clear();
                                         bool shouldGrab = 0;
                                         if(!newVolume.isAttributeSet("image")){
                                             for(int i = 1, j = strlen(buffer); i < j; i++){
