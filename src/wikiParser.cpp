@@ -290,7 +290,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                             /* Check the first four characters
                                              * of my image file is "File"
                                              */
-                                            std::string tempString(filename.begin(), filename.begin()+4);
+                                            std::string tempString(fileName.begin(), fileName.begin()+4);
                                             if(tempString == "File"){
                                                 cGetImage newImageGrab;
                                                 std::string savedTo = newImageGrab.getImage(fileName);
