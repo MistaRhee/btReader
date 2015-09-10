@@ -167,9 +167,11 @@ void cWikiParser::openAP(const std::string inFile, const std::string existFile){
     //get information on whether an internal link exist 
     int numLinks = 0;
 	fscanf(fexist, "%i", &numLinks);	        //get the max number of links to pull out
+    printf("%i\n", numLinks);
 	int availInt;
     std::string information;                    //variable forwhich the text is stored into.
-	for(int i = 0; i<numLinks;i++){				//pull string and info out
+    printf("inputed exist map\n");
+	for(int i = 0; i < numLinks; i++){				//pull string and info out
         fgets(data, 4096, fexist);
 	    std::string volStr;					    //temporary storage of string
         bool getting = true;
@@ -187,9 +189,10 @@ void cWikiParser::openAP(const std::string inFile, const std::string existFile){
         }
         volStr = space2Undersc(volStr);         //create string using underscores
 		availMap[volStr] = availInt;			//move data into map
+        printf("%i.%s = %i\n", i, volStr.c_str(), availInt);
         volStr.clear();
 	}
-   
+    printf("loaded image map\n"); 
     //parse text based on on information.
     bool processed = true;
     while(true){
@@ -200,6 +203,7 @@ void cWikiParser::openAP(const std::string inFile, const std::string existFile){
             fgets(data, 4096, fin);
             buffer = data;
         }
+        printf("%s\n", buffer.c_str());
         if(!processed){
             processed = 1;
         }
@@ -268,10 +272,13 @@ void cWikiParser::openAP(const std::string inFile, const std::string existFile){
                     break;
                 case '{':                   //remove template;
                     if(buffer[position+1] == '{'){
-                    	while(buffer[position] != '}' && buffer[position+1] != '}'){
+                    	printf("entered correctly\n");
+                        while(buffer[position] != '}' && buffer[position+1] != '}'){
                         	position++;
+                            printf("%c%c\n", buffer[position], buffer[position+1]);
                         }
                         position++;
+                        printf("exited, next char is %c\n", buffer[position]);
                     }else{
                         buffer.erase(0, position);
                         database.push_back({'b', 1, textCleaner(buffer)});

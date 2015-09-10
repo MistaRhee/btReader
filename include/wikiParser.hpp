@@ -21,7 +21,7 @@ struct Links{
     bool page;          //true for page, false for file/image
     std::string link;
     std::string text;
-}links_info;
+};
 
 struct WikiText{
     char type;
