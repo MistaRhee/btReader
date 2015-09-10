@@ -290,14 +290,22 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                             /* Check the first four characters
                                              * of my image file is "File"
                                              */
-                                            std::string tempString(fileName.begin(), fileName.begin()+4);
+                                            std::string tempString(fileName.begin()+1, fileName.begin()+5);
                                             if(tempString == "File"){
                                                 cGetImage newImageGrab;
                                                 std::string savedTo = newImageGrab.getImage(fileName);
                                                 newVolume.addAttribute("image", savedTo.c_str());
                                             }
                                             else{
-                                                printf("%s:[wikiParser.cpp] - Invalid image name %s. Ignoring \n", currentDateTime().c_str(), tempString.c_str());
+                                                tempString = fileName.substr(0, 5);
+                                                if(tempString == "Image"){
+                                                    cGetImage newImageGrab;
+                                                    std::string savedTo = newImageGrab.getImage(fileName);
+                                                    newVolume.addAttribute("image", savedTo.c_str());
+                                                }
+                                                else{
+                                                    printf("%s:[wikiParser.cpp] - Invalid image name %s. Ignoring \n", currentDateTime().c_str(), fileName.c_str());
+                                                }
                                             }
                                         }
                                     }
