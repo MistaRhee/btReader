@@ -56,7 +56,7 @@ void cWikiInterpreter::cleanNovel(const std::string inFile, const std::string ex
     
     cWikiParser wParser;
 
-    wParser.open(inFile, existFile);                //open the text file as well as the links availability in the wikiparser.
+    wParser.openAP(inFile, existFile);                //open the text file as well as the links availability in the wikiparser.
   /*  
     //get the synopsis, incase someone decides to have headings under synopsis:
     information.clear();

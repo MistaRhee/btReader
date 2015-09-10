@@ -32,7 +32,7 @@ struct WikiText{
 
 class cWikiParser{
     public:
-        void open(const std::string, const std::string);       //send data returned from api query toi be opened. 
+        void openAP(const std::string, const std::string);       //send data returned from api query toi be opened. 
         void close();                       //cklears registry of data.
         int nquery(const std::string);      //get count of a ceratin element
         std::string query(const std::string);                   //query for the data in the withint the element with their text = string.
@@ -47,6 +47,7 @@ class cWikiParser{
         std::vector<WikiText> database;
         std::vector<Links> linkDB;
         std::map<std::string, std::pair<int, int>> searchDB;
+	    std::map<std::string, int> availMap;        //map with the string and availability
 
 };
 

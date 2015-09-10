@@ -41,8 +41,7 @@ std::string cWikiParser::textCleaner(std::string original){
     std::string cleaned;
     std::string temp;
     int i = 0;
-    int counter = 0;
-    int j = strlen(original);
+    int j = original.size();
     while(original[i] == ' '){                              //remove all spaces at beginning of the line.
         i++;
     }
@@ -95,6 +94,7 @@ std::string cWikiParser::textCleaner(std::string original){
                     i++;
                 }else{
                     cleaned += original[i];
+                }
                 break;
 			default:
 				cleaned += original[i];
@@ -155,34 +155,33 @@ std::string cWikiParser::textCleaner(std::string original){
         return std::make_pair("", "");
     }
 }*/
-void cWikiParser::open(const std::string inFile, const std::string existFile){
-    cWikiParser::close();                           //clears all the global maps and vectors and other random variables
+void cWikiParser::openAP(const std::string inFile, const std::string existFile){
+    close();                           //clears all the global maps and vectors and other random variables
     FILE*fin = fopen(inFile.c_str(), "r");          //opens the text imnformation file that you got from alling the website AP
 	FILE*fexist = fopen(existFile.c_str(), "r");    //opens the file containting whether or not a page exist, you will find in Database.cpp, this page is generated from the XML call.
-    char buffer[4096];
-    
+    char data[4096];
+    std::string buffer;
 
-    database.push_back({"h", 1, "title"});           //well the title is ignored in this anyways, so might put this entry in so you can get stuff immediately under the title.
+    database.push_back({'h', 1, "title"});           //well the title is ignored in this anyways, so might put this entry in so you can get stuff immediately under the title.
 
     //get information on whether an internal link exist 
     int numLinks = 0;
 	fscanf(fexist, "%i", &numLinks);	        //get the max number of links to pull out
 	int availInt;
-	std::map<std::string, int> availMap;        //map with the string and availability
     std::string information;                    //variable forwhich the text is stored into.
 	for(int i = 0; i<numLinks;i++){				//pull string and info out
-        fgets(buffer, 4096, fexist);
+        fgets(data, 4096, fexist);
 	    std::string volStr;					    //temporary storage of string
-        getting = true;
-        for(int i = 0, j = strlen(buffer); i < j; i++)  //split the string into title and availability{
+        bool getting = true;
+        for(int i = 0, j = strlen(data); i < j; i++){  //split the string into title and availability
             if(getting==true){
-                if(buffer[i]!='|'){
-                    volStr += buffer[i];
+                if(data[i]!='|'){
+                    volStr += data[i];
                 }else{
                     getting = false;
                 }
             }else{
-                availInt = atoi(&buffer[i]);
+                availInt = atoi(&data[i]);
                 break;
             }
         }
@@ -192,12 +191,14 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
 	}
    
     //parse text based on on information.
+    bool processed = true;
     while(true){
         if(feof(fin)){                          //loop until end of file
             break;
         }
         if(processed){                          //read data in
-            fgets(buffer, 4096, fin);
+            fgets(data, 4096, fin);
+            buffer = data;
         }
         if(!processed){
             processed = 1;
@@ -230,17 +231,16 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
 					    level++;
                     }while(buffer[position]=='=');
                     //create new reqistry item
-                    database.push_back(Wikitext());
-                    int counter = database.size()-1;
+                    database.push_back(WikiText());
                     //define at heading
-                    database[counter].type = 'h';
+                    database[database.size()-1].type = 'h';
                     //set level to equal position
-                    database[counter].level = level;
+                    database[database.size()-1].level = level;
                     //get data
                     //clean the string
                     buffer.erase(0, position);
                     //put text in.
-                    database[counter].text = textCleaner(buffer);
+                    database[database.size()-1].text = textCleaner(buffer);
                     break;
                 case ':':       //found some sort of indent
                     //count number of indents
@@ -267,8 +267,8 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
                      database.push_back({'l', level, textCleaner(buffer)});
                     break;
                 case '{':                   //remove template;
-                    if(original[position+1] == '{'){
-                    	while(original[position] != '}' && original[position+1] != '}'){
+                    if(buffer[position+1] == '{'){
+                    	while(buffer[position] != '}' && buffer[position+1] != '}'){
                         	position++;
                         }
                         position++;
@@ -286,14 +286,12 @@ void cWikiParser::open(const std::string inFile, const std::string existFile){
                      database.push_back({'n', level, textCleaner(buffer)});
                      break;
                 default:
-                    //figure out current type 
-                    counter = database.size()-1;
                     //put it into correct data entry.
                     information = textCleaner(buffer);
-                    if(databse[counter].type == 'b' && database[counter].level == 1){
-                        database[counter].text += information;
+                    if(database[database.size()-1].type == 'b' && database[database.size()-1].level == 1){
+                        database[database.size()-1].text += information;
                     }else{
-                        database.push_back({"b", 1, information});
+                        database.push_back({'b', 1, information});
                     }
                     break;
             }
@@ -350,6 +348,7 @@ int cWikiParser::internalLink(std::string original){
     std::string text;
     linkDB.push_back(Links());
     
+
     int UID = linkDB.size()-1;                  //size will get number of elements so the first one is linkDB[0] while size is 1
 
     int i = 0;
@@ -381,12 +380,12 @@ int cWikiParser::internalLink(std::string original){
         auto it = availMap.find(link);
         if(it != availMap.end()){
             if(it->second==1){
-                linkDB[UID].available = true
-             }else{
-                linkDB[UID].availbale = false;
+                linkDB[UID].available = true;
+            }else{
+                linkDB[UID].available = false;
         	}
         }else{
-            printf("%s:[wikiParser.cpp] - Unable to locate %s within map. Set as not avilable for now\n", currentDateTime().c_str(), chapName.c_str());		//just to make sure error is fixed								
+            printf("[wikiParser.cpp] - Unable to locate %s within map. Set as not avilable for now\n", text.c_str());		//just to make sure error is fixed								
             linkDB[UID].available = false;
         }
     }
