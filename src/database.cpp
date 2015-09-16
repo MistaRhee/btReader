@@ -95,7 +95,9 @@ bool cMain::hasNew(const std::string title){
         while(fileExists(fileName)){
             fileName = tempLoc+generateRandomName(50);
         }
-        newDl.download(domain+revID+title, fileName);
+        if(!newDl.download(domain+revID+title, fileName)){
+            return 0; //The website is offline.
+        }
         XMLNode mNode = XMLNode::openFileHelper(fileName.c_str(), "api");
         if(original.compare(mNode.getChildNode("query").getChildNode("novels").getChildNode("novel").getChildNode("revisions").getChildNode("rev").getAttribute("revid"))!= 0){
             rVal = 0;
@@ -120,7 +122,7 @@ void cMain::updateDatabase(){
         tempFile = tempLoc+generateRandomName(50);
     }
     std::string novelName;
-    stream1.download(domain+novelList, tempFile);
+    if(!stream1.download(domain+novelList, tempFile)) return; //Stop trying to update if site is down or something
     try{
         XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
         XMLNode queryNode = mainNode.getChildNode("query");
@@ -193,7 +195,10 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
             tempFile = "data/temp/"+generateRandomName(50);
 			tempFile2 = tempFile + "2";
         }
-        mDownload.download(domain+pageDetail+title, tempFile);
+        int retry = 0;
+        while(!mDownload.download(domain+pageDetail+title, tempFile)){
+            if (retry++ > 5) throw (mException("Website is down or something, can't download"));
+        }
         printf("%s: [database.cpp] - Page saved to %s. \n", currentDateTime().c_str(), tempFile.c_str());
         printf("%s: [database.cpp] - Extracting wiki text... \n", currentDateTime().c_str());
         XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
@@ -205,7 +210,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         fprintf(fout, "%s", parseNode.getChildNode("wikitext").getText());
         fclose(fout);
 		int links = linksNode.nChildNode("pl");	//get the number of links and send it through.	
-		fprintf(fexist, "%i", links);
+		fpri0ntf(fexist, "%i", links);
 		for(int i = 0; i<links; i++){
 			if(linksNode.getChildNode("pl", i).isAttributeSet("exists")){
 				exist = 1;//link exists

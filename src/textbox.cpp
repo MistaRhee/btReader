@@ -138,6 +138,7 @@ namespace beatOff{
             mError += font;
             mError += ")";
             printf("%s\n", mError.c_str());
+            printf("%s\n", text.c_str());
             setWarning(mError); //Only warning the user (maybe they forgot to set the font before the test... IDK LOL!
         }
         else{

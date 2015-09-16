@@ -44,7 +44,7 @@ bool cHttpd::checkExist(const std::string url){
 }
 */
 
-void cHttpd::download(const std::string url, const std::string fileName){
+bool cHttpd::download(const std::string url, const std::string fileName){
     try{
 /*
         if(!checkExist(url)){
@@ -70,9 +70,11 @@ void cHttpd::download(const std::string url, const std::string fileName){
             throw (mException(e));
         }
         fclose(fin);
+        return 1;
     }
     catch(mException &e){
         printf("%s \n", e.what());
+        return 0;
     }
 }
 

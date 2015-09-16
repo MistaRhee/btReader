@@ -71,7 +71,8 @@ std::string cGetImage::getImage(const std::string fileName){
             while(fileExists(tempFile)){ //Just to ensure no double ups in name
                 tempFile = "data/temp/"+generateRandomName(50);
             }
-            mDownload.download(imageInfo, tempFile.c_str());
+            int retry = 0;
+            while(!mDownload.download(imageInfo, tempFile.c_str())) if(retry ++ > 5) throw(mException("Failed to download - Link is offline or website is down"));
             XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
             std::string check = mainNode.getChildNode("query").getChildNode("pages").getChildNode("page").getAttribute("imagerepository");
             if(check.compare("local") != 0){

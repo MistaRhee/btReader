@@ -21,8 +21,7 @@ To leave the image at its original size (and only set the size), set height and 
  -->
 
 <menu>
-	<!--main menu-->
-    <font name="default" sauce="system/fonts/droidsansfallback.ttf">
+    <font name="default" sauce="system/fonts/droidsansfallback.ttf" />
     <image name="settings" sauce="system/images/settings.png" x="0" y="0" h="50" w="50"/>
     <image name="settings-selected" sauce="system/images/settings_invert.png" x="0" y="0" h="50" w="50" />
     <button name="novelList" text="Novel List" font="default" x="55" y="0" h="50" w="453" size="25"/>
@@ -30,16 +29,6 @@ To leave the image at its original size (and only set the size), set height and 
     <image name="downloads" sauce="system/images/download.png" x="974" y="0" h="50" w="50" />
     <image name="downloads-selected" sauce="system/images/download_invert.png" x="974" y="0" h="50" w="50" />
     <image name="downloads-inactive" sauce="system/images/update.png" x="974" y="0" h="50" w="50" />
-	<!--submenus-->
-	<!--under construction
-	the following two are the novellist submenus
-	<button name="database" text="Database" font="default" x="0" y="55" h="50" w="297" size="25"/>
-	<button name="novelinfo" text="Novel info" font="default" x="303" y="55" h="50" w="297" size="25"/>
-	the following 3 are reader submenu
-	<button name="previous" text="Previous" font="default" x="0" y="55" h="50" w="196" size="25"/>
-	<button name="home" text="Home" font="default" x="202" y="55" h="50" w="196" size="25"/>
-	<button name="next" text="Next" font="default" x="404" y="55" h="50" w="196" size="25"/>
-	-->
     <content name="rendering" x="15" y="55" h="545" w="994" />
 </menu>
 
