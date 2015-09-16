@@ -185,6 +185,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                 }
                                 while(true){
                                     fgets(buffer, 4096, fin);
+                                    if(feof(fin)) break; //If I'm at the end of file, break the loop
                                     std::string title;
                                     std::string chapName;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
@@ -202,11 +203,11 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 														grabbing = spacer;
 													}
                                                     else if (buffer[i]==']'){
-                                                        title = chapName;
+                                                        chapName = title;
                                                         grabbing = leave;
                                                     }
 													else{
-														chapName += buffer[i];
+														title += buffer[i];
 													}
 													break;
 

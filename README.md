@@ -48,7 +48,7 @@ License and stuff
 these seconds of time which you are reading this note and realising that this
 note is actually pointless and is not worth NOTICING)
 
-Baka-Tsuki Reader for PC Copyright (C) 2013-2014  Justin Huang
+Baka-Tsuki Reader for PC Copyright (C) 2013-2014  Justin Huang (MistaRhee)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -54,6 +54,7 @@ namespace beatOff{
              * declared beforehand */
 
             int mHeight = 0;
+            cTextBox tempBox(); // This should only be used for the wrappedHeight method
 
             /* Create the texture first */
             mTexture = SDL_CreateTexture(
