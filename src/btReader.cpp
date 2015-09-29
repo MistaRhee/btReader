@@ -48,7 +48,7 @@ cMain::cMain(){
                 "btReader - By MistaRhee and NoOne2246", 
                 SDL_WINDOWPOS_CENTERED, 
                 SDL_WINDOWPOS_CENTERED, 
-                600, 1024, 
+                1024, 600, 
                 SDL_WINDOW_SHOWN
                 );
         mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
