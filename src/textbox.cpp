@@ -213,7 +213,7 @@ namespace beatOff{
             SDL_Rect dRect;
             SDL_Texture* mTexture = NULL;
             SDL_Surface* mSurface = NULL;
-            SDL_Colour mColour = {textR, textG, textB, textA};
+            SDL_Colour mColour = {static_cast<Uint8>(textR), static_cast<Uint8>(textG), static_cast<Uint8>(textB), static_cast<Uint8>(textA)};
             for(int i = 0, j = text.size(); i < j; i++){
                 temp += text[i];
                 if(text[i] == ' '){

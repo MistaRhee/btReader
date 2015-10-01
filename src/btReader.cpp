@@ -57,6 +57,7 @@ cMain::cMain(){
         getUserProfile();
     }
     startRunTime = SDL_GetTicks();
+    whereAt = showNovels;
 }
 
 cMain::~cMain(){
