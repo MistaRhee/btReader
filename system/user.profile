@@ -1,3 +1,13 @@
+<! ---
+
+    NOTE: This file holds all the data which will allow the use to modify the
+    way the interface looks. NOT TO BE USED BY n00b5 because it can potentailly
+    break horribly and potentially rupture the fabric of the universe.
+
+    You have been warned.....
+
+-->
+
 <profile>
 
     <keyBindings>
@@ -16,5 +26,40 @@
         <set option="NLsize" value="50" />
 
     </options>
+
+<!-- Note: Menu works in the following manner:
+        - There is either image, button or content
+        - They require a NAME (What the program will recognise it as), SAUCE(Location of the image), text (Contents of a button), X(x-pos of the object), Y (y-pos of the object), H (height of the object), W (Width of the object)
+        - They are listed in the drawn order as well (so the first image will be drawn before the second image etc.)
+    THESE IMAGES/BUTTON/CONTENT/FONT MUST EXIST OR THE CODE WILL BE CHANGED:
+        - FONT: default
+        - IMAGE: settings
+        - IMAGE: settings-selected
+        - button: novelList
+        - button: reader
+        - IMAGE: downloads
+        - IMAGE: downloads-selected
+        - IMAGE: downloads-inactive
+        - CONTENT: rendering (For the place for all the details of each section to be rendered)
+
+There is the optional tag name COLOUR. This tag allows the modder to change the default colours (such as button colours, background colours and the screen clear colours). To change the button colour, just have the tag <colour> with the attributes name(which can be either back, clear or button), r, g, b, a (each of the rgba combinations must be a number between 0 - 255. Colour must exist before ANY buttons are (or else the colour won't appear)
+
+There is only support for one content ATM
+
+To leave the image at its original size (and only set the size), set height and width at -1
+ -->
+    <menu>
+        <font name="default" sauce="system/fonts/droidsansfallback.ttf" />
+        <image name="settings" sauce="system/images/settings.png" x="0" y="0" h="50" w="50"/>
+        <image name="settings-selected" sauce="system/images/settings_invert.png" x="0" y="0" h="50" w="50" />
+        <button name="novelList" text="Novel List" font="default" x="55" y="0" h="50" w="453" size="25"/>
+        <button name="reader" text="Reader" font="default" x="513" y="0" h="50" w="453" size="25"/>
+        <image name="downloads" sauce="system/images/download.png" x="974" y="0" h="50" w="50" />
+        <image name="downloads-selected" sauce="system/images/download_invert.png" x="974" y="0" h="50" w="50" />
+        <image name="downloads-inactive" sauce="system/images/update.png" x="974" y="0" h="50" w="50" />
+        <content name="rendering" x="15" y="55" h="545" w="994" />
+    </menu>
+
+
 
 </profile>
