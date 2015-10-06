@@ -1,4 +1,4 @@
-<! ---
+<!---
 
     NOTE: This file holds all the data which will allow the use to modify the
     way the interface looks. NOT TO BE USED BY n00b5 because it can potentailly
@@ -20,10 +20,17 @@
 
     </keyBindings>
 
+    <fontList>
+<!-- 
+    Should list the fonts (name and the location) where name corresponds to
+    the name that will be referred to throughout this file
+ -->
+        <font name="default" sauce="system/fonts/droidsansfallback.ttf" />
+    </fontList>
+
     <options>
+<!-- This should only affect the settings/options screen -->
         
-<!-- Only tag is set -> It will set an option to a value -->
-        <set option="NLsize" value="50" />
 
     </options>
 
@@ -49,7 +56,7 @@ There is only support for one content ATM
 To leave the image at its original size (and only set the size), set height and width at -1
  -->
     <menu>
-        <font name="default" sauce="system/fonts/droidsansfallback.ttf" />
+        <font title="menuFont" name="default" />
         <image name="settings" sauce="system/images/settings.png" x="0" y="0" h="50" w="50"/>
         <image name="settings-selected" sauce="system/images/settings_invert.png" x="0" y="0" h="50" w="50" />
         <button name="novelList" text="Novel List" font="default" x="55" y="0" h="50" w="453" size="25"/>
@@ -60,6 +67,9 @@ To leave the image at its original size (and only set the size), set height and 
         <content name="rendering" x="15" y="55" h="545" w="994" />
     </menu>
 
-
+    <novelList>
+        <font title="novelListFont" name="default" />
+        <size value="50" />
+    </novelList>
 
 </profile>

@@ -23,13 +23,15 @@ So, when designing this, I have tried to allow as much flexibility in the
 interface as possible. This is the main cause of me using XML to store the data
 about graphics as much as possible. So basically, there will be three main XML
 files which need changing: manifest.db (yes, it's actually an XML file),
-system/menu.xml and system/profile.xml. "system/menu.xml" will store all the
-graphics and their positions. There MUST BE a downloads button, settings
-button, novel list button and reader button, but you can change it from text
-buttons to icons etc. "manifest.db" stores all the important system files, and
-so if you want to add extra graphics etc. you MUST add it to the manifest.db
-and remove the old entries, or else the program will refuse to work (I built it
-that way). "system/profile.xml" is the only XML file which won't force you to
+system/user.profile and system/profile.xml. "system/user.profile"
+
+"system/user.profile" is the most common file that will be edited (if you're
+looking into modding this stuff). This file will contain most of the options
+needed to make this thing work (nothing much else I guess). All extra resources
+or data MUST be added to manifest.db (which is an XML file), otherwise the
+program will refuse to work (most of the time)
+
+"system/profile.xml" is the only XML file which won't force you to
 manually edit it (it's the result of the settings page) and it will store your
 precious settings. You can do nifty things to it (like set the text colour or
 the background colour) which I don't really want to put into the settings menu
