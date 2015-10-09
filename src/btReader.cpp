@@ -99,7 +99,7 @@ void cMain::preComp(){
     colours.insert(std::make_pair("text", temp));
     getObjects();
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
-        mNovelList.addNovel(i->first, atoi(userProfile["NLSize"].c_str()));
+        mNovelList.addNovel(i->first, atoi(userProfile["NLSize"].c_str()), fonts["novelList"]);
     }
 }
 
@@ -155,6 +155,8 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
 void cMain::getUserProfile(){
     if(!fileExists("system/user.profile")){
         /* No existing profile exists create new one using default settings */
+        printf("%s: [btReader.cpp] - Critical Error! User Profile does not exist! \n", currentDateTime().c_str());
+        exit(-1);
     }
     else{
         try{

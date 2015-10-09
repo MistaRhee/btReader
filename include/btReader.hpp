@@ -131,6 +131,7 @@ class cMain{
         std::map<std::string, std::string> fonts;
         std::map<std::string, SDL_Color> colours;
         std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title, place to read from
+        std::map<std::string, > ;
 
         /* Different Screens */
         beatOff::cNovelList mNovelList;
@@ -139,7 +140,6 @@ class cMain{
 
         /* User stuff */
         beatOff::cKeyMap mKeys;
-        std::map<std::string, std::string> userProfile;
 };
 
 #endif //BTREADER_HPP

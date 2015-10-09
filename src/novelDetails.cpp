@@ -15,7 +15,7 @@ namespace beatOff{
         setSize(inRect.h, inRect.w); 
     }
 
-    void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer, std::string font){
+    void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer, std::string fontLoc){
         try{
             /* Clearing out old textures */
             if(mTexture){
@@ -54,7 +54,7 @@ namespace beatOff{
              * declared beforehand */
 
             cTextBox tempBox; //A temporary textbox that will only be used for the "wrapped height" method
-            tempBox.setFont(font); //Font will always be here
+            tempBox.setFont(fontLoc); //Font will always be here
             int mHeight = 0;
             tempBox.setText(title);
 //            tempBox.setTextSize();

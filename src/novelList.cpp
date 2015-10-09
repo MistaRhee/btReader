@@ -14,7 +14,7 @@ namespace beatOff{
         backColour.g = 255;
         backColour.b = 255;
         backColour.a = 255;
-        setFont("system/fonts/droidsansfallback.ttf");
+        setFont("system/fonts/droidsansfallback.ttf"); //Should be default
         setFontSize(20);
 
         /* Handles the texturing of the novel list */
@@ -67,6 +67,7 @@ namespace beatOff{
         newText.setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
         newText.setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);
         newText.setFont(fontLoc);
+        fprintf(stderr, "%s \n", fontLoc.c_str());
         newText.centre(); //Because text centering is nice
         mNovels.push_back(newText);
         h += novelHeight;
