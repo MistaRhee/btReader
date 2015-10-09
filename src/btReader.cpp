@@ -305,37 +305,9 @@ void cMain::render(){
     auto found = colours.find("clear");
     SDL_SetRenderDrawColor(mRenderer, found->second.r, found->second.g, found->second.b, found->second.a);
     SDL_RenderClear(mRenderer);
-    /* Draw the content first */
     try{
-        switch(whereAt){
-            case settings:
-                /* Not done yet. You mad? */
-                break;
-
-            case showNovels:
-                mNovelList.render(mRenderer);
-                break;
-
-            case novelDetails:
-                /* Not done yet. You mad? */
-                break;
-
-            case reader:
-//                mReader.render(mRenderer);
-                break;
-
-            case dlList:
-                /* Not done yet. You mad? */
-                break;
-
-            default:
-                std::string mError = currentDateTime() + ": ";
-                mError += "[btReader.cpp] - Stuck at render. Invalid WhereAt (Code: ";
-                mError += std::to_string(whereAt);
-                setError(mError);
-                printf("%s \n", mError.c_str());
-                break;
-        }
+        /* Draw the content first */
+        mContents[whereAt]->render();
         /* Draw the "interface" over the content. Interface will ALWAYS only
          * consist of the objects below (no dynamic loading etc...) */
         switch(whereAt){

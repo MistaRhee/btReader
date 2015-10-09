@@ -125,21 +125,23 @@ class cMain{
         SDL_Renderer* mRenderer;
         SDL_Rect contentLoc;
 
-        /* Storage */
-        std::map<std::string, beatOff::cImage> images;
-        std::map<std::string, beatOff::cButton> buttons;
-        std::map<std::string, std::string> fonts;
-        std::map<std::string, SDL_Color> colours;
-        std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title, place to read from
-        std::map<std::string, > ;
+        /* Different screen contents stored here */
+        std::map<places_t, beatOff::cContent*> mContents;
 
-        /* Different Screens */
-        beatOff::cNovelList mNovelList;
-//        beatOff::cReader mReader;
-//        beatOff::cNovelDetails mNovelDetails;
+        /* Global storage */
+        std::map<std::string, std::string> fonts;
+        std::map<std::string, SDL_Color> colours; //Unsure if this is needed yet
+
+        /* Background storage */
+        std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title, place to read from
 
         /* User stuff */
         beatOff::cKeyMap mKeys;
+
+        /* Configuration file -> Going to leave loaded ATM, but it shouldn't be
+         * needed 
+         */
+        XMLNode userConfig;
 };
 
 #endif //BTREADER_HPP

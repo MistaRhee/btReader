@@ -37,6 +37,17 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             SDL_Color textColour;
             SDL_Color backColour;
     };
+    
+    class cMenu : public cContent{ //For the main menu (headers etc.)
+        public:
+            void render(SDL_Renderer*);
+            void handleUserMouse(int, int, int, bool);
+            std::string getSelected; //Returns the name of the object that is currently selected
+        private:
+            void moveSelection(int); //ds
+            std::map<std::string, beatOff::cImage> images;
+            std::map<std::string, beatOff::cButton> butons;
+    };
 
     class cNovelList : public cContent{ //Config part of user Profile
         public:
@@ -46,7 +57,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
 
             /* "User" interactions */
             void addNovel(std::string, int);
-            void moveSelection(int);
+            void moveSelection(int); //ds
             std::string getSelected();
 
             /* Event handling */
