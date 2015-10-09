@@ -31,6 +31,7 @@
 #define FPS_CAP 1000/60
 
 enum places_t{
+    menu = -1, //Should actually have to maually call this
     settings,
     showNovels,
     novelDetails,

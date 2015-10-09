@@ -308,62 +308,8 @@ void cMain::render(){
     try{
         /* Draw the content first */
         mContents[whereAt]->render();
-        /* Draw the "interface" over the content. Interface will ALWAYS only
-         * consist of the objects below (no dynamic loading etc...) */
-        switch(whereAt){
-            case settings:
-                images["settings-selected"].render(mRenderer);
-                buttons["novelList"].deselect();
-                buttons["novelList"].render(mRenderer);
-                buttons["reader"].deselect();
-                buttons["reader"].render(mRenderer);
-                images["downloads"].render(mRenderer);
-                break;
-
-            case showNovels:
-                images["settings"].render(mRenderer);
-                buttons["novelList"].select();
-                buttons["novelList"].render(mRenderer);
-                buttons["reader"].deselect();
-                buttons["reader"].render(mRenderer);
-                images["downloads"].render(mRenderer);
-                break;
-
-            case novelDetails:
-                images["settings"].render(mRenderer);
-                buttons["novelList"].select();
-                buttons["novelList"].render(mRenderer);
-                buttons["reader"].deselect();
-                buttons["reader"].render(mRenderer);
-                images["downloads"].render(mRenderer);
-                break;
-
-            case reader:
-                images["settings"].render(mRenderer);
-                buttons["novelList"].deselect();
-                buttons["novelList"].render(mRenderer);
-                buttons["reader"].select();
-                buttons["reader"].render(mRenderer);
-                images["downloads"].render(mRenderer);
-                break;
-
-            case dlList:
-                images["settings"].render(mRenderer);
-                buttons["novelList"].deselect();
-                buttons["novelList"].render(mRenderer);
-                buttons["reader"].deselect();
-                buttons["reader"].render(mRenderer);
-                images["downloads-selected"].render(mRenderer);
-                break;
-
-            default:
-                std::string mError = currentDateTime() + ": ";
-                mError += "[btReader.cpp] - Stuck at render. Invalid WhereAt (Code: ";
-                mError += std::to_string(whereAt);
-                setError(mError);
-                printf("%s \n", mError.c_str());
-                break;
-        }
+        /* Draw the "interface" over the content. */
+        mContents[menu]->render();
     }
     catch(mException& e){
         std::string mError = currentDateTime() + ": ";
