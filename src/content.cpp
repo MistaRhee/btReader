@@ -31,4 +31,13 @@ namespace beatOff{
         return(((x >= this->x)&(x < this->x + this->w)&(y >= this->y)&(y < this->y + this->h)));
     }
 
+    void cContent::inFocus(){
+        inFocus = 1;
+    }
+
+    void cContent::offFocus(){
+        inFocus = 0;
+    }
+
+    bool cContent::isInFocus(){ return inFocus; }
 }

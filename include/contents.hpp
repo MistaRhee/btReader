@@ -25,7 +25,10 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void setFontSize(int);
             void setTextColour(SDL_Color);
             void setBackColour(SDL_Color);
-            bool inFocus(int, int); //x and y position of the mouse
+            bool inOver(int, int); //x and y position of the mouse
+            void inFocus(); //Turns on focus
+            void offFocus(); //Turns off focus
+            bool isInFocus();
 
             /* Event Handling -> Keyboard ignored as it is handled in main
              * event */
@@ -37,6 +40,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             int fontSize;
             SDL_Color textColour;
             SDL_Color backColour;
+            bool inFocus;
     };
     
     class cMenu : public cContent{ //For the main menu (headers etc.)
