@@ -79,10 +79,9 @@ void cMain::preComp(){
      * exists
      */
     /* Clearing the maps, just in case data is leaked (shouldn't though) */
-    images.clear();
-    buttons.clear();
     fonts.clear();
     colours.clear();
+    mContents.clear();
     replaceDatabase();
 
     /* Creating a colour map */

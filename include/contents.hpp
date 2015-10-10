@@ -25,6 +25,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void setFontSize(int);
             void setTextColour(SDL_Color);
             void setBackColour(SDL_Color);
+            bool inFocus(int, int); //x and y position of the mouse
 
             /* Event Handling -> Keyboard ignored as it is handled in main
              * event */

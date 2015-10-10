@@ -92,8 +92,12 @@ class cMain{
         void handleUserScroll(int, int); //dx, dy
 
         /* The main loop */
-//        void update();
+        void update();
         void processEvents();
+        /* NOTE: The main "overlord" class should not be rendering anything
+         * itself, it should only be calling the "render" functions of all the
+         * smaller subclasses of contents
+         */
         void render();
 
         /* Database operations */
