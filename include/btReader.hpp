@@ -86,6 +86,9 @@ class cMain{
         void getObjects();
         void getUserProfile();
 
+        /* Sudoku function */
+        void commitSudoku();
+
         /* Event handling */
         void handleUserKey(SDL_Keycode, bool, unsigned int); //key pressed, is it down, keyModifiers
         void handleUserMouse(int, int, int, bool); //x, y, mouse type, is down

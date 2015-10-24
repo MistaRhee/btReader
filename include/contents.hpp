@@ -29,11 +29,14 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void inFocus(); //Turns on focus
             void offFocus(); //Turns off focus
             bool isInFocus();
-
+            void use();
+            void hide();
+            bool isInUse();
             /* Event Handling -> Keyboard ignored as it is handled in main
              * event */
             virtual void handleUserMouse(int, int, int, bool) {}
             virtual void handleUserScroll(int, int) {}
+            virtual void handleUserKeyboard(SDL_Keycode, bool, unsigned int) {}
         protected:
 //            bool changed, created; //Not sure why these are here....
             std::string fontLoc;
@@ -41,6 +44,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             SDL_Color textColour;
             SDL_Color backColour;
             bool inFocus;
+            bool inUse;
     };
     
     class cMenu : public cContent{ //For the main menu (headers etc.)

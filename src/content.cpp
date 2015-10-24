@@ -40,4 +40,8 @@ namespace beatOff{
     }
 
     bool cContent::isInFocus(){ return inFocus; }
+
+    void cContent::use() { inUse = 1; }
+    void cContent::hide() { inUse = 0; }
+    bool cContent::isInUse(){ return isInUse; }
 }

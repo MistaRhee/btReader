@@ -293,11 +293,10 @@ bool cMain::run(){
     printf("Runtime = %d", SDL_GetTicks() - startRunTime);
     return rVal;
 }
-/*
+
 void cMain::update(){
-    
+    /* ~~La da da~~ */
 }
-*/
 
 void cMain::render(){
     /* Clear the screen with the background colour */
@@ -320,4 +319,8 @@ void cMain::render(){
     /* Display the image \0/ */
     SDL_RenderPresent(mRenderer);
     /* Come again to render more shit :D */
+}
+
+void cMain::commitSudoku(){
+    running = 0; //Wai you do dis?
 }
