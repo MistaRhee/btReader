@@ -5,4 +5,6 @@ noteToSelf
 notesToSelf
 reader
 data/
-nbproject/
+.codelite/
+btreader.project
+btreader.workspace
