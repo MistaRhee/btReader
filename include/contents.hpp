@@ -32,11 +32,10 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void use();
             void hide();
             bool isInUse();
-            /* Event Handling -> Keyboard ignored as it is handled in main
-             * event */
+            /* Event Handling */
             virtual void handleUserMouse(int, int, int, bool) {}
             virtual void handleUserScroll(int, int) {}
-            virtual void handleUserKeyboard(SDL_Keycode, bool, unsigned int) {}
+            virtual void handleUserKeyboard(std::string, bool, unsigned int) {} //Name of the key, is pressed and the bitmask for modifiers
         protected:
 //            bool changed, created; //Not sure why these are here....
             std::string fontLoc;

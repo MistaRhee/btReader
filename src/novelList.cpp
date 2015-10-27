@@ -130,6 +130,21 @@ namespace beatOff{
         /* Sauce rect h and w should be equal to dRect */
         SDL_RenderCopy(mRenderer, mTexture, &sauceRect, &dRect);
     }
+    
+    void cNovelList::handleUserKeyboard(std::string id, bool isPressed, unsigned int bitmask){
+        /* Add in ID cases as we go along */
+        if(id == "up"){
+            /* Move selection up */
+            
+        }
+        else if (id == "down"){
+            /* Move selection down */
+            
+        }
+        else if (id == "go"){
+            /* Selected that object */
+        }
+    }
 
     void cNovelList::handleUserScroll(int dx, int dy){
         move(0, dy); //No horizontal scrolling
@@ -142,7 +157,7 @@ namespace beatOff{
          * */
         switch(mouseType){
             case SDL_BUTTON_LEFT:
-                /* Left click -> Should be handled by main class*/
+                /* Left click */
                 break;
 
             case SDL_BUTTON_RIGHT:
@@ -157,7 +172,7 @@ namespace beatOff{
                 break;
 
             default:
-                /* Should only reach here on non-conventional mouse keys */
+                /* Should only reach here on non-conventional mouse keys which I don't handle ROFL */
                 break;
         }
 

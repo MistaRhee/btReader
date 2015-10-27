@@ -68,8 +68,9 @@ void cMain::processEvents(){
 void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers){
     /* Sends the correct token to the appropriate content object */
     for(auto it = mContents.begin(); it != mContents.end(); ++it){
-        if(it->second->isFocused()){
-            
+        if(it->second->isFocused() && it->second->isInUse()){ //In use should be implied, but leaving there to be sure
+            /* Send the appropriate keyID to the content */
+            it->second->handleUser
         }
     }
 }
@@ -95,7 +96,7 @@ void cMain::handleUserScroll(int dx, int dy){
     for(auto it = mContents.begin(); it != mContents.end(); ++it){
         if(it->second->isOver(x, y) && it->second->isInUse()){
             it->second->handleUserScroll(dx, dy);
-            break;
+            break; //No need to check any more
         }
     }
 }
