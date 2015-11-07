@@ -94,17 +94,6 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             bool textureGen;
             bool mouseMoved;
     };
-    
-    class cReader : public cContent{
-        public:
-            cReader();
-            void setRect(SDL_Rect); //Sets the dimensions of the rendered object (so the program won't get confused)
-            void render(SDL_Renderer*);
-            void getContent(std::string); //Gets the content from a file and then renders it to a texture
-        private:
-            SDL_Texture* mTexture;
-            bool loaded;
-    };
 
     class cNovelDetails : public cContent{
         public:

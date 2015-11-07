@@ -132,7 +132,9 @@ namespace beatOff{
     }
     
     void cNovelList::handleUserKeyboard(std::string id, bool isPressed, unsigned int bitmask){
-        /* Add in ID cases as we go along */
+        /* Add in ID cases as we go along. On second thoughts, this wasn't such
+         * a good idea.......
+         */
         if(id == "up"){
             /* Move selection up */
             
