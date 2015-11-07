@@ -16,6 +16,11 @@ Hikaru ga Chikyuu ni Itakoro...... as a title should not have the extra periods
 after it.................................. and some URLs have them, others
 don't. Yeah, that stuff)
 
+
+-> NOTE: This version is the "lazy man's" version without a proper reader. If
+you wish to have a nice reader attached to this which doesn't launch a web-browser
+make it yourself.
+
 Modding/Modifications that can be made
 --------------------------------------
 
