@@ -1,12 +1,6 @@
 #ifndef BTREADER_HPP
 #define BTREADER_HPP
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-#if __unix__
-#include <dirent.h>
-#endif
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
@@ -35,9 +29,21 @@ enum places_t{
     settings,
     showNovels,
     novelDetails,
-    reader,
     dlList
     //updates (maybe implementing later)
+};
+
+class cWebOut{
+    public:
+        cWebOut();
+        ~cWebOut();
+        void createPage(std::string sauce);
+        void displayPage();
+        void cleanUp();
+
+    private:
+        bool isReady;
+        std::string tempLoc;
 };
 
 class cGetImage{

@@ -1,6 +1,13 @@
 #include "btReader.hpp"
 
 #ifdef _WIN32
+#include <windows.h>
+#endif
+#if __unix__
+#include <dirent.h>
+#endif
+
+#ifdef _WIN32
 inline bool dirExists(const std::string& dirName) {
     DWORD ftyp = GetFileAttributesA(dirName.c_str());
     if (ftyp == INVALID_FILE_ATTRIBUTES) return false;
