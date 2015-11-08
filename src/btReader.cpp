@@ -49,7 +49,10 @@ cMain::cMain(){
     if(checkDependencies()){
         preComp();
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
-            printf("%s: [btReader.cpp] - SDL could not initialize! SDL_Error: %s \n",currentDateTime().c_str(), SDL_GetError());
+            std::string e = currentDateTime() + ": [btReader.cpp] - SDL could not initialize! SDL_Error:";
+            e += SDL_GetError();
+            fprintf(stderr, "%s \n", e.c_str());
+            exit(123);
         }
         mWindow = SDL_CreateWindow(
                 "btReader - By MistaRhee and NoOne2246", 

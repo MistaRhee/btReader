@@ -343,11 +343,11 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
     char buffer[1000000];
     std::string text;
     while(true){
-        if(!feof(fin)){
+        fgets(buffer, 1000000, fin);
+        if(feof(fin)){
             break;
         }
         else{
-            fgets(buffer, 1000000, fin);
             if(buffer[0] == '[' and buffer[1] == '['){
                 std::string fileName;
                 for(int i = 2;; i++){
@@ -365,12 +365,13 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
             }
             else{
                 text += buffer;
-                text += "\n";
             }
         }
     }
     fclose(fin);
-    fprintf(fopen(out.c_str(), "w+"), "%s \n", text.c_str());
+    FILE* fout = fopen(out.c_str(), "w+");
+    fprintf(fout, "%s \n", text.c_str());
+    fclose(fout);
 }
 
 std::string cWikiParser::getError(){

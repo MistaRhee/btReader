@@ -49,7 +49,7 @@ class cWebOut{
 class cGetImage{
     public:
         std::string getImage(const std::string); //File name, returns file saved location
-        std::string generateRandomName(int len);
+
     private:
         bool isFromBT(std::string);
         std::string sanatize(const std::string);

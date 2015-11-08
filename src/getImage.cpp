@@ -25,16 +25,6 @@ std::string sanitize(const std::string filename){
     return newString;
 }
 
-std::string cGetImage::generateRandomName(int length){       
-    srand(time(NULL));     
-    const char aCharacters[] = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";       
-    std::string rVal;      
-    for(int i = 0, j = strlen(aCharacters); i < length; i++){      
-        rVal += aCharacters[rand()%j];     
-    }      
-    return rVal;   
-}
-
 bool cGetImage::isFromBT(std::string sauce){
     /* Should only have one http:// so I'll use this as base and if this isn't
      * good enough, I'll improve it */
@@ -80,10 +70,30 @@ std::string cGetImage::getImage(const std::string fileName){
             else{
                 std::string imageSource = mainNode.getChildNode("query").getChildNode("pages").getChildNode("page").getChildNode("imageinfo").getChildNode("ii").getAttribute("url");
                 remove(tempFile.c_str());
-                tempFile = imageStore+generateRandomName(25);
-                while(fileExists(tempFile)){ //Just to ensure no double ups in name
-                    tempFile = "data/image/"+generateRandomName(25);
+                
+                /* Pull their naming system and create the folders needed to use this
+                 * Guaranteed to be unique because they use this system
+                 */
+                std::string temp;
+                tempFile = imageSource;
+                /* Remove fluff */
+                for(int i = 0; i < imageSource.size(); i++){
+                    if(imageSource[i] == "/"){
+                        if(temp == "image"){
+                            imageSource.erase(0, temp.size()+1);
+                            break;
+                        }
+                        else{
+                            imageSource.erase(0, temp.size()+1);
+                        }
+                    }
+                    else{
+                        temp += imageSource[i];
+                    }
                 }
+
+                /* Grab subfolders */
+
                 mDownload.download(imageSource, tempFile);
                 return tempFile;
             }

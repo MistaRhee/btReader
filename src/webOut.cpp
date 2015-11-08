@@ -1,5 +1,12 @@
 #include "btReader.hpp"
 
+inline bool fileExists(const std::string loc){
+    FILE* ftest = NULL;
+    ftest = fopen(loc.c_str(), "r");
+    if(ftest) return 1;
+    else return 0;
+}
+
 #ifdef _WIN32
 #include <windows.h>
 
@@ -36,13 +43,6 @@ inline bool dirExists(const std::string& dirName){
     else return true;
 }
 
-inline bool fileExists(const std::string loc){
-    FILE* ftest = NULL;
-    ftest = fopen(loc.c_str(), "r");
-    if(ftest) return 1;
-    else return 0;
-}
-
 /* Same as functions above, just for unix */
 inline std::string ctf(){
     assert(dirExists("/tmp/"));
@@ -67,6 +67,11 @@ inline void disp(std::string loc){
 
 cWebOut::cWebOut(){
     /* Create the temporary file, ready for writing */
+    std::string mLoc;
+    mLoc = ctf();
+    FILE* ft = fopen(mLoc.c_str(), "w+");
+    fclose(ft);
+    tempLoc = mLoc;
 }
 
 cWebOut::~cWebOut(){
@@ -75,6 +80,13 @@ cWebOut::~cWebOut(){
 
 void cWebOut::createPage(std::string sauce){
     /* Takes the chapter XML information file and generates a HTML webpage for it */
+    if(!fileExists(tempLoc.c_str())){
+        std::string e = currentDateTime() + ": [webOut.cpp] - Error! Temporary file wasn't created!";
+        throw(mException(e));
+    }
+    else{
+        
+    }
 }
 
 void cWebOut::cleanUp(){
