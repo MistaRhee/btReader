@@ -57,11 +57,15 @@ inline std::string ctf(){
 }
 
 inline void disp(std::string loc){
-    const char** margv = new const char* [3];
-    margv[0] = "/usr/bin/xdg-open";
-    margv[1] = loc.c_str();
-    margv[2] = NULL;
-    execv("/usr/bin/xdg-open", (char**) margv);
+    pid_t i = fork();
+    if(i == 0){
+        /* Child process */
+        const char** margv = new const char* [3];
+        margv[0] = "/usr/bin/xdg-open";
+        margv[1] = loc.c_str();
+        margv[2] = NULL;
+        execv("/usr/bin/xdg-open", (char**) margv);
+    }
 }
 #endif
 
