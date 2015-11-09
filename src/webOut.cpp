@@ -155,12 +155,38 @@ void cWebOut::createPage(std::string sauce, std::string title){
                 }
             }
             else{
+                /* Create a paragraph node */
+                XMLNode pNode = body.addChild("p");
+                XMLNode currNode = pNode;
                 for(int i = 0, j = strlen(buffer); i < j; i++){
+                    /* Continue adding text. */
+                    if(buffer[i] == '\''){
+                        /* Check if it's a triple*/
+                        if(i < j-2 && buffer[i+1] == '\'' && buffer[i+2] == '\''){
+                            /* OH BABY IT'S A TRIPLE 
+                             * If it's already flagged, then unflag and display as bold 
+                             */
+                            if(bitmask & 0b00010000 > 0){
+                                /* Flagged */
+                                bitmask &= 0b11101111;
+                            }
+                            else{
+                                bitmask |= 0b00010000;
+                            }
+                        }
+                        /* Check for double */
+                        else if(i < j-1 && buffer[i+1] == '\''){
+                            /* DOUBLE! 
+                             * Same as above
+                             */
+                            
+                        }
+                    }
                 }
             }
 
             if(feof(fin)){ //Now I'm post-checking like a good boy!
-
+                break;
             }
         }
     }
