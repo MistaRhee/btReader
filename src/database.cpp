@@ -170,7 +170,9 @@ void cMain::replaceDatabase(){
     else{
         char* t;
         t = mainNode.createXMLString(true);
-        fprintf(fopen("data/novels.db", "w+"), "%s\n", t);
+        FILE*fout = fopen("data/novels.db", "w+");
+        fprintf(fout, "%s\n", t);
+        fclose(fout); //To ensure the write
         free(t);
         printf("%s: [database.cpp] - Database successfully replaced! \n", currentDateTime().c_str());
     }

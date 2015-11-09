@@ -37,7 +37,7 @@ class cWebOut{
     public:
         cWebOut();
         ~cWebOut();
-        void createPage(std::string sauce);
+        void createPage(std::string sauce, std::string title);
         void displayPage();
         void cleanUp();
 
