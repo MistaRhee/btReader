@@ -111,7 +111,6 @@ void cWebOut::createPage(std::string sauce, std::string title){
         main.getChildNode("head").getChildNode("title").addText(title.c_str());
         FILE* fin = fopen(sauce.c_str());
         char buffer[1000000];
-        int counter = 0;
         std::string temp;
         /* Bitmask to contain what modifiers are currently used
          * Format:
@@ -126,7 +125,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
          */
         unsigned char bitmask = 0;
         while(true){ //Loop 'till end of file
-            fgets(buffer, 1000000, fin);
+            fgets(buffer, 1000000, fin); //Get next line
 
             /* Reset counters and bitmask */
             bitmask = 0;
@@ -140,7 +139,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
                 }
                 if(num == j){ //Pure equals, just leave it in
                     body.addChild("p");
-                    body.getChildNode(counter).addText(buffer);
+                    body.getChildNode(body.nChildNode()-1).addText(buffer);
                     counter++;
                 }
                 else{
@@ -149,15 +148,13 @@ void cWebOut::createPage(std::string sauce, std::string title){
                     }
                     sprintf(buffer, "h%d", num);
                     body.addChild(buffer);
-                    body.getChildNode(counter).addText(temp);
+                    body.getChildNode(body.nChildNode()-1).addText(temp);
                     temp.clear();
-                    counter ++;
                 }
             }
             else{
                 /* Create a paragraph node */
-                XMLNode pNode = body.addChild("p");
-                XMLNode currNode = pNode;
+                XMLNode currNode = body.addChild("p");
                 for(int i = 0, j = strlen(buffer); i < j; i++){
                     /* Continue adding text. */
                     if(buffer[i] == '\''){
@@ -168,18 +165,51 @@ void cWebOut::createPage(std::string sauce, std::string title){
                              */
                             if(bitmask & 0b00010000 > 0){
                                 /* Flagged */
-                                bitmask &= 0b11101111;
+                                bitmask &= 0b11101111; //Clear bit
+                                if(!temp.empty()) currNode.addText(temp.c_str());
+                                temp.clear();
+                                currNode = currNode.getParentNode();
                             }
                             else{
-                                bitmask |= 0b00010000;
+                                bitmask |= 0b00010000; //Flip the bit
+                                if(!temp.empty()) currNode.addText(temp.c_str());
+                                temp.clear();
+                                currNode.addChild("b");
+                                currNode = currNode.getChildNode(currNode.nChildNode()-1);
                             }
+                            i += 2;
                         }
                         /* Check for double */
                         else if(i < j-1 && buffer[i+1] == '\''){
                             /* DOUBLE! 
                              * Same as above
                              */
-                            
+                            if(bitmask & 0b00001000 > 0){
+                                /* Flagged */
+                                bitmask &= 0b11110111; //Clear bit
+                                if(!temp.empty()) currNode.addText(temp.c_str());
+                                temp.clear();
+                                currNode = currNode.getParentNode();
+                            }
+                            else{
+                                bitmask |= 0b00001000; //Flip the bit
+                                if(!temp.empty()) currNode.addText(temp.c_str());
+                                temp.clear();
+                                currNode.addChild("i");
+                                currNode = currNode.getChildNode(currNode.nChildNode()-1);
+                            }
+                            i++;
+                        }
+                        else if(buffer[i] == '[' && buffer[i+1] == '['){
+                            /* Image */
+                            if(!temp.empty()) currNode.addText(temp.c_str());
+                            temp.clear();
+                            temp = getCWD();
+                        }
+                        else{
+                            /* Just add it to the current text, it's not like it's special or
+                             * anything -.- */
+                            temp += buffer[i];
                         }
                     }
                 }
