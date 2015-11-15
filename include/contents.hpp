@@ -29,7 +29,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void inFocus(); //Turns on focus
             void offFocus(); //Turns off focus
             bool isInFocus();
-            void use();
+            void inUse();
             void hide();
             bool isInUse();
             /* Event Handling */
@@ -42,8 +42,8 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             int fontSize;
             SDL_Color textColour;
             SDL_Color backColour;
-            bool inFocus;
-            bool inUse;
+            bool focus;
+            bool use;
     };
     
     class cMenu : public cContent{ //For the main menu (headers etc.)

@@ -32,16 +32,16 @@ namespace beatOff{
     }
 
     void cContent::inFocus(){
-        inFocus = 1;
+        focus = 1;
     }
 
     void cContent::offFocus(){
-        inFocus = 0;
+        focus = 0;
     }
 
     bool cContent::isInFocus(){ return inFocus; }
 
-    void cContent::use() { inUse = 1; }
-    void cContent::hide() { inUse = 0; }
+    void cContent::inUse() { use = 1; }
+    void cContent::hide() { use = 0; }
     bool cContent::isInUse(){ return isInUse; }
 }

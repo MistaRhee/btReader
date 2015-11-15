@@ -127,7 +127,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
         while(true){ //Loop 'till end of file
             fgets(buffer, 1000000, fin); //Get next line
 
-            /* Reset counters and bitmask */
+            /* Reset bitmask */
             bitmask = 0;
             if(buffer[0] == '='){ //Heading modifier
                 /* Count the number of '=' there are */
@@ -140,7 +140,6 @@ void cWebOut::createPage(std::string sauce, std::string title){
                 if(num == j){ //Pure equals, just leave it in
                     body.addChild("p");
                     body.getChildNode(body.nChildNode()-1).addText(buffer);
-                    counter++;
                 }
                 else{
                     for(int k = 0, int j = strlen(buffer); k < j-num; k++){
@@ -182,7 +181,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
                         /* Check for double */
                         else if(i < j-1 && buffer[i+1] == '\''){
                             /* DOUBLE! 
-                             * Same as above
+                             * Same as above, just with italics instead of bold
                              */
                             if(bitmask & 0b00001000 > 0){
                                 /* Flagged */
@@ -204,7 +203,9 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             /* Image */
                             if(!temp.empty()) currNode.addText(temp.c_str());
                             temp.clear();
-                            temp = getCWD();
+                            for(int k = i+2; k < j; k++){
+                                
+                            }
                         }
                         else{
                             /* Just add it to the current text, it's not like it's special or
@@ -212,6 +213,13 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             temp += buffer[i];
                         }
                     }
+                    else{
+                        temp += buffer[i]
+                    }
+                }
+                if(!temp.empty()){
+                    currNode.addText(temp.c_str());
+                    temp.clear();
                 }
             }
 

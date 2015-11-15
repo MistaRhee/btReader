@@ -108,7 +108,11 @@ void cMain::preComp(){
     colours.insert(std::make_pair("text", temp));
     getObjects();
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
-        mNovelList.addNovel(i->first, atoi(userProfile["NLSize"].c_str()), fonts["novelList"]);
+        mContents[novelList].addNovel(
+                i->first, 
+                atoi(userProfile["NLSize"].c_str()), 
+                fonts["novelList"]
+                );
     }
 }
 
