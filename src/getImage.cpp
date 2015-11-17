@@ -1,5 +1,34 @@
 #include "btReader.hpp"
 
+#ifdef _WIN32
+inline bool dirExists(const std::string& dirName) {
+    DWORD ftyp = GetFileAttributesA(dirName.c_str());
+    if (ftyp == INVALID_FILE_ATTRIBUTES) return false;
+    if (ftyp & FILE_ATTRIBUTE_DIRECTORY) return true;
+    return false;
+}
+
+inline void createFolder(const std::string& dirName){
+    std::string command;
+    command = "mkdir "+dirName;
+    system(command.c_str());
+}
+#endif
+#ifdef __unix__
+inline bool dirExists(const std::string& dirName){
+    DIR* myDir = NULL;
+    myDir = opendir(dirName.c_str());
+    if(myDir == NULL) return false;
+    else return true;
+}
+
+inline void createFolder(const std::string& dirName){
+    std::string command;
+    command = "mkdir "+dirName;
+    system(command.c_str());
+}
+#endif
+
 inline bool fileExists (const std::string& name) {
     if (FILE *file = fopen(name.c_str(), "r")) {
         fclose(file);
@@ -92,7 +121,7 @@ std::string cGetImage::getImage(const std::string fileName){
                     }
                 }
 
-                /* Grab subfolders */
+                /* Grab subfolders, check their existence and create them if necessary */
 
                 mDownload.download(imageSource, tempFile);
                 return tempFile;

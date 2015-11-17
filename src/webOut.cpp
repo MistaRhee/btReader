@@ -112,23 +112,12 @@ void cWebOut::createPage(std::string sauce, std::string title){
         FILE* fin = fopen(sauce.c_str());
         char buffer[1000000];
         std::string temp;
-        /* Bitmask to contain what modifiers are currently used
-         * Format:
-         *  7 6 5 4 3 2 1 0
-         * |R|R|R|B|I|H|H|H|
-         *
-         * Where 
-         * H = Heading # bits (i.e. h1/h2 etc..)
-         * I = Italics
-         * B = Bold
-         * R = Reserved for later (mebbe strikethrough or underlined)
-         */
-        unsigned char bitmask = 0;
+        bool bold = 0;
+        bool italic = 0;
         while(true){ //Loop 'till end of file
             fgets(buffer, 1000000, fin); //Get next line
 
-            /* Reset bitmask */
-            bitmask = 0;
+            /* Not resetting flags at the moment because of potential multi-line bold/italics */
             if(buffer[0] == '='){ //Heading modifier
                 /* Count the number of '=' there are */
                 int num;
@@ -162,15 +151,15 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             /* OH BABY IT'S A TRIPLE 
                              * If it's already flagged, then unflag and display as bold 
                              */
-                            if(bitmask & 0b00010000 > 0){
+                            if(bold){
                                 /* Flagged */
-                                bitmask &= 0b11101111; //Clear bit
+                                bold = 0;
                                 if(!temp.empty()) currNode.addText(temp.c_str());
                                 temp.clear();
                                 currNode = currNode.getParentNode();
                             }
                             else{
-                                bitmask |= 0b00010000; //Flip the bit
+                                bold = 1; //Flip the bit
                                 if(!temp.empty()) currNode.addText(temp.c_str());
                                 temp.clear();
                                 currNode.addChild("b");
@@ -183,15 +172,15 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             /* DOUBLE! 
                              * Same as above, just with italics instead of bold
                              */
-                            if(bitmask & 0b00001000 > 0){
+                            if(italic){
                                 /* Flagged */
-                                bitmask &= 0b11110111; //Clear bit
+                                italic = 0; //Clear bit
                                 if(!temp.empty()) currNode.addText(temp.c_str());
                                 temp.clear();
                                 currNode = currNode.getParentNode();
                             }
                             else{
-                                bitmask |= 0b00001000; //Flip the bit
+                                italic = 1; //Flip the bit
                                 if(!temp.empty()) currNode.addText(temp.c_str());
                                 temp.clear();
                                 currNode.addChild("i");
@@ -200,7 +189,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             i++;
                         }
                         else if(buffer[i] == '[' && buffer[i+1] == '['){
-                            /* Image */
+                            /* Image -> It's an internal link */
                             if(!temp.empty()) currNode.addText(temp.c_str());
                             temp.clear();
                             for(int k = i+2; k < j; k++){
