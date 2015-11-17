@@ -37,7 +37,8 @@ std::string cWikiParser::space2Undersc(const std::string title){
     return cleaned;
 }
 
-std::string cWikiParser::textCleaner(std::string original){
+std::string cWikiParser::textCleaner(std::string in){
+    std::string original = in; //To remove potential memory space conflicts
     std::string cleaned;
     std::string temp;
     int i = 0;
@@ -58,7 +59,7 @@ std::string cWikiParser::textCleaner(std::string original){
                     cleaned += '{' + internalLink(temp) + '}';         //writes UID in
                     temp.clear();                                                   //clears temp
 
-                }else if(original[1] == 'h' && original[i+2]=='t' && original[i+3] == 't' && original[i+4] == 'p'){
+                }else if(original[i+1] == 'h' && original[i+2]=='t' && original[i+3] == 't' && original[i+4] == 'p'){
                                                                         //http link means external
                     i++;
                    while(original[i] != ']'){                           //get information
@@ -101,6 +102,7 @@ std::string cWikiParser::textCleaner(std::string original){
                 break;
 		}
     }
+    printf("%s \n", cleaned.c_str());
     return cleaned;
 }
 
@@ -215,7 +217,7 @@ void cWikiParser::openAP(const std::string inFile, const std::string existFile){
 
             //look for any of the following symbols':', '='or "*'
         int position = 0;
-        do{
+        while(position < buffer.size()){
 	    	int level = 0; //counts level the heading or body or information is under.
             switch(buffer[position]){
                 case '<':                                               //only deal with breaks
@@ -302,7 +304,7 @@ void cWikiParser::openAP(const std::string inFile, const std::string existFile){
                     }
                     break;
             }
-        }while(position < buffer.size());
+        }
     }
     fclose(fin);
     fclose(fexist);
