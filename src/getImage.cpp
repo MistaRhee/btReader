@@ -93,7 +93,7 @@ std::string cGetImage::getImage(const std::string fileName){
             mDownload.download(imageInfo, tempFile.c_str());
             XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
             std::string check = mainNode.getChildNode("query").getChildNode("pages").getChildNode("page").getAttribute("imagerepository");
-            if(check.compare("local") != 0){
+            if(check.compare("local") != 0){ //Not local image
                 return "system/images/notHere.jpg";
             }
             else{
@@ -107,21 +107,33 @@ std::string cGetImage::getImage(const std::string fileName){
                 tempFile = imageSource;
                 /* Remove fluff */
                 for(int i = 0; i < imageSource.size(); i++){
-                    if(imageSource[i] == "/"){
+                    if(tempFile[i] == '/'){
                         if(temp == "image"){
-                            imageSource.erase(0, temp.size()+1);
+                            tempFile.erase(0, temp.size()+1);
+                            temp.clear();
                             break;
                         }
                         else{
-                            imageSource.erase(0, temp.size()+1);
+                            tempFile.erase(0, temp.size()+1);
+                            temp.clear();
                         }
                     }
                     else{
                         temp += imageSource[i];
                     }
                 }
-
                 /* Grab subfolders, check their existence and create them if necessary */
+                for(int i = 0; i < tempFile.size(); i++){
+                    if(tempFile[i] == '/'){
+                        if(!dirExists(temp)){
+                            createFolder(temp);
+                        }
+                        temp += tempFile[i];
+                    }
+                    else{
+                        temp += tempFile[i];
+                    }
+                }
 
                 mDownload.download(imageSource, tempFile);
                 return tempFile;

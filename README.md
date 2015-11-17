@@ -19,7 +19,8 @@ don't. Yeah, that stuff)
 
 -> NOTE: This version is the "lazy man's" version without a proper reader. If
 you wish to have a nice reader attached to this which doesn't launch a web-browser
-make it yourself.
+make it yourself. Also, Windows will always remain inferior to unix, since I
+can't really test on Windows too well.
 
 Modding/Modifications that can be made
 --------------------------------------
