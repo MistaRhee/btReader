@@ -67,7 +67,7 @@ cMain::cMain(){
         getUserProfile();
     }
     startRunTime = SDL_GetTicks();
-    whereAt = showNovels;
+    whereAt = list;
 }
 
 cMain::~cMain(){
@@ -107,10 +107,11 @@ void cMain::preComp(){
     colours.insert(std::make_pair("clear", temp));
     colours.insert(std::make_pair("text", temp));
     getObjects();
+    beatOff::cNovelList* mList = (beatOff::cNovelList*)mContents[list];
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
-        mContents[novelList].addNovel(
+        mList->addNovel(
                 i->first, 
-                atoi(userProfile["NLSize"].c_str()), 
+                atoi(config["NLSize"].c_str()), 
                 fonts["novelList"]
                 );
     }

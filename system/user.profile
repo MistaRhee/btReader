@@ -8,7 +8,7 @@
 
 -->
 
-<profile>
+<config>
 
     <keyBindings>
 
@@ -72,4 +72,4 @@ To leave the image at its original size (and only set the size), set height and 
         <size value="50" />
     </novelList>
 
-</profile>
+</config>
