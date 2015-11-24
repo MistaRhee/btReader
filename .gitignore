@@ -10,3 +10,5 @@ btreader.project
 btreader.workspace
 gitExplosion.sh
 git_stats/
+.cproject
+.project
