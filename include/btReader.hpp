@@ -26,10 +26,10 @@
 
 enum places_t{
     menu = -1, //Should actually have to maually call this
-    settings,
-    list,
-    details,
-    dlList
+    list, //NovelList
+    settings, //Settings
+    details, //Novel Details
+    dlList //List of DLs 
     //updates (maybe implementing later)
 };
 
@@ -152,10 +152,11 @@ class cMain{
         /* User stuff */
         beatOff::cKeyMap mKeys;
 
-        /* Configuration file -> Going to leave loaded ATM, but it shouldn't be
-         * needed 
+        /* Settings */
+        std::map<std::string, std::map<std::string, std::string> > config;
+        /* Config formatted as
+         *  -> Subsection:  Key->value
          */
-        XMLNode userConfig;
 };
 
 #endif //BTREADER_HPP

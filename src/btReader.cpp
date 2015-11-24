@@ -67,7 +67,7 @@ cMain::cMain(){
         getUserProfile();
     }
     startRunTime = SDL_GetTicks();
-    whereAt = showNovels;
+    whereAt = list;
 }
 
 cMain::~cMain(){
@@ -107,10 +107,11 @@ void cMain::preComp(){
     colours.insert(std::make_pair("clear", temp));
     colours.insert(std::make_pair("text", temp));
     getObjects();
+    beatOff::cNovelList* mList = (beatOff::cNovelList*)mContents[list];
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
-        mContents[novelList].addNovel(
+        mList->addNovel(
                 i->first, 
-                atoi(userProfile["NLSize"].c_str()), 
+                atoi(config["NLSize"].c_str()), 
                 fonts["novelList"]
                 );
     }
@@ -174,24 +175,29 @@ void cMain::getUserProfile(){
     else{
         try{
             XMLNode mainNode = XMLNode::openFileHelper("system/user.profile", "profile");
-            XMLNode currChild = mainNode.getChildNode("keyBindings");
-            for(int i = 0, j = currChild.nChildNode("key"); i < j; i++){
-                XMLNode currNode = currChild.getChildNode("key", i);
-                if(!mKeys.exists(currNode.getAttribute("id"))){
-                    mKeys.addMapping(
-                        currNode.getAttribute("id"), 
-                        atoi(currNode.getAttribute("code"))
-                        );
+            XMLNode currChild;
+            /* Load XML File into the map */
+            for(int i = 0, j = mainNode.nChildNode(); i < j; i++){
+                currChild = mainNode.getChildNode(i);
+                std::string name = currChild.getName();
+                for(int k = 0, l = currChild.nChildNode(); k < l; k++){
+                    config[name][currChild.getChildNode(k).getAttribute("key")] = currChild.getChildNode(k).getAttribute("value");
                 }
-                else{
-                    throw(mException("Attempted to add two keyBindings to the same ID"));
-                }
-                
             }
-            currChild = mainNode.getChildNode("options");
-            for(int i = 0, j = currChild.nChildNode("set"); i < j; i++){
-                XMLNode currNode = currChild.getChildNode("set", i);
-                userProfile.insert(std::make_pair(currNode.getAttribute("option"), currNode.getAttribute("value")));
+
+            /* Get keybindings out of the map. If there aren't keybindings, resort to default */
+            if(!config.count("keyBindings")){
+                /* Giff default plz! -> Not sure if this is legit.... */
+                mKeys.addMapping(SDLKey_Up, "up");
+                mKeys.addMapping(SDLKey_Down, "down");
+                mKeys.addMapping(SDLKey_Left, "left");
+                mKeys.addMapping(SDLKey_Right, "right");
+            }
+            else{
+                /* Extract keys */
+
+                /* Remove that entry from the map to save memory */
+                config.erase("keyBindings");
             }
         }
         catch(mException& e){

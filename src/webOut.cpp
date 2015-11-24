@@ -114,7 +114,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
         std::string temp;
         bool bold = 0;
         bool italic = 0;
-        while(true){ //Loop 'till end of file
+        while(true){ //Loop 'till end of file (or the end of time, either way is fine)
             fgets(buffer, 1000000, fin); //Get next line
 
             /* Not resetting flags at the moment because of potential multi-line bold/italics */
