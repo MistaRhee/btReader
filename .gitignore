@@ -8,7 +8,6 @@ data/
 .codelite/
 btreader.project
 btreader.workspace
-gitExplosion.sh
-git_stats/
+stats.html
 .cproject
 .project

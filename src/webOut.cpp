@@ -45,7 +45,7 @@ inline bool dirExists(const std::string& dirName){
 
 /* Same as functions above, just for unix */
 inline std::string ctf(){
-    assert(dirExists("/tmp/"));
+    if(!dirExists("/tmp/")) throw(mException("Error! User's /tmp doesn't exist!"));
     char tmpNam[L_tmpnam]; //Shouldn't need more than 50 random characters right?
     tmpnam(tmpNam);
     std::string mCurrLoc = tmpNam; 
@@ -193,7 +193,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             if(!temp.empty()) currNode.addText(temp.c_str());
                             temp.clear();
                             for(int k = i+2; k < j; k++){
-                                
+
                             }
                         }
                         else{
