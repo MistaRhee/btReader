@@ -218,6 +218,10 @@ void cWikiParser::openAP(const std::string inFile, const std::string existFile){
             //look for any of the following symbols':', '='or "*'
         int position = 0;
         while(position < buffer.size()){
+            printf("%i, %i", position, buffer.size());
+            printf("%c\n", buffer[16]);
+            getchar();
+
 	    	int level = 0; //counts level the heading or body or information is under.
             switch(buffer[position]){
                 case '<':                                               //only deal with breaks
@@ -276,10 +280,11 @@ void cWikiParser::openAP(const std::string inFile, const std::string existFile){
                     if(buffer[position+1] == '{'){
                     	printf("entered correctly\n");
                         while(buffer[position] != '}' && buffer[position+1] != '}'){
+                            printf("error here");
                         	position++;
                             printf("%c%c\n", buffer[position], buffer[position+1]);
                         }
-                        position++;
+                        position = position + 2;
                         printf("exited, next char is %c\n", buffer[position]);
                     }else{
                         buffer.erase(0, position);
@@ -296,12 +301,14 @@ void cWikiParser::openAP(const std::string inFile, const std::string existFile){
                      break;
                 default:
                     //put it into correct data entry.
+                    printf("I am here \n");
                     information = textCleaner(buffer);
                     if(database[database.size()-1].type == 'b' && database[database.size()-1].level == 1){
                         database[database.size()-1].text += information;
                     }else{
                         database.push_back({'b', 1, information});
                     }
+                    position = buffer.size();
                     break;
             }
         }
