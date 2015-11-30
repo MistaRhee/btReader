@@ -111,7 +111,7 @@ void cMain::preComp(){
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
         mList->addNovel(
                 i->first, 
-                atoi(config["NLSize"].c_str()), 
+                atoi(config["novelList"]["font"].c_str()),
                 fonts["novelList"]
                 );
     }
@@ -167,6 +167,7 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
 }
 
 void cMain::getUserProfile(){
+    /* All the settings/GUI configs etc. shall now be found here */
     if(!fileExists("system/user.profile")){
         /* No existing profile exists create new one using default settings */
         printf("%s: [btReader.cpp] - Critical Error! User Profile does not exist! \n", currentDateTime().c_str());
@@ -188,10 +189,10 @@ void cMain::getUserProfile(){
             /* Get keybindings out of the map. If there aren't keybindings, resort to default */
             if(!config.count("keyBindings")){
                 /* Giff default plz! -> Not sure if this is legit.... */
-                mKeys.addMapping(SDLKey_Up, "up");
-                mKeys.addMapping(SDLKey_Down, "down");
-                mKeys.addMapping(SDLKey_Left, "left");
-                mKeys.addMapping(SDLKey_Right, "right");
+                mKeys.addMapping(SDLK_UP, "up");
+                mKeys.addMapping(SDLK_DOWN, "down");
+                mKeys.addMapping(SDLK_LEFT, "left");
+                mKeys.addMapping(SDLK_RIGHT, "right");
             }
             else{
                 /* Extract keys */
@@ -217,78 +218,6 @@ void cMain::setError(std::string mError){
 std::string cMain::getError(){
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", error.c_str(), NULL);
     return error;
-}
-
-void cMain::getObjects(){
-    XMLNode mainNode = XMLNode::openFileHelper("system/menu.xml", "menu");
-    for(int i = 0, j = mainNode.nChildNode(); i < j; i++){
-        XMLNode curr = mainNode.getChildNode(i);
-        std::string name = curr.getName();
-        std::string id;
-        if(name.compare("font") == 0){
-            id = curr.getAttribute("name");
-            std::string sauce = curr.getAttribute("sauce");
-            fonts.insert(std::make_pair(id, sauce));
-        }
-        else if(name.compare("image") == 0){
-            id = curr.getAttribute("name");
-            beatOff::cImage newImage;
-            newImage.setPicLoc(curr.getAttribute("sauce"));
-            newImage.setPos(atoi(curr.getAttribute("x")), atoi(curr.getAttribute("y")));
-            newImage.setSize(atoi(curr.getAttribute("h")), atoi(curr.getAttribute("w")));
-            images.insert(std::make_pair(id, std::move(newImage)));
-        }
-        else if(name.compare("button") == 0){
-            id = curr.getAttribute("name");
-            beatOff::cButton newButton;
-            auto textCol = colours.find("text");
-            auto boxCol = colours.find("back");
-            newButton.setText(curr.getAttribute("text"));
-            newButton.setTextSize(atoi(curr.getAttribute("size")));
-            newButton.setTextCol(
-                    textCol->second.r, 
-                    textCol->second.g, 
-                    textCol->second.b, 
-                    textCol->second.a
-                    );
-            newButton.setBoxCol(
-                    boxCol->second.r, 
-                    boxCol->second.g, 
-                    boxCol->second.b, 
-                    boxCol->second.a
-                    );
-            newButton.setFont(curr.getAttribute("font"));
-            buttons.insert(std::make_pair(id, std::move(newButton)));
-        }
-        else if(name.compare("content") == 0){
-            id = curr.getAttribute("name");
-            SDL_Rect mRect;
-            mRect.x = atoi(curr.getAttribute("x"));
-            mRect.y = atoi(curr.getAttribute("y"));
-            mRect.h = atoi(curr.getAttribute("h"));
-            mRect.w = atoi(curr.getAttribute("w"));
-            contentLoc = mRect;
-            mNovelList.setRect(contentLoc);
-//            mNovelReader.setRect(contentLoc);
-//            mNovelDetails.setRect(contentLoc);
-
-        }
-        else if(name.compare("colour") == 0){
-            id = curr.getAttribute("name");
-            SDL_Color newColour;
-            newColour.r = atoi(curr.getAttribute("r"));
-            newColour.g = atoi(curr.getAttribute("g"));
-            newColour.b = atoi(curr.getAttribute("b"));
-            newColour.a = atoi(curr.getAttribute("a"));
-            colours.insert(std::make_pair(id, std::move(newColour)));
-        }
-        else{
-            std::string mError = currentDateTime() + ": ";
-            mError += "[btReader.cpp] - Invaid menu object type! (Type: ";
-            mError += name + ")\n";
-            printf("%s \n", mError.c_str());
-        }
-    }
 }
 
 bool cMain::run(){

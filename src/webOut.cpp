@@ -70,11 +70,11 @@ inline void disp(std::string loc){
 #endif
 
 XMLNode createHTMLHeader(){
-    XMLNode rVal = XMLNode::createXMLTopNode(html);
+    XMLNode rVal = XMLNode::createXMLTopNode("html");
     rVal.addChild("head");
     rVal.addChild("body");
-    rVal.getChildNode("head").addChildNode("title");
-    rVal.getChildNode("head").addChildNode("meta");
+    rVal.getChildNode("head").addChild("title");
+    rVal.getChildNode("head").addChild("meta");
     rVal.getChildNode("head").getChildNode("meta").addAttribute("charset", "UTF-8");
     return rVal;
 }
@@ -85,7 +85,8 @@ cWebOut::cWebOut(){
     mLoc = ctf();
     FILE* ft = fopen(mLoc.c_str(), "w+");
     fclose(ft);
-    tempLoc = mLoc;
+    this->tempLoc = mLoc;
+    this->isReady = 0;
 }
 
 cWebOut::~cWebOut(){
@@ -109,7 +110,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
         XMLNode main = createHTMLHeader();
         XMLNode body = main.getChildNode("body");
         main.getChildNode("head").getChildNode("title").addText(title.c_str());
-        FILE* fin = fopen(sauce.c_str());
+        FILE* fin = fopen(sauce.c_str(), "r");
         char buffer[1000000];
         std::string temp;
         bool bold = 0;
@@ -120,8 +121,9 @@ void cWebOut::createPage(std::string sauce, std::string title){
             /* Not resetting flags at the moment because of potential multi-line bold/italics */
             if(buffer[0] == '='){ //Heading modifier
                 /* Count the number of '=' there are */
-                int num;
-                for(num = 0, int j = strlen(buffer); num < j; num++){
+                int num = 0;
+                int j = strlen(buffer);
+                for(num = 0; num < j; num++){
                     if(buffer[num] != '='){
                         break;
                     }
@@ -131,12 +133,12 @@ void cWebOut::createPage(std::string sauce, std::string title){
                     body.getChildNode(body.nChildNode()-1).addText(buffer);
                 }
                 else{
-                    for(int k = 0, int j = strlen(buffer); k < j-num; k++){
+                    for(int k = 0; k < j-num; k++){
                         temp += buffer[k];
                     }
                     sprintf(buffer, "h%d", num);
                     body.addChild(buffer);
-                    body.getChildNode(body.nChildNode()-1).addText(temp);
+                    body.getChildNode(body.nChildNode()-1).addText(temp.c_str());
                     temp.clear();
                 }
             }

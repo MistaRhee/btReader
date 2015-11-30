@@ -89,7 +89,6 @@ class cMain{
         /* Initialization functions */
         bool checkDependencies();
         void preComp();
-        void getObjects();
         void getUserProfile();
 
         /* Sudoku function */

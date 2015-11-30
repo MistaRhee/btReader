@@ -68,8 +68,8 @@ To leave the image at its original size (and only set the size), set height and 
     </menu>
 
     <novelList>
-        <font title="novelListFont" name="default" />
-        <size value="50" />
+        <font key="novelListFont" value="default" />
+        <size key="size" value="50" />
     </novelList>
 
 </config>
