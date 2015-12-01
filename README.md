@@ -105,6 +105,6 @@ Not So Dependencies
 
 I found this pretty nifty library for parsing XML,
 
-http://www.applied-mathematics.net/tools/xmlParser.html
+http://github.com/zeux/pugixml
 
-Pretty handy. Would rate 10/10.
+Pretty neat
