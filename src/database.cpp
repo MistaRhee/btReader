@@ -55,6 +55,7 @@ void cMain::createDatabase(){
             std::string e = currentDateTime() + " [database.cpp] Load config error! ";
             e += "manifest.db could not be parsed. Error: ";
             e += res.description();
+            remove(mainPageFileName.c_str()); //Clean useless junk
             throw(e);
         }
         remove(mainPageFileName.c_str());
@@ -78,7 +79,7 @@ bool cMain::readDatabase(){
             int nodeSize = std::distance(mainNode.children("novel").begin(), mainNode.children("novel").end());
             if(novelDB.size() != nodeSize){
                 std::string mWarning = currentDateTime();
-                mWarning +=  ": [database.cpp] - Mismatch in numers! \nRebuilding the database from scratch! Size: ";
+                mWarning +=  ": [database.cpp] - Mismatch in numbers! \nRebuilding the database from scratch! Size: ";
                 mWarning += std::to_string(novelDB.size());
                 mWarning += " Novel List Size: ";
                 mWarning += std::to_string(nodeSize);
@@ -129,8 +130,10 @@ bool cMain::hasNew(const std::string title){
             std::string e = currentDateTime() + " [database.cpp] Load config error! ";
             e += "manifest.db could not be parsed. Error: ";
             e += res.description();
+            remove(fileName.c_str());
             throw(e);
         }
+        remove(fileName.c_str());
     }
     catch(mException& e){
         setError(e.what());
@@ -144,6 +147,7 @@ bool cMain::hasNew(const std::string title){
 }
 
 void cMain::updateDatabase(){
+    std::map<std::string, std::pair<std::string, std::string> > tempNovelDB;
     printf("Updating the database \n");
     cHttpd stream1;
     std::string tempFile = tempLoc+generateRandomName(50);
@@ -153,30 +157,33 @@ void cMain::updateDatabase(){
     std::string novelName;
     stream1.download(domain+novelList, tempFile);
     try{
-        XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
-        XMLNode queryNode = mainNode.getChildNode("query");
-        XMLNode categoryMembers = queryNode.getChildNode("categorymembers");
-        for(int i = 0, j = categoryMembers.nChildNode("cm"); i < j; i++){
-            novelName = categoryMembers.getChildNode("cm", i).getAttribute("title");
-            novelName = convTitle(novelName);
-            if(novelDB.count(novelName) > 0){
-                auto found = novelDB.find(novelName);
-                if(found->second.second.size() > 0){
-                    if(hasNew(novelName)){ //The page has been updated (i.e. there is an extra novel)
-                        std::pair<std::string, std::string> mDetails = getNovelDetails(novelName);
-                        novelDB[novelName] = mDetails;
+        pugi::xml_document doc;
+        pugi::xml_parse_result res = doc.load_file(tempFile.c_str());
+        if(res){
+            pugi::xml_node category = doc.child("api").child("query").child("categorymembers");
+            for(auto cm: category.children("cm")){
+                novelName = cm.attribute("title").value();
+                if(novelDB.count(novelName) > 0){
+                    auto found = novelDB.find(novelName);
+                    if(found->second.second.size() > 0){ //If the details for this novel has been DLed already, check if there is update and update the page
+                        if(hasNew(novelName)){ //More recent version of what was already DLed
+                            tempNovelDB[novelName] = getNovelDetails(novelName);
+                            remove(found->second.first.c_str()); //Remove the old file
+                        }
                     }
+                    else tempNovelDB[novelName] = getNovelDetails(novelName);//New novel, just get the details
                 }
-                else{
-                    std::pair<std::string, std::string> mDetails = getNovelDetails(novelName);
-                    novelDB[novelName] = mDetails;
-                }
-            }
-            else{
-                std::pair<std::string, std::string> mDetails = getNovelDetails(novelName);
-                novelDB[novelName] = mDetails;
             }
         }
+        else{
+            /* XML Failed to load! */
+            std::string e = currentDateTime() + " [database.cpp] Load config error! ";
+            e += "manifest.db could not be parsed. Error: ";
+            e += res.description();
+            throw(e);
+        }
+        novelDB.clear(); //To prevent removed novels from staying (i.e. abiding by BT rules)
+        novelDB = tempNovelDB;
     }
     catch(mException& e){
         setError(e.what());
@@ -186,26 +193,27 @@ void cMain::updateDatabase(){
 
 void cMain::replaceDatabase(){
     printf("Replacing Database! \n");
-    XMLNode mainNode = XMLNode::createXMLTopNode("novellist");
+    pugi::xml_document doc;
+    pugi::xml_node root = doc.append_child();
+    root.set_name("novellist");
+
     int count = 0;
-    for(std::map<std::string, std::pair<std::string, std::string> >::iterator it = novelDB.begin(); it != novelDB.end(); ++it){
-        XMLNode newEntry = mainNode.addChild("novel");
-        newEntry.addAttribute("title", it->first.c_str());
-        newEntry.addAttribute("location", it->second.first.c_str());
-        newEntry.addAttribute("revid", it->second.second.c_str());
-        count ++;
+    for(auto it = novelDB.begin(); it != novelDB.end(); ++it){
+        pugi::xml_node newEntry = root.append_child();
+        newEntry.set_name("novel");
+        newEntry.append_attribute("title") = it->first.c_str();
+        newEntry.append_attribute("location") = it->second.first.c_str();
+        newEntry.append_attribute("revid") = it->second.second.c_str();
+        count++;
     }
+
     if(count != novelDB.size()){
         printf("%s: [database.cpp] - An error has occured when replacing the old database! Mismatch in numbers \n", currentDateTime().c_str());
     }
     else{
-        char* t;
-        t = mainNode.createXMLString(true);
-        FILE*fout = fopen("data/novels.db", "w+");
-        fprintf(fout, "%s\n", t);
-        fclose(fout); //To ensure the write
-        free(t);
-        printf("%s: [database.cpp] - Database successfully replaced! \n", currentDateTime().c_str());
+        if(!doc.save_file("data/novels.db")){
+            printf("%s: [database.cpp] - An error has occured when writing to data/novels.db! Aborting! \n");
+        }
     }
 }
 
@@ -221,34 +229,34 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         cHttpd mDownload;
         cWikiParser mParser;
         tempFile = "data/temp/"+generateRandomName(50);
-		tempFile2 = tempFile + "2";
+        tempFile2 = tempFile + "2";
         while(fileExists(tempFile)||fileExists(tempFile2)){
             tempFile = "data/temp/"+generateRandomName(50);
-			tempFile2 = tempFile + "2";
+            tempFile2 = tempFile + "2";
         }
         mDownload.download(domain+pageDetail+title, tempFile);
         printf("%s: [database.cpp] - Page saved to %s. \n", currentDateTime().c_str(), tempFile.c_str());
         printf("%s: [database.cpp] - Extracting wiki text... \n", currentDateTime().c_str());
         XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
         XMLNode parseNode = mainNode.getChildNode("parse");
-		XMLNode linksNode = parseNode.getChildNode("links");
+        XMLNode linksNode = parseNode.getChildNode("links");
         revID = parseNode.getAttribute("revid");
         FILE*fout = fopen(tempFile.c_str(), "w+");
-		FILE*fexist = fopen(tempFile2.c_str(), "w+");
+        FILE*fexist = fopen(tempFile2.c_str(), "w+");
         fprintf(fout, "%s", parseNode.getChildNode("wikitext").getText());
         fclose(fout);
-		int links = linksNode.nChildNode("pl");	//get the number of links and send it through.	
-		fprintf(fexist, "%i", links);
-		for(int i = 0; i<links; i++){
-			if(linksNode.getChildNode("pl", i).isAttributeSet("exists")){
-				exist = 1;//link exists
-			}
-			else{
-				exist = 0;//link does not exist
-			}
-			fprintf(fexist, "%s|%i\n", linksNode.getChildNode("pl", i).getText(), exist); //dump the list of chapter and the array into a table
-		}
-		fclose(fexist);
+        int links = linksNode.nChildNode("pl");	//get the number of links and send it through.	
+        fprintf(fexist, "%i", links);
+        for(int i = 0; i<links; i++){
+            if(linksNode.getChildNode("pl", i).isAttributeSet("exists")){
+                exist = 1;//link exists
+            }
+            else{
+                exist = 0;//link does not exist
+            }
+            fprintf(fexist, "%s|%i\n", linksNode.getChildNode("pl", i).getText(), exist); //dump the list of chapter and the array into a table
+        }
+        fclose(fexist);
         printf("%s: [database.cpp] - Extraction complete! \n", currentDateTime().c_str());
         novelStore = "data/novels/"+generateRandomName(50);
         while(fileExists(novelStore)){

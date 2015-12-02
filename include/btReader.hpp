@@ -147,7 +147,7 @@ class cMain{
         std::map<std::string, SDL_Color> colours; //Unsure if this is needed yet
 
         /* Background storage */
-        std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title, place to read from
+        std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title: <location, revID>
 
         /* User stuff */
         beatOff::cKeyMap mKeys;
