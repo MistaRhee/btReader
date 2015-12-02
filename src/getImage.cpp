@@ -73,8 +73,8 @@ bool cGetImage::isFromBT(std::string sauce){
         if(locSauce[0] != 'h') locSauce.erase(locSauce.begin());
         else{
             if( locSauce[1] == 't' &&
-                locSauce[2] == 't' &&
-                locSauce[3] == 'p'
+                    locSauce[2] == 't' &&
+                    locSauce[3] == 'p'
               ){
                 if(!seenHTTP) seenHTTP = 1;
                 else{
@@ -113,43 +113,43 @@ std::string cGetImage::getImage(const std::string fileName){
                 else{
                     std::string imageSauce = mainNode.child("query").child("pages").child("page").child("imageinfo").child("ii").attribute("url").value();
                     remove(tempFile.c_str());
-                /* Pull their naming system and create the folders needed to use this
-                 * Guaranteed to be unique because they use this system
-                 */
-                std::string temp;
-                tempFile = imageSauce;
-                /* Remove fluff */
-                for(int i = 0; i < imageSauce.size(); i++){
-                    if(tempFile[i] == '/'){
-                        if(temp == "image"){
-                            tempFile.erase(0, temp.size()+1);
-                            temp.clear();
-                            break;
+                    /* Pull their naming system and create the folders needed to use this
+                     * Guaranteed to be unique because they use this system
+                     */
+                    std::string temp;
+                    tempFile = imageSauce;
+                    /* Remove fluff */
+                    for(int i = 0; i < imageSauce.size(); i++){
+                        if(tempFile[i] == '/'){
+                            if(temp == "image"){
+                                tempFile.erase(0, temp.size()+1);
+                                temp.clear();
+                                break;
+                            }
+                            else{
+                                tempFile.erase(0, temp.size()+1);
+                                temp.clear();
+                            }
                         }
                         else{
-                            tempFile.erase(0, temp.size()+1);
-                            temp.clear();
+                            temp += imageSauce[i];
                         }
                     }
-                    else{
-                        temp += imageSauce[i];
-                    }
-                }
-                /* Grab subfolders, check their existence and create them if necessary */
-                for(int i = 0; i < tempFile.size(); i++){
-                    if(tempFile[i] == '/'){
-                        if(!dirExists(temp)){
-                            createFolder(temp);
+                    /* Grab subfolders, check their existence and create them if necessary */
+                    for(int i = 0; i < tempFile.size(); i++){
+                        if(tempFile[i] == '/'){
+                            if(!dirExists(temp)){
+                                createFolder(temp);
+                            }
+                            temp += tempFile[i];
                         }
-                        temp += tempFile[i];
+                        else{
+                            temp += tempFile[i];
+                        }
                     }
-                    else{
-                        temp += tempFile[i];
-                    }
-                }
 
-                mDownload.download(imageSauce, tempFile);
-                return tempFile;
+                    mDownload.download(imageSauce, tempFile);
+                    return tempFile;
                 }
             }
             else{
