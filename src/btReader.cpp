@@ -164,7 +164,7 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
         }
     }
     else{
-        std::string e = currentDateTime() + " [routing.cpp] Load config error! ";
+        std::string e = currentDateTime() + " [btReader.cpp] Load config error! ";
         e += "manifest.db could not be parsed. Error: ";
         e += mRes.description();
         setError(mError);

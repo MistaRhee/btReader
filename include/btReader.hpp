@@ -1,25 +1,26 @@
 #ifndef BTREADER_HPP
 #define BTREADER_HPP
 
+#include <algorithm>
+#include <ctime>
 #include <cstdio>
 #include <cstdlib>
-#include <vector>
-#include <queue>
-#include <map>
-#include <thread>
-#include <utility>
-#include <ctime>
-#include <SDL2/SDL.h>
-#include <string>
 #include <cstring>
 #include <exception>
+#include <map>
+#include <queue>
+#include <SDL2/SDL.h>
+#include <string>
+#include <thread>
+#include <utility>
+#include <vector>
 
-#include "pugixml.hpp" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
-#include "httpd.hpp" //For website retreival
-#include "objects.hpp" //For SDL Objects
 #include "contents.hpp" //For content objects
-#include "mException.h" //For exception handling
+#include "httpd.hpp" //For website retreival
 #include "keyMap.hpp" //For keymap class
+#include "mException.h" //For exception handling
+#include "objects.hpp" //For SDL Objects
+#include "pugixml.hpp" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
 
 #define MAX_THREADS 5
 #define FPS_CAP 1000/60

@@ -41,12 +41,21 @@ void cMain::createDatabase(){
         }
         stream1.download(domain+novelList, mainPageFileName);
         std::string tempStr;
-        XMLNode mainNode = XMLNode::openFileHelper(mainPageFileName.c_str(), "api");
-        XMLNode queryNode = mainNode.getChildNode("query");
-        XMLNode categoryNode = queryNode.getChildNode("categorymembers");
-        for(int i = 0, j = categoryNode.nChildNode("cm"); i < j; i++){
-            tempStr = categoryNode.getChildNode("cm", i).getAttribute("title");
-            novelDB[convTitle(tempStr)] = std::make_pair("", "");
+        pugi::xml_document doc;
+        pugi::xml_parse_result res = doc.load_file(mainPageFileName.c_str());
+        if(res){
+            pugi::xml_node category = doc.child("api").child("query").child("cagetorymembers");
+            for(auto cmNode: category.children("cm")){
+                tempStr = cmNode.attribute("title").value();
+                novelDB[convTitle(tempStr)] = std::make_pair("","");
+            }
+        }
+        else{
+            /* XML Failed to load! */
+            std::string e = currentDateTime() + " [database.cpp] Load config error! ";
+            e += "manifest.db could not be parsed. Error: ";
+            e += res.description();
+            throw(e);
         }
         remove(mainPageFileName.c_str());
         updateDatabase();
@@ -59,20 +68,32 @@ void cMain::createDatabase(){
 bool cMain::readDatabase(){ 
     bool rVal = 1;
     try{
-        XMLNode mainNode = XMLNode::openFileHelper("data/novels.db", "novellist");
-        for(int i = 0, j = mainNode.nChildNode("novel"); i < j; i++){
-            XMLNode newEntry = mainNode.getChildNode("novel", i);
-            novelDB[newEntry.getAttribute("title")] = std::make_pair(newEntry.getAttribute("location"), newEntry.getAttribute("revid"));
+        pugi::xml_document doc;
+        pugi::xml_parse_result res = doc.load_file("data/novels.db");
+        pugi::xml_node mainNode = doc.child("novellist");
+        if(res){
+            for(auto newEntry: mainNode.children("novel")){
+                novelDB[newEntry.attribute("title").value()] = std::make_pair(newEntry.attribute("location").value(), newEntry.attribute("revid").value());
+            }
+            int nodeSize = std::distance(mainNode.children("novel").begin(), mainNode.children("novel").end());
+            if(novelDB.size() != nodeSize){
+                std::string mWarning = currentDateTime();
+                mWarning +=  ": [database.cpp] - Mismatch in numers! \nRebuilding the database from scratch! Size: ";
+                mWarning += std::to_string(novelDB.size());
+                mWarning += " Novel List Size: ";
+                mWarning += std::to_string(nodeSize);
+                printf("%s \n", mWarning.c_str());
+                rVal = 0;
+            }
         }
-        if(novelDB.size() != mainNode.nChildNode("novel")){
-            std::string mWarning = currentDateTime();
-            mWarning +=  ": [database.cpp] - Mismatch in numers! \nRebuilding the database from scratch! Size: ";
-            mWarning += std::to_string(novelDB.size());
-            mWarning += " Novel List Size: ";
-            mWarning += std::to_string(mainNode.nChildNode("novel"));
-            printf("%s \n", mWarning.c_str());
-            rVal = 0;
+        else{
+            /* XML Failed to load! */
+            std::string e = currentDateTime() + " [database.cpp] Load config error! ";
+            e += "manifest.db could not be parsed. Error: ";
+            e += res.description();
+            throw(e);
         }
+
     }
     catch(mException& e){
         setError(e.what());
@@ -96,9 +117,19 @@ bool cMain::hasNew(const std::string title){
             fileName = tempLoc+generateRandomName(50);
         }
         newDl.download(domain+revID+title, fileName);
-        XMLNode mNode = XMLNode::openFileHelper(fileName.c_str(), "api");
-        if(original.compare(mNode.getChildNode("query").getChildNode("novels").getChildNode("novel").getChildNode("revisions").getChildNode("rev").getAttribute("revid"))!= 0){
-            rVal = 0;
+        pugi::xml_document doc;
+        pugi::xml_parse_result res = doc.load_file(fileName.c_str());
+
+        if(res){
+            pugi::xml_node rootNode = doc.child("api");
+            if(original.compare(rootNode.child("query").child("novels").child("novel").child("revisions").child("rev").attribute("revid").value()) != 0) rVal = 0;
+        }
+        else{
+            /* XML Failed to load! */
+            std::string e = currentDateTime() + " [database.cpp] Load config error! ";
+            e += "manifest.db could not be parsed. Error: ";
+            e += res.description();
+            throw(e);
         }
     }
     catch(mException& e){
