@@ -240,37 +240,46 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
 
         pugi::xml_document doc;
         pugi::xml_parse_result res = doc.load_file(tempFile.c_str());
-        pugi::xml_node mainNode = doc.child("api");
-        pugi::xml_node parseNode = mainNode.child("parse");
-        pugi::xml_node linksNode = parseNode.child("links");
+        if(res){
+            pugi::xml_node mainNode = doc.child("api");
+            pugi::xml_node parseNode = mainNode.child("parse");
+            pugi::xml_node linksNode = parseNode.child("links");
 
-        revID = parseNode.attribute("revid").value();
-        FILE*fout = fopen(tempFile.c_str(), "w+");
-        FILE*fexist = fopen(tempFile2.c_str(), "w+");
-        fprintf(fout, "%s", parseNode.child("wikitext").text().as_string());
-        fclose(fout);
+            revID = parseNode.attribute("revid").value();
+            FILE*fout = fopen(tempFile.c_str(), "w+");
+            FILE*fexist = fopen(tempFile2.c_str(), "w+");
+            fprintf(fout, "%s", parseNode.child("wikitext").text().as_string());
+            fclose(fout);
 
-        int links = std::distance(linksNode.begin(), linksNode.end());	//get the number of links and send it through.
-        fprintf(fexist, "%d \n", links);
-        for(auto childLink: linksNode.children()){
-            if(childLink.attribute("exists")) exist = 1;
-            else exist = 0;
-            fprintf(fexist, "%s|%d \n", childLink.text().as_string(), exist);
-        }
-        fclose(fexist);
+            int links = std::distance(linksNode.begin(), linksNode.end());	//get the number of links and send it through.
+            fprintf(fexist, "%d \n", links);
+            for(auto childLink: linksNode.children()){
+                if(childLink.attribute("exists")) exist = 1;
+                else exist = 0;
+                fprintf(fexist, "%s|%d \n", childLink.text().as_string(), exist);
+            }
+            fclose(fexist);
 
-        printf("%s: [database.cpp] - Extraction complete! \n", currentDateTime().c_str());
-        novelStore = "data/novels/"+generateRandomName(50);
-        while(fileExists(novelStore)){
+            printf("%s: [database.cpp] - Extraction complete! \n", currentDateTime().c_str());
             novelStore = "data/novels/"+generateRandomName(50);
+            while(fileExists(novelStore)){
+                novelStore = "data/novels/"+generateRandomName(50);
+            }
+            printf("%s: [database.cpp] - Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n", currentDateTime().c_str());
+            mParser.cleanNovel(tempFile, tempFile2, novelStore);
+            printf("%s: [database.cpp] - Cleaned page stored in %s. \n", currentDateTime().c_str(), novelStore.c_str());
+            printf("%s: [database.cpp] - Deleting temp file \n", currentDateTime().c_str());
+            remove (tempFile.c_str());
+            remove (tempFile2.c_str());
+            return std::make_pair(novelStore, revID);
         }
-        printf("%s: [database.cpp] - Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n", currentDateTime().c_str());
-        mParser.cleanNovel(tempFile, tempFile2, novelStore);
-        printf("%s: [database.cpp] - Cleaned page stored in %s. \n", currentDateTime().c_str(), novelStore.c_str());
-        printf("%s: [database.cpp] - Deleting temp file \n", currentDateTime().c_str());
-        remove (tempFile.c_str());
-        remove (tempFile2.c_str());
-        return std::make_pair(novelStore, revID);
+        else{
+            /* XML Failed to load! */
+            std::string e = currentDateTime() + " [database.cpp] Load config error! ";
+            e += "manifest.db could not be parsed. Error: ";
+            e += res.description();
+            throw(e);
+        }
     }
     catch(mException& e){
         std::string mError = currentDateTime();

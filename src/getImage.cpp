@@ -38,6 +38,16 @@ inline bool fileExists (const std::string& name) {
     }   
 }
 
+std::string cGetImage::generateRandomName(int length){
+    srand(time(NULL));
+    const char aCharacters[] = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    std::string rVal;
+    for(int i = 0, j = strlen(aCharacters); i < length; i++){
+        rVal += aCharacters[rand()%j];
+    }
+    return rVal;
+}
+
 std::string sanitize(const std::string filename){
     std::string newString;
     for(int i = 0, j = filename.size(); i < j; i++){
@@ -91,22 +101,25 @@ std::string cGetImage::getImage(const std::string fileName){
                 tempFile = "data/temp/"+generateRandomName(50);
             }
             mDownload.download(imageInfo, tempFile.c_str());
-            XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
-            std::string check = mainNode.getChildNode("query").getChildNode("pages").getChildNode("page").getAttribute("imagerepository");
-            if(check.compare("local") != 0){ //Not local image
-                return "system/images/notHere.jpg";
-            }
-            else{
-                std::string imageSource = mainNode.getChildNode("query").getChildNode("pages").getChildNode("page").getChildNode("imageinfo").getChildNode("ii").getAttribute("url");
-                remove(tempFile.c_str());
-                
+            pugi::xml_document doc;
+            pugi::xml_parse_result res;
+
+            if(res){
+                pugi::xml_node mainNode = doc.child("api");
+                std::string check = mainNode.child("query").child("pages").child("page").attribute("imagerepository").value();
+                if(check.compare("local") != 0){
+                    return "system/images/notHere.jpg";
+                }
+                else{
+                    std::string imageSauce = mainNode.child("query").child("pages").child("page").child("imageinfo").child("ii").attribute("url").value();
+                    remove(tempFile.c_str());
                 /* Pull their naming system and create the folders needed to use this
                  * Guaranteed to be unique because they use this system
                  */
                 std::string temp;
-                tempFile = imageSource;
+                tempFile = imageSauce;
                 /* Remove fluff */
-                for(int i = 0; i < imageSource.size(); i++){
+                for(int i = 0; i < imageSauce.size(); i++){
                     if(tempFile[i] == '/'){
                         if(temp == "image"){
                             tempFile.erase(0, temp.size()+1);
@@ -119,7 +132,7 @@ std::string cGetImage::getImage(const std::string fileName){
                         }
                     }
                     else{
-                        temp += imageSource[i];
+                        temp += imageSauce[i];
                     }
                 }
                 /* Grab subfolders, check their existence and create them if necessary */
@@ -135,8 +148,16 @@ std::string cGetImage::getImage(const std::string fileName){
                     }
                 }
 
-                mDownload.download(imageSource, tempFile);
+                mDownload.download(imageSauce, tempFile);
                 return tempFile;
+                }
+            }
+            else{
+                /* XML Failed to load! */
+                std::string e = currentDateTime() + " [database.cpp] Load config error! ";
+                e += "manifest.db could not be parsed. Error: ";
+                e += res.description();
+                throw(e);
             }
         }
         catch(mException& e){
