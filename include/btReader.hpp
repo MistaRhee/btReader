@@ -14,7 +14,7 @@
 #include <cstring>
 #include <exception>
 
-#include "xmlParser.h" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
+#include "pugixml.hpp" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
 #include "httpd.hpp" //For website retreival
 #include "objects.hpp" //For SDL Objects
 #include "contents.hpp" //For content objects

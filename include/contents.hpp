@@ -14,7 +14,7 @@
 #include "objects.hpp" 
 
 /* Including the XML parsing library */
-#include "xmlParser.h"
+#include "pugixml.hpp"
 
 namespace beatOff{ //Because it's a derived class and I would like to keep namespaces
 

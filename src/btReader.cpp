@@ -63,7 +63,6 @@ cMain::cMain(){
                 );
         mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
         currThreads = 1;
-        getObjects();
         getUserProfile();
     }
     startRunTime = SDL_GetTicks();
@@ -106,7 +105,6 @@ void cMain::preComp(){
     temp.b = 0;
     colours.insert(std::make_pair("clear", temp));
     colours.insert(std::make_pair("text", temp));
-    getObjects();
     beatOff::cNovelList* mList = (beatOff::cNovelList*)mContents[list];
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
         mList->addNovel(
@@ -119,50 +117,60 @@ void cMain::preComp(){
 
 bool cMain::checkDependencies(){ //Checking if directories exist and important files are there.
     bool rVal = 1;
-    XMLNode mainNode = XMLNode::openFileHelper("manifest.db", "content");
-    for(int i = 0, j = mainNode.nChildNode(); i < j; i++){
-        XMLNode currNode = mainNode.getChildNode(i);
-        std::string type = currNode.getName();
-        if(type.compare("folder") == 0){
-            /* For system folders */
-            std::string essential = currNode.getAttribute("essential");
-            if(!dirExists(currNode.getAttribute("sauce"))){
-                if(!essential.compare("true")){
-                    /* Important shit that can't just be made on the spot */
+    pugi::xml_document mDoc;
+    pugi::xml_parse_result mRes = mDoc.load_file("manifest.db");
+
+    if(mRes){
+        pugi::xml_node rootNode = mDoc.child("content");
+        for(auto it = rootNode.begin(); it != rootNode.end(); ++it){ // Since it's only a single root and a bunch of nodes (one level deep)
+            std::string type = it->name();
+            if(type.compare("folder") == 0){
+                /* For program required folders */
+                if(!dirExists(it->attribute("sauce").value())){
+                    std::string essential = it->attribute("essential").value();
+                    if(!essential.compare("true")){
+                        /* Important shit that can't just be made on the spot */
+                        std::string mError = currentDateTime() + ": ";
+                        mError += "[btReader.cpp] - Check Dependencies Error: Essential Folder doesn't exist (";
+                        mError += it->attribute("sauce").value();
+                        mError += ")";
+                        setError(mError);
+                        printf("%s \n", mError.c_str());
+                        rVal = 0;
+                    }
+                    else createFolder(it->attribute("sauce").value())
+                }
+            }
+            else if(type.compare("file") == 0){
+                /* For important system files */
+                if(!fileExists(it->attribute("sauce").value())){
                     std::string mError = currentDateTime() + ": ";
-                    mError += "[btReader.cpp] - Check Dependencies Error: Essential Folder doesn't exist (";
-                    mError += currNode.getAttribute("sauce");
-                    mError += ")";
+                    mError += "[btReader.cpp] - Check Dependencies Error: Essential File doesn't exist: ";
+                    mError += it->attribute("sauce").value();
                     setError(mError);
                     printf("%s \n", mError.c_str());
                     rVal = 0;
                 }
-                else{
-                    createFolder(currNode.getAttribute("sauce"));
-                }
             }
-        }
-        else if(type.compare("file") == 0){
-            /* For important system files */
-            if(!fileExists(currNode.getAttribute("sauce"))){
+            else{
+                /* Invalid manifest type... I mean, if it isn't a file nor folder, what is it???? */
                 std::string mError = currentDateTime() + ": ";
-                mError += "[btReader.cpp] - Check Dependencies Error: Essential File doesn't exist: ";
-                mError += currNode.getAttribute("sauce");
+                mError += "[btReader.cpp] - Check Dependencies Error: Invalid typing: ";
+                mError += type;
                 setError(mError);
                 printf("%s \n", mError.c_str());
                 rVal = 0;
             }
         }
-        else{
-            /* Invalid manifest type... I mean, if it isn't a file nor folder, what is it???? */
-            std::string mError = currentDateTime() + ": ";
-            mError += "[btReader.cpp] - Check Dependencies Error: Invalid typing: ";
-            mError += type;
-            setError(mError);
-            printf("%s \n", mError.c_str());
-            rVal = 0;
-        }
     }
+    else{
+        std::string e = currentDateTime() + " [routing.cpp] Load config error! ";
+        e += "manifest.db could not be parsed. Error: ";
+        e += mRes.description();
+        setError(mError);
+        fprintf(stderr, "%s \n", e.c_str());
+    }
+
     return rVal;
 }
 
@@ -175,27 +183,30 @@ void cMain::getUserProfile(){
     }
     else{
         try{
-            XMLNode mainNode = XMLNode::openFileHelper("system/user.profile", "profile");
-            XMLNode currChild;
+            pugi::xml_document doc;
+            pugi::xml_parse_result res = doc.load_file("system/user.profile");
+            pugi::xml_node rootNode = doc.child("profile");
             /* Load XML File into the map */
-            for(int i = 0, j = mainNode.nChildNode(); i < j; i++){
-                currChild = mainNode.getChildNode(i);
-                std::string name = currChild.getName();
-                for(int k = 0, l = currChild.nChildNode(); k < l; k++){
-                    config[name][currChild.getChildNode(k).getAttribute("key")] = currChild.getChildNode(k).getAttribute("value");
+            for(auto it = rootNode.begin(); it != rootNode.end(); ++it){
+                std::string name = it->name();
+                for(auto ot = it->begin(); ot != it->end(); ++ot){
+                    config[name][ot->attribute("key").value()] = ot->attribute("value");
                 }
             }
 
             /* Get keybindings out of the map. If there aren't keybindings, resort to default */
             if(!config.count("keyBindings")){
                 /* Giff default plz! -> Not sure if this is legit.... */
-                mKeys.addMapping(SDLK_UP, "up");
-                mKeys.addMapping(SDLK_DOWN, "down");
-                mKeys.addMapping(SDLK_LEFT, "left");
-                mKeys.addMapping(SDLK_RIGHT, "right");
+                this->mKeys.addMapping(SDLK_UP, "up");
+                this->mKeys.addMapping(SDLK_DOWN, "down");
+                this->mKeys.addMapping(SDLK_LEFT, "left");
+                this->mKeys.addMapping(SDLK_RIGHT, "right");
             }
             else{
                 /* Extract keys */
+                for(auto it = config["keyBindings"].begin(); it != config["keyBindings"].end(); ++it){
+                    this->mKeys.addMapping(atoi(it->first.c_str()), it->second);
+                }
 
                 /* Remove that entry from the map to save memory */
                 config.erase("keyBindings");
@@ -231,10 +242,10 @@ bool cMain::run(){
         }
         else{
             startTick = SDL_GetTicks();
-//            while(SDL_GetTicks() < startTick+FPS_CAP){
+            while(SDL_GetTicks() < startTick+FPS_CAP){
                 processEvents();
-//                update();
-//            }
+                update();
+            }
             render();
         }
     }
@@ -245,6 +256,7 @@ bool cMain::run(){
 
 void cMain::update(){
     /* ~~La da da~~ */
+    return;
 }
 
 void cMain::render(){
