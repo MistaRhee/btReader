@@ -67,6 +67,7 @@ cMain::cMain(){
     }
     startRunTime = SDL_GetTicks();
     whereAt = list;
+    running = 1;
 }
 
 cMain::~cMain(){
@@ -138,7 +139,7 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
                         printf("%s \n", mError.c_str());
                         rVal = 0;
                     }
-                    else createFolder(it->attribute("sauce").value())
+                    else createFolder(it->attribute("sauce").value());
                 }
             }
             else if(type.compare("file") == 0){
@@ -167,7 +168,7 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
         std::string e = currentDateTime() + " [btReader.cpp] Load config error! ";
         e += "manifest.db could not be parsed. Error: ";
         e += mRes.description();
-        setError(mError);
+        setError(e);
         fprintf(stderr, "%s \n", e.c_str());
     }
 
@@ -190,7 +191,7 @@ void cMain::getUserProfile(){
             for(auto it = rootNode.begin(); it != rootNode.end(); ++it){
                 std::string name = it->name();
                 for(auto ot = it->begin(); ot != it->end(); ++ot){
-                    config[name][ot->attribute("key").value()] = ot->attribute("value");
+                    config[name][ot->attribute("key").value()] = ot->attribute("value").value();
                 }
             }
 
@@ -283,5 +284,5 @@ void cMain::render(){
 }
 
 void cMain::commitSudoku(){
-    running = 0; //Wai you do dis?
+    this->running = 0; //Wai you do dis?
 }

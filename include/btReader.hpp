@@ -159,6 +159,9 @@ class cMain{
         /* Config formatted as
          *  -> Subsection:  Key->value
          */
+
+        /* Running check */
+        bool running;
 };
 
 #endif //BTREADER_HPP
