@@ -237,26 +237,28 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         mDownload.download(domain+pageDetail+title, tempFile);
         printf("%s: [database.cpp] - Page saved to %s. \n", currentDateTime().c_str(), tempFile.c_str());
         printf("%s: [database.cpp] - Extracting wiki text... \n", currentDateTime().c_str());
-        XMLNode mainNode = XMLNode::openFileHelper(tempFile.c_str(), "api");
-        XMLNode parseNode = mainNode.getChildNode("parse");
-        XMLNode linksNode = parseNode.getChildNode("links");
-        revID = parseNode.getAttribute("revid");
+
+        pugi::xml_document doc;
+        pugi::xml_parse_result res = doc.load_file(tempFile.c_str());
+        pugi::xml_node mainNode = doc.child("api");
+        pugi::xml_node parseNode = mainNode.child("parse");
+        pugi::xml_node linksNode = parseNode.child("links");
+
+        revID = parseNode.attribute("revid").value();
         FILE*fout = fopen(tempFile.c_str(), "w+");
         FILE*fexist = fopen(tempFile2.c_str(), "w+");
-        fprintf(fout, "%s", parseNode.getChildNode("wikitext").getText());
+        fprintf(fout, "%s", parseNode.child("wikitext").text().as_string());
         fclose(fout);
-        int links = linksNode.nChildNode("pl");	//get the number of links and send it through.	
-        fprintf(fexist, "%i", links);
-        for(int i = 0; i<links; i++){
-            if(linksNode.getChildNode("pl", i).isAttributeSet("exists")){
-                exist = 1;//link exists
-            }
-            else{
-                exist = 0;//link does not exist
-            }
-            fprintf(fexist, "%s|%i\n", linksNode.getChildNode("pl", i).getText(), exist); //dump the list of chapter and the array into a table
+
+        int links = std::distance(linksNode.begin(), linksNode.end());	//get the number of links and send it through.
+        fprintf(fexist, "%d \n", links);
+        for(auto childLink: linksNode.children()){
+            if(childLink.attribute("exists")) exist = 1;
+            else exist = 0;
+            fprintf(fexist, "%s|%d \n", childLink.text().as_string(), exist);
         }
         fclose(fexist);
+
         printf("%s: [database.cpp] - Extraction complete! \n", currentDateTime().c_str());
         novelStore = "data/novels/"+generateRandomName(50);
         while(fileExists(novelStore)){
