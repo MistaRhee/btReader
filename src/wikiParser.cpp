@@ -49,8 +49,11 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 	FILE*fexist = fopen(existFile.c_str(), "r");
     FILE*fout = fopen(outFile.c_str(), "w+");
     char buffer[4096];
-    XMLNode mainNode = XMLNode::createXMLTopNode("novel");
-    XMLNode infoNode = mainNode.addChild("info");
+
+    pugi::xml_document doc;
+    pugi::xml_node mainNode = doc.append_child("novel");
+    pugi::xml_node infoNode = mainNode.append_child("info");
+
     std::string tempStr;
     int status = SYNOPSIS;
     bool found = 0;
@@ -112,8 +115,8 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                 synopsisText += '\n';
                             }
                         }
-                        XMLNode synopsis = mainNode.addChild("synopsis");
-                        synopsis.addText(synopsisText.c_str());
+                        pugi::xml_node synopsis = mainNode.append_child("synopsis");
+                        synopsis.text().set(synopsisText.c_str());
                         synopsisText.clear();
                         status = VOLUMES;
                     }
@@ -135,12 +138,14 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         for(int k = 0; k < i-1; k++){
                                             title += tempStr[k];
                                         }
-                                        infoNode.addAttribute("title", title.c_str());
+                                        pugi::xml_attribute tempAtt = infoNode.append_attribute("title");
+                                        tempAtt.set_value(title.c_str());
                                         title.clear();
                                         for(int k = i; k < j; k++){
                                             title += tempStr[k];
                                         }
-                                        infoNode.addAttribute("author", title.c_str());
+                                        tempAtt = infoNode.append_attribute("author");
+                                        tempAtt.set_value(title.c_str());
                                         break;
                                     }
                                     word.clear();
@@ -169,13 +174,14 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                         }
                         if(buffer[0] == '=' and buffer[1] == '='){
                             if(buffer[2] == '='){
-                                XMLNode newVolume = mainNode.addChild("volume");
+                                pugi::xml_node newVol = mainNode.append_child("volume");
                                 tempStr = buffer;
                                 tempStr.erase(0, 3);
                                 std::string volumeTitle;
                                 for(int i = 0, j = tempStr.size(); i < j; i++){
                                     if(tempStr[i] == '(' or tempStr[i] == '='){
-                                        newVolume.addAttribute("title", volumeTitle.c_str());
+                                        pugi::xml_attribute tAtt = newVol.append_attribute("title");
+                                        tAtt.set_value(volumeTitle.c_str());
                                         volumeTitle.clear();
                                         break;
                                     }
@@ -236,29 +242,36 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 												break;
 											}
                                         }
-                                        XMLNode chapterNode = newVolume.addChild("chapter"); //Moved here so it will only create a new chapter node if there is atually something worth grabbing
-                                        chapterNode.addAttribute("title", title.c_str());
+                                        pugi::xml_node chapterNode = newVol.append_child("chapter"); //Moved here so it will only create a new chapter node if there is atually something worth grabbing
+                                        pugi::xml_attribute tempAtt = chapterNode.append_attribute("title");
+                                        tempAtt.set_value(title.c_str());
                                         title.clear();
                                         title = "data/novels/"+generateRandomName(50);
                                         while(fileExists(title)){
                                             title = "data/novels/"+generateRandomName(50);
                                         }
 
-                                        chapterNode.addAttribute("location", title.c_str()); //The chapter will be saved here, it doesn't mean that it will actually have content stored there... That will come later.
-                                        chapterNode.addAttribute("dl", "no");
-                                        chapterNode.addAttribute("revid", "");
+                                        tempAtt = chapterNode.append_attribute("location");
+                                        tempAtt.set_value(title.c_str()); //The chapter will be saved here, it doesn't mean that it will actually have content stored there... That will come later.
+                                        tempAtt = chapterNode.append_attribute("dl");
+                                        tempAtt.set_value("no");
+                                        tempAtt = chapterNode.append_attribute("revid");
+                                        tempAtt.set_value(""); //Not really needed because default to be nothing
 										//check whether the link is available.
 										chapName = titleClean(chapName);
                                         auto it = availMap.find(chapName);
 										if(it != availMap.end()){
 											if(it->second==1){
-                                                chapterNode.addAttribute("available", "1");
+                                                tempAtt = chapterNode.append_attribute("available");
+                                                tempAtt.set_value("1");
 											}else{
-                                                chapterNode.addAttribute("available", "0");
+                                                tempAtt = chapterNode.append_attribute("available");
+                                                tempAtt.set_value("0");
 											}
 										}else{
 											printf("%s:[wikiParser.cpp] - Unable to locate %s within map. Set as not avilable for now\n", currentDateTime().c_str(), chapName.c_str());		//just to make sure error is fixed								
-                                            chapterNode.addAttribute("available", "0");
+                                            tempAtt = chapterNode.append_attribute("available");
+                                            tempAtt.set_value("0");
 										}
                                     }
                                     else if(buffer[0] == '['){
@@ -268,7 +281,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                          */
                                         fileName.clear();
                                         bool shouldGrab = 0;
-                                        if(!newVolume.isAttributeSet("image")){
+                                        if(newVol.attribute("image")){
                                             for(int i = 1, j = strlen(buffer); i < j; i++){
                                                 if(buffer[i] == '['){
                                                     /* Iss 13 fix */
@@ -294,7 +307,8 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                             if(tempString == "File"){
                                                 cGetImage newImageGrab;
                                                 std::string savedTo = newImageGrab.getImage(fileName);
-                                                newVolume.addAttribute("image", savedTo.c_str());
+                                                pugi::xml_attribute tempAtt = newVol.append_attribute("image");
+                                                tempAtt.set_value(savedTo.c_str());
                                             }
                                             else{
                                                 printf("%s:[wikiParser.cpp] - Invalid image name %s. Ignoring \n", currentDateTime().c_str(), tempString.c_str());
@@ -331,9 +345,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
             break;
         }
     }
-    char* t = mainNode.createXMLString(true);
-    fprintf(fout, "%s \n", t);
-    fclose(fout);
+	doc.save_file(outFile.c_str());
     fclose(fexist);
     free(t);
 }

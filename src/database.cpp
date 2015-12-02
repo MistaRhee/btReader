@@ -194,13 +194,11 @@ void cMain::updateDatabase(){
 void cMain::replaceDatabase(){
     printf("Replacing Database! \n");
     pugi::xml_document doc;
-    pugi::xml_node root = doc.append_child();
-    root.set_name("novellist");
+    pugi::xml_node root = doc.append_child("novellist");
 
     int count = 0;
     for(auto it = novelDB.begin(); it != novelDB.end(); ++it){
-        pugi::xml_node newEntry = root.append_child();
-        newEntry.set_name("novel");
+        pugi::xml_node newEntry = root.append_child("novel");
         newEntry.append_attribute("title") = it->first.c_str();
         newEntry.append_attribute("location") = it->second.first.c_str();
         newEntry.append_attribute("revid") = it->second.second.c_str();
