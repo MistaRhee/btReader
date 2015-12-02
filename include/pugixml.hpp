@@ -1006,6 +1006,7 @@ namespace pugi
 		// Get document element
 		xml_node document_element() const;
 	};
+
 #ifndef PUGIXML_NO_XPATH
 	// XPath query return type
 	enum xpath_value_type
