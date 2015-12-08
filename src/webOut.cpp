@@ -69,13 +69,15 @@ inline void disp(std::string loc){
 }
 #endif
 
-XMLNode createHTMLHeader(){
-    XMLNode rVal = XMLNode::createXMLTopNode("html");
-    rVal.addChild("head");
-    rVal.addChild("body");
-    rVal.getChildNode("head").addChild("title");
-    rVal.getChildNode("head").addChild("meta");
-    rVal.getChildNode("head").getChildNode("meta").addAttribute("charset", "UTF-8");
+pugi::xml_document createHTMLHeader(){
+    pugi::xml_document rVal;
+    pugi::xml_node temp = rVal.append_child("html");
+    temp.append_child("head");
+    temp.append_child("body");
+    temp.child("head").append_child("title");
+    temp.child("head").append_child("meta");
+    pugi::xml_attribute tAtt = temp.child("head").child("meta").append_attribute("charset");
+    tAtt.set_value("UTF-8");
     return rVal;
 }
 
@@ -107,9 +109,9 @@ void cWebOut::createPage(std::string sauce, std::string title){
         /* Start parsing through the file and create a HTML out of it
          * NOTE: This HTML will be a joke of a html page, just H1, H2 etc. + p and text. Don't get
          * hopes up! */
-        XMLNode main = createHTMLHeader();
-        XMLNode body = main.getChildNode("body");
-        main.getChildNode("head").getChildNode("title").addText(title.c_str());
+        pugi::xml_document main = createHTMLHeader();
+        pugi::xml_node body = main.child("body");
+        main.child("head").child("title").text().set(title.c_str()); //title.c_str()
         FILE* fin = fopen(sauce.c_str(), "r");
         char buffer[1000000];
         std::string temp;
@@ -129,22 +131,22 @@ void cWebOut::createPage(std::string sauce, std::string title){
                     }
                 }
                 if(num == j){ //Pure equals, just leave it in
-                    body.addChild("p");
-                    body.getChildNode(body.nChildNode()-1).addText(buffer);
+                    pugi::xml_node tempNode = body.append_child("p");
+                    tempNode.text().set(buffer);
                 }
                 else{
                     for(int k = 0; k < j-num; k++){
                         temp += buffer[k];
                     }
                     sprintf(buffer, "h%d", num);
-                    body.addChild(buffer);
-                    body.getChildNode(body.nChildNode()-1).addText(temp.c_str());
+                    pugi::xml_node tempNode = body.append_child(buffer);
+                    tempNode.text().set(temp.c_str());
                     temp.clear();
                 }
             }
             else{
                 /* Create a paragraph node */
-                XMLNode currNode = body.addChild("p");
+                pugi::xml_node currNode = body.append_child("p");
                 for(int i = 0, j = strlen(buffer); i < j; i++){
                     /* Continue adding text. */
                     if(buffer[i] == '\''){
@@ -156,16 +158,15 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             if(bold){
                                 /* Flagged */
                                 bold = 0;
-                                if(!temp.empty()) currNode.addText(temp.c_str());
+                                if(!temp.empty()) currNode.text().set(temp.c_str());
                                 temp.clear();
-                                currNode = currNode.getParentNode();
+                                currNode = currNode.parent();
                             }
                             else{
                                 bold = 1; //Flip the bit
-                                if(!temp.empty()) currNode.addText(temp.c_str());
+                                if(!temp.empty()) currNode.text().set(temp.c_str());
                                 temp.clear();
-                                currNode.addChild("b");
-                                currNode = currNode.getChildNode(currNode.nChildNode()-1);
+                                currNode = currNode.append_child("b");
                             }
                             i += 2;
                         }
