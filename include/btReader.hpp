@@ -18,6 +18,7 @@
 #include "contents.hpp" //For content objects
 #include "httpd.hpp" //For website retreival
 #include "keyMap.hpp" //For keymap class
+#include "logger.hpp" //For logging ease
 #include "mException.h" //For exception handling
 #include "objects.hpp" //For SDL Objects
 #include "pugixml.hpp" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
@@ -118,6 +119,9 @@ class cMain{
         void updateDatabase();
         void replaceDatabase();
         std::pair<std::string, std::string> getNovelDetails(std::string); //Returns name and location
+
+        /* Logging needs */
+        __logger::cLogger* mLog;
 
         /* URL constant strings */
         const std::string tempLoc = "data/temp/";

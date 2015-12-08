@@ -46,6 +46,8 @@ inline bool fileExists (const std::string& name) {
 }
 
 cMain::cMain(){
+    std::string logLoc = currentDateTime() + " btReader.log";
+    mLog = new(__logger::cLogger, logLoc);
     if(checkDependencies()){
         preComp();
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
