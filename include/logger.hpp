@@ -38,6 +38,7 @@
 #endif
 
 #include <cstdio> //Yes, I'm an old boy. Deal with it
+#include <ctime>
 #include <queue>
 #include <string>
 

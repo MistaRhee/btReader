@@ -35,10 +35,10 @@ namespace __logger{
         time_t now = time(0);
         struct tm tstruct;
         char buff[100];
-        tStruct = *localtime(&now);
-        strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+        tstruct = *localtime(&now);
+        strftime(buff, sizeof(buff), "%Y-%m-%d.%X", &tstruct);
         
-        return std::string(buf);
+        return std::string(buff);
     }
 
     cLogger::cLogger(){
@@ -61,9 +61,12 @@ namespace __logger{
             fprintf(stderr, "Critical Hit! flog failed to open the file! \n");
             exit(322);
         }
+#ifndef __NOTHREAD__
+        this->dead = 0;
+#endif
     }
         
-    ~cLogger::cLogger(){
+    cLogger::~cLogger(){
         fflush(flog);
         fclose(flog);
     }
