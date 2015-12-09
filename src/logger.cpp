@@ -96,6 +96,7 @@ namespace __logger{
                 std::string out = this->q.front();
                 this->q.pop();
                 fprintf(this->flog, "%s \n", out.c_str());
+                fflush(this->flog); //Force the update
             }
             this->lock.unlock();
         }
