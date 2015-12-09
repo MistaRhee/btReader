@@ -55,13 +55,13 @@ namespace __logger{
             std::thread start();
             void run();
             void kill();
-            std::mutex lock;
 #endif
 
         private:
 #ifndef __NOTHREAD__
             std::queue<std::string> q;
             bool dead;
+            std::mutex lock;
 #endif
             FILE* flog;
 
