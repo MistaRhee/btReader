@@ -38,6 +38,17 @@ inline bool fileExists (const std::string& name) {
     }   
 }
 
+cGetImage::cGetImage(){
+    std::string logFile = "logs/";
+    logFile += currentDateTime();
+    logFile += " cGetImage.log";
+    this->mLog = new __logger::cLogger(logFile);
+}
+
+cGetImage::cGetImage(__logger::cLogger* mLog){
+    this->mLog = mLog;
+}
+
 std::string cGetImage::generateRandomName(int length){
     srand(time(NULL));
     const char aCharacters[] = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -89,11 +100,16 @@ bool cGetImage::isFromBT(std::string sauce){
 }
 
 std::string cGetImage::getImage(const std::string fileName){
+    std::string logInfo;
     if(fileName.size() > 0){
         std::string sauce = sanitize(fileName);
         try{
             if(!isFromBT(fileName)) throw("IMAGE URL NOT FROM BT PANIC!!!");
-            printf("%s: [getImage.cpp] Grabbing image: %s\n", currentDateTime().c_str(),sauce.c_str());
+            logInfo = "[getImage.cpp] Info: Grabbing image ";
+            logInfo += sauce;
+            this->mLog->log(logInfo);
+            logInfo.clear();
+
             std::string imageInfo = imageQuery+sauce+"&";
             cHttpd mDownload;
             std::string tempFile = "data/temp/"+generateRandomName(50);
@@ -154,17 +170,22 @@ std::string cGetImage::getImage(const std::string fileName){
             }
             else{
                 /* XML Failed to load! */
-                std::string e = currentDateTime() + " [database.cpp] Load config error! ";
-                e += "manifest.db could not be parsed. Error: ";
+                std::string e = "[cGetImage] Error: ";
+                e += imageInfo;
+                e += " could not be parsed. Description: ";
                 e += res.description();
                 throw(e);
             }
         }
         catch(mException& e){
-            std::string mDT = currentDateTime();
-            printf("%s: [getImage.cpp] %s\n", mDT.c_str(), e.what());
+            std::string mErr = "[getImage.cpp] Error: ";
+            mErr += e.what();
+            this->mLog->log(mErr);
             return "system/images/notHere.jpg";
         }
     }
-    else return "system/images/notHere.jpg";
+    else{
+        this->mLog->log("[getImage.cpp] Warning: Image requested was empty! Returning notHere");
+        return "system/images/notHere.jpg";
+    }
 }

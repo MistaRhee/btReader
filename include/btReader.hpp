@@ -38,22 +38,28 @@ enum places_t{
 class cWebOut{
     public:
         cWebOut();
+        cWebOut(__logger::cLogger*);
         ~cWebOut();
         void createPage(std::string sauce, std::string title);
         void displayPage();
         void cleanUp();
 
     private:
+        __logger::cLogger* mLog;
         bool isReady;
         std::string tempLoc;
 };
 
 class cGetImage{
     public:
+        cGetImage();
+        cGetImage(__logger::cLogger*);
+        ~cGetImage() {}
         std::string getImage(const std::string); //File name, returns file saved location
 
     private:
 
+        __logger::cLogger* mLog;
         std::string generateRandomName(int len);
         bool isFromBT(std::string);
         std::string sanatize(const std::string);
@@ -63,11 +69,15 @@ class cGetImage{
 
 class cWikiParser{
     public:
+        cWikiParser();
+        cWikiParser(__logger::cLogger*);
+        ~cWikiParser(){}
         void cleanNovel(const std::string, const std::string, const std::string); //Title of file to clean, title of the "exist" checking file, title of location to save to
         void cleanChapter(const std::string, const std::string); //Title of the file to clean, title of the location to save to
         std::string getError();
         std::string generateRandomName(int len);
     private:
+        __logger::cLogger* mLog;
         std::string error;
         void setError(std::string);
         std::string titleClean(const std::string);
@@ -87,8 +97,7 @@ class cMain{
         std::string generateRandomName(int len);
 
         /* Error Handling */
-        void setError(std::string);
-        std::string getError();
+        void setError();
     private:
         /* Initialization functions */
         bool checkDependencies();
@@ -138,7 +147,7 @@ class cMain{
         places_t whereAt;
         int currThreads;
         int startRunTime;
-        std::string error;
+        bool error; //If there had been an error
 
         /* Graphics */
         SDL_Window* mWindow;

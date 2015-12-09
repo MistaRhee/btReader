@@ -11,9 +11,13 @@ int main(int argc, char* argv[]){
             freopen(argv[2], "w+", stdout);
         }
     }
-    if(mProg.run()) return 0;
+    if(mProg.run()){
+        delete(&mProg);
+        return 0;
+    }
     else{
-        printf("An error has occured in the program! BTReader Error: %s", mProg.getError().c_str());
+        fprintf(stderr, "An error had occured. Please look at the log files for more details \n");
+        delete(&mProg);
         return -1;
     }
 }

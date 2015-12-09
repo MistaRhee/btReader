@@ -67,12 +67,16 @@ namespace __logger{
     }
         
     cLogger::~cLogger(){
+#ifndef __NOTHREAD__
+        this->dead = 1;
+#endif
         fflush(flog);
         fclose(flog);
     }
 
     void cLogger::log(std::string out){
-        std::string output = currentDateTime() + out;
+        std::string output = currentDateTime() + ": ";
+        output += out;
         while(output[output.size()-1] == '\n') output.erase(output.end()-1); //Remove trailing new-lines
 #ifdef __NOTHREAD__
         fprintf(this->flog, "%s \n", output.c_str());

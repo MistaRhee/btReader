@@ -46,14 +46,19 @@ inline bool fileExists (const std::string& name) {
 }
 
 cMain::cMain(){
-    std::string logLoc = currentDateTime() + " btReader.log";
-    mLog = new(__logger::cLogger, logLoc);
+    std::string logLoc = "logs/";
+    logLoc = currentDateTime() + " btReader.log";
+    mLog = new __logger::cLogger(logLoc);
+    logLoc.clear();
+    mLog->start().detach();
+    mLog->log("[btReader.cpp] - Started logging.");
     if(checkDependencies()){
         preComp();
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
-            std::string e = currentDateTime() + ": [btReader.cpp] - SDL could not initialize! SDL_Error:";
+            std::string e = "[btReader.cpp] Error: SDL could not initialize! SDL_Error:";
             e += SDL_GetError();
-            fprintf(stderr, "%s \n", e.c_str());
+            mLog->log(e);
+            mLog->kill();
             exit(123);
         }
         mWindow = SDL_CreateWindow(
@@ -66,13 +71,16 @@ cMain::cMain(){
         mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
         currThreads = 1;
         getUserProfile();
+        startRunTime = SDL_GetTicks();
+        whereAt = list;
+        running = 1;
     }
-    startRunTime = SDL_GetTicks();
-    whereAt = list;
-    running = 1;
+    else running = 0;
 }
 
 cMain::~cMain(){
+    this->mLog->kill();
+    delete(this->mLog);
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
     SDL_Quit();
@@ -80,11 +88,11 @@ cMain::~cMain(){
 
 void cMain::preComp(){
     if(!fileExists("data/novels.db")){
-        printf("%s: [btReader.cpp] - No database found! Rebuilding novel list from site! \n", currentDateTime().c_str());
+        mLog->log("[btReader.cpp] Warning: No database found! Rebuilding novel list from site!");
         createDatabase();
     }
     else if(!readDatabase()){
-        printf("%s: [btReader.cpp] - Error! The database is corrupt and cannot be read. Overwriting the database! \n", currentDateTime().c_str());
+        mLog->log("[btReader.cpp] Error: The database is corrupt and cannot be read. Overwriting the database!");
         createDatabase();
     }
     /* Setting default colours! (will be overwritten by the XML file if it
@@ -133,12 +141,10 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
                     std::string essential = it->attribute("essential").value();
                     if(!essential.compare("true")){
                         /* Important shit that can't just be made on the spot */
-                        std::string mError = currentDateTime() + ": ";
-                        mError += "[btReader.cpp] - Check Dependencies Error: Essential Folder doesn't exist (";
+                        std::string mError = "[btReader.cpp] Error: Essential Folder doesn't exist (";
                         mError += it->attribute("sauce").value();
                         mError += ")";
-                        setError(mError);
-                        printf("%s \n", mError.c_str());
+                        mLog->log(mError);
                         rVal = 0;
                     }
                     else createFolder(it->attribute("sauce").value());
@@ -147,31 +153,26 @@ bool cMain::checkDependencies(){ //Checking if directories exist and important f
             else if(type.compare("file") == 0){
                 /* For important system files */
                 if(!fileExists(it->attribute("sauce").value())){
-                    std::string mError = currentDateTime() + ": ";
-                    mError += "[btReader.cpp] - Check Dependencies Error: Essential File doesn't exist: ";
+                    std::string mError = "[btReader.cpp] Error: Essential File doesn't exist: ";
                     mError += it->attribute("sauce").value();
-                    setError(mError);
-                    printf("%s \n", mError.c_str());
+                    mLog->log(mError);
                     rVal = 0;
                 }
             }
             else{
                 /* Invalid manifest type... I mean, if it isn't a file nor folder, what is it???? */
-                std::string mError = currentDateTime() + ": ";
-                mError += "[btReader.cpp] - Check Dependencies Error: Invalid typing: ";
+                std::string mError = "[btReader.cpp] - Error: Invalid typing: ";
                 mError += type;
-                setError(mError);
-                printf("%s \n", mError.c_str());
+                mLog->log(mError);
                 rVal = 0;
             }
         }
     }
     else{
-        std::string e = currentDateTime() + " [btReader.cpp] Load config error! ";
-        e += "manifest.db could not be parsed. Error: ";
+        std::string e = "[btReader.cpp] Error:";
+        e += "manifest.db could not be parsed. Description: ";
         e += mRes.description();
-        setError(e);
-        fprintf(stderr, "%s \n", e.c_str());
+        mLog->log(e);
     }
 
     return rVal;
@@ -181,7 +182,8 @@ void cMain::getUserProfile(){
     /* All the settings/GUI configs etc. shall now be found here */
     if(!fileExists("system/user.profile")){
         /* No existing profile exists create new one using default settings */
-        printf("%s: [btReader.cpp] - Critical Error! User Profile does not exist! \n", currentDateTime().c_str());
+        mLog->log("[btReader.cpp] Critical: User Profile does not exist!");
+        mLog->kill();
         exit(-1);
     }
     else{
@@ -189,57 +191,57 @@ void cMain::getUserProfile(){
             pugi::xml_document doc;
             pugi::xml_parse_result res = doc.load_file("system/user.profile");
             pugi::xml_node rootNode = doc.child("profile");
-            /* Load XML File into the map */
-            for(auto it = rootNode.begin(); it != rootNode.end(); ++it){
-                std::string name = it->name();
-                for(auto ot = it->begin(); ot != it->end(); ++ot){
-                    config[name][ot->attribute("key").value()] = ot->attribute("value").value();
+            if(res){
+                /* Load XML File into the map */
+                for(auto it = rootNode.begin(); it != rootNode.end(); ++it){
+                    std::string name = it->name();
+                    for(auto ot = it->begin(); ot != it->end(); ++ot){
+                        config[name][ot->attribute("key").value()] = ot->attribute("value").value();
+                    }
                 }
-            }
 
-            /* Get keybindings out of the map. If there aren't keybindings, resort to default */
-            if(!config.count("keyBindings")){
-                /* Giff default plz! -> Not sure if this is legit.... */
-                this->mKeys.addMapping(SDLK_UP, "up");
-                this->mKeys.addMapping(SDLK_DOWN, "down");
-                this->mKeys.addMapping(SDLK_LEFT, "left");
-                this->mKeys.addMapping(SDLK_RIGHT, "right");
+                /* Get keybindings out of the map. If there aren't keybindings, resort to default */
+                if(!config.count("keyBindings")){
+                    /* Giff default plz! -> Not sure if this is legit.... */
+                    this->mKeys.addMapping(SDLK_UP, "up");
+                    this->mKeys.addMapping(SDLK_DOWN, "down");
+                    this->mKeys.addMapping(SDLK_LEFT, "left");
+                    this->mKeys.addMapping(SDLK_RIGHT, "right");
+                }
+                else{
+                    /* Extract keys */
+                    for(auto it = config["keyBindings"].begin(); it != config["keyBindings"].end(); ++it){
+                        this->mKeys.addMapping(atoi(it->first.c_str()), it->second);
+                    }
+
+                    /* Remove that entry from the map to save memory */
+                    config.erase("keyBindings");
+                }
             }
             else{
-                /* Extract keys */
-                for(auto it = config["keyBindings"].begin(); it != config["keyBindings"].end(); ++it){
-                    this->mKeys.addMapping(atoi(it->first.c_str()), it->second);
-                }
-
-                /* Remove that entry from the map to save memory */
-                config.erase("keyBindings");
+                std::string e = "[btReader.cpp] Error: ";
+                e += "user.profile could not be parsed. Description: ";
+                e += res.description();
+                throw(e);
             }
         }
         catch(mException& e){
-            std::string mError = currentDateTime() + ": ";
-            mError += "[btReader.cpp] - getUserProfile Error: ";
-            mError += e.what();
-            setError(mError);
-            printf("%s \n", mError.c_str());;
+            mLog->log(e.what());
+            setError();
         }
     }
 }
 
-void cMain::setError(std::string mError){
-    error += mError+"\n";
-}
-
-std::string cMain::getError(){
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", error.c_str(), NULL);
-    return error;
+void cMain::setError(){
+    this->error = 1;
 }
 
 bool cMain::run(){
-    bool rVal = 1;
-    bool running = 1;
+    bool rVal = 0;
     int startTick = SDL_GetTicks();
     while(running){
-        if(error.size() > 0){
+        rVal = 1;
+        if(error){
             rVal = 0;
             running = 0;
         }
@@ -253,7 +255,9 @@ bool cMain::run(){
         }
     }
     replaceDatabase();
-    printf("Runtime = %d", SDL_GetTicks() - startRunTime);
+    std::string runtime = "Runtime = ";
+    runtime += std::to_string(SDL_GetTicks() - startRunTime);
+    mLog->log(runtime);
     return rVal;
 }
 
@@ -274,11 +278,8 @@ void cMain::render(){
         mContents[menu]->render();
     }
     catch(mException& e){
-        std::string mError = currentDateTime() + ": ";
-        mError += "[btReader.cpp] - Error: In Render, ";
-        mError += e.what();
-        setError(mError);
-        printf("%s \n", mError.c_str());
+        /* Render errors should be logged in the respective rendering file */
+        setError();
     }
     /* Display the image \0/ */
     SDL_RenderPresent(mRenderer);

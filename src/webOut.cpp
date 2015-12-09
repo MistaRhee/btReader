@@ -89,6 +89,31 @@ cWebOut::cWebOut(){
     fclose(ft);
     this->tempLoc = mLoc;
     this->isReady = 0;
+
+    /* Create log file */
+    std::string logFile = "logs/";
+    logFile += currentDateTime();
+    logFile += " webOut.log";
+    this->mLog = new __logger::cLogger(logFile);
+    logFile.clear();
+}
+
+cWebOut::cWebOut(__logger::cLogger* mLog){
+    /* Create the temporary file, ready for writing */
+    this->mLog = mLog;
+    std::string mLoc;
+    mLoc = ctf();
+    FILE* ft = fopen(mLoc.c_str(), "w+");
+    fclose(ft);
+    this->tempLoc = mLoc;
+    this->isReady = 0;
+
+    /* Create log file */
+    std::string logFile = "logs/";
+    logFile += currentDateTime();
+    logFile += " webOut.log";
+    __logger::cLogger(logFile);
+    logFile.clear();
 }
 
 cWebOut::~cWebOut(){
@@ -99,10 +124,12 @@ void cWebOut::createPage(std::string sauce, std::string title){
     /* Takes the chapter XML information file and generates a HTML webpage for it */
     if(!fileExists(tempLoc)){
         std::string e = currentDateTime() + ": [webOut.cpp] - Error! Temporary file wasn't created!";
+        mLog->log("[webOut.cpp] - Error! Temporary file wasn't created!");
         throw(mException(e));
     }
     else if(!fileExists(sauce)){
-        std::string e = currentDateTime() + ": [webOut.cpp] - Error! Sauce file sent does not exist!";
+        std::string e = currentDateTime() + ": [webOut.cpp] - Error! Sauce file sent doesn't exist!";
+        mLog->log("[webOut.cpp] - Error! Sauce file requested doesn't exist!");
         throw(mException(e));
     }
     else{
