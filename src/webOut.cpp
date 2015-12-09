@@ -111,7 +111,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
          * hopes up! */
         pugi::xml_document main = createHTMLHeader();
         pugi::xml_node body = main.child("body");
-        main.child("head").child("title").text().set(title.c_str()); //title.c_str()
+        main.child("head").child("title").text().set(title.c_str()); //Safe again, because only one text field in this anyway
         FILE* fin = fopen(sauce.c_str(), "r");
         char buffer[1000000];
         std::string temp;
@@ -132,7 +132,8 @@ void cWebOut::createPage(std::string sauce, std::string title){
                 }
                 if(num == j){ //Pure equals, just leave it in
                     pugi::xml_node tempNode = body.append_child("p");
-                    tempNode.text().set(buffer);
+                    pugi::xml_node tText = tempNode.append_child(pugi::node_pcdata);
+                    tText.set_value(buffer);
                 }
                 else{
                     for(int k = 0; k < j-num; k++){
@@ -140,7 +141,8 @@ void cWebOut::createPage(std::string sauce, std::string title){
                     }
                     sprintf(buffer, "h%d", num);
                     pugi::xml_node tempNode = body.append_child(buffer);
-                    tempNode.text().set(temp.c_str());
+                    pugi::xml_node tText = tempNode.append_child(pugi::node_pcdata);
+                    tText.set_value(temp.c_str());
                     temp.clear();
                 }
             }
@@ -158,13 +160,19 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             if(bold){
                                 /* Flagged */
                                 bold = 0;
-                                if(!temp.empty()) currNode.text().set(temp.c_str());
+                                if(!temp.empty()){
+                                    pugi::xml_node tText = currNode.append_child(pugi::node_pcdata);
+                                    tText.set_value(temp.c_str());
+                                }
                                 temp.clear();
                                 currNode = currNode.parent();
                             }
                             else{
                                 bold = 1; //Flip the bit
-                                if(!temp.empty()) currNode.text().set(temp.c_str());
+                                if(!temp.empty()){
+                                    pugi::xml_node tText = currNode.append_child(pugi::node_pcdata);
+                                    tText.set_value(temp.c_str());
+                                }
                                 temp.clear();
                                 currNode = currNode.append_child("b");
                             }
@@ -178,25 +186,43 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             if(italic){
                                 /* Flagged */
                                 italic = 0; //Clear bit
-                                if(!temp.empty()) currNode.addText(temp.c_str());
+                                if(!temp.empty()){
+                                    pugi::xml_node tText = currNode.append_child(pugi::node_pcdata);
+                                    tText.set_value(temp.c_str());
+                                }
                                 temp.clear();
-                                currNode = currNode.getParentNode();
+                                currNode = currNode.parent();
                             }
                             else{
                                 italic = 1; //Flip the bit
-                                if(!temp.empty()) currNode.addText(temp.c_str());
+                                if(!temp.empty()){
+                                    pugi::xml_node tText = currNode.append_child(pugi::node_pcdata);
+                                    tText.set_value(temp.c_str());
+                                }
                                 temp.clear();
-                                currNode.addChild("i");
-                                currNode = currNode.getChildNode(currNode.nChildNode()-1);
+                                currNode = currNode.append_child("i");
                             }
                             i++;
                         }
-                        else if(buffer[i] == '[' && buffer[i+1] == '['){
+                        else if(buffer[i] == '[' && i < j-1 && buffer[i+1] == '['){ //Should never have a '[[' right next to the end anyway
                             /* Image -> It's an internal link */
-                            if(!temp.empty()) currNode.addText(temp.c_str());
+                            if(!temp.empty()){
+                                pugi::xml_node tText = currNode.append_child(pugi::node_pcdata);
+                                tText.set_value(temp.c_str());
+                            }
                             temp.clear();
-                            for(int k = i+2; k < j; k++){
-
+                            for(int k = i+2; k < j-1; k++){
+                                if(buffer[k] == ']'){
+                                    /* Save contents of image, break out */
+                                    pugi::xml_node imageNode = currNode.append_child("img");
+                                    pugi::xml_attribute imageSauce = imageNode.append_attribute("src");
+                                    imageSauce.set_value(temp.c_str());
+                                    i = k+1;
+                                    break;
+                                }
+                                else{
+                                    temp += buffer[k];
+                                }
                             }
                         }
                         else{
@@ -206,11 +232,12 @@ void cWebOut::createPage(std::string sauce, std::string title){
                         }
                     }
                     else{
-                        temp += buffer[i]
+                        temp += buffer[i];
                     }
                 }
                 if(!temp.empty()){
-                    currNode.addText(temp.c_str());
+                    pugi::xml_node tText = currNode.append_child(pugi::node_pcdata);
+                    tText.set_value(temp.c_str());
                     temp.clear();
                 }
             }

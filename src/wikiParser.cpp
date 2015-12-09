@@ -116,7 +116,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                             }
                         }
                         pugi::xml_node synopsis = mainNode.append_child("synopsis");
-                        synopsis.text().set(synopsisText.c_str());
+                        synopsis.text().set(synopsisText.c_str()); //Safe to use this because there will only be one text field anyway
                         synopsisText.clear();
                         status = VOLUMES;
                     }
