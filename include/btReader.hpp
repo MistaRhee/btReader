@@ -74,12 +74,9 @@ class cWikiParser{
         ~cWikiParser(){}
         void cleanNovel(const std::string, const std::string, const std::string); //Title of file to clean, title of the "exist" checking file, title of location to save to
         void cleanChapter(const std::string, const std::string); //Title of the file to clean, title of the location to save to
-        std::string getError();
         std::string generateRandomName(int len);
     private:
         __logger::cLogger* mLog;
-        std::string error;
-        void setError(std::string);
         std::string titleClean(const std::string);
 };
 

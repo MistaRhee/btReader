@@ -61,21 +61,21 @@ cMain::cMain(){
             mLog->kill();
             exit(123);
         }
-        mWindow = SDL_CreateWindow(
+        this->mWindow = SDL_CreateWindow(
                 "btReader - By MistaRhee and NoOne2246", 
                 SDL_WINDOWPOS_CENTERED, 
                 SDL_WINDOWPOS_CENTERED, 
                 1024, 600, 
                 SDL_WINDOW_SHOWN
                 );
-        mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
-        currThreads = 1;
+        this->mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
+        this->currThreads = 1;
         getUserProfile();
-        startRunTime = SDL_GetTicks();
-        whereAt = list;
-        running = 1;
+        this->startRunTime = SDL_GetTicks();
+        this->whereAt = list;
+        this->running = 1;
     }
-    else running = 0;
+    else this->running = 0;
 }
 
 cMain::~cMain(){
@@ -88,10 +88,25 @@ cMain::~cMain(){
 
 void cMain::preComp(){
     if(!fileExists("data/novels.db")){
+        /* Remove any old data that might still be there */
+        remove("data/novels");
+        remove("data/images");
+        remove("data/temp");
+
+        /* Recreate the non-essential folders */
+        checkDependencies();
         mLog->log("[btReader.cpp] Warning: No database found! Rebuilding novel list from site!");
         createDatabase();
     }
     else if(!readDatabase()){
+        /* Remove any old data that might still be there */
+        remove("data/novels");
+        remove("data/images");
+        remove("data/temp");
+        remove("data/novels.db");
+
+        /* Recreate the non-essential folders */
+        checkDependencies();
         mLog->log("[btReader.cpp] Error: The database is corrupt and cannot be read. Overwriting the database!");
         createDatabase();
     }

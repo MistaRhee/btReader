@@ -22,6 +22,17 @@ inline bool fileExists (const std::string& name) {
     }   
 }
 
+cWikiParser::cWikiParser(){
+    std::string logLoc = "logs/";
+    logLoc += currentDateTime() + " wikiParser.log";
+    this->mLog = new __logger::cLogger(logLoc);
+    logLoc.clear();
+}
+
+cWikiParser::cWikiParser(__logger::cLogger* mLog){
+    this->mLog = mLog;
+}
+
 std::string cWikiParser::titleClean(const std::string title){
     std::string cleaned;
     for(int i = 0, j = title.size(); i<j; i++){
@@ -236,7 +247,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 													break;
 
 												default:
-													printf("%s:[wikiParser.cpp] - enum error entered into default somehow.\n", currentDateTime().c_str());
+												    this->mLog->log("[wikiParser.cpp] Error: Enum somehow got into default");'
                                             }
 											if(grabbing == leave){
 												break;
@@ -269,7 +280,9 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                                 tempAtt.set_value("0");
 											}
 										}else{
-											printf("%s:[wikiParser.cpp] - Unable to locate %s within map. Set as not avilable for now\n", currentDateTime().c_str(), chapName.c_str());		//just to make sure error is fixed								
+											std::string err = "[wikiParser.cpp] Warning: Unable to locate ";
+											err += chapName + " within the map. Set as not available for now \n";
+											this->mLog->log(err);
                                             tempAtt = chapterNode.append_attribute("available");
                                             tempAtt.set_value("0");
 										}
@@ -311,7 +324,9 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                                 tempAtt.set_value(savedTo.c_str());
                                             }
                                             else{
-                                                printf("%s:[wikiParser.cpp] - Invalid image name %s. Ignoring \n", currentDateTime().c_str(), tempString.c_str());
+                                                std::string err = "[wikiParser.cpp] Warning: Invalid image name ";
+                                                err += tempString + " -> Ignoring";
+                                                this->mLog->log(err);
                                             }
                                         }
                                     }
@@ -384,12 +399,4 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
     FILE* fout = fopen(out.c_str(), "w+");
     fprintf(fout, "%s \n", text.c_str());
     fclose(fout);
-}
-
-std::string cWikiParser::getError(){
-    return error;
-}
-
-void cWikiParser::setError(std::string inError){
-    error = inError;
 }

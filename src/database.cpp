@@ -52,8 +52,7 @@ void cMain::createDatabase(){
         }
         else{
             /* XML Failed to load! */
-            std::string e = currentDateTime() + " [database.cpp] Load config error! ";
-            e += "manifest.db could not be parsed. Error: ";
+            std::string e = "Remote novelList could not be parsed. Error: ";
             e += res.description();
             remove(mainPageFileName.c_str()); //Clean useless junk
             throw(e);
@@ -62,7 +61,8 @@ void cMain::createDatabase(){
         updateDatabase();
     }
     catch(mException& e){
-        setError(e.what());
+        this->mLog->log(e.what());
+        setError();
     }
 }
 
@@ -78,30 +78,25 @@ bool cMain::readDatabase(){
             }
             int nodeSize = std::distance(mainNode.children("novel").begin(), mainNode.children("novel").end());
             if(novelDB.size() != nodeSize){
-                std::string mWarning = currentDateTime();
-                mWarning +=  ": [database.cpp] - Mismatch in numbers! \nRebuilding the database from scratch! Size: ";
+                std::string mWarning =  "[database.cpp] - Mismatch in numbers! \nRebuilding the database from scratch! Size: ";
                 mWarning += std::to_string(novelDB.size());
                 mWarning += " Novel List Size: ";
                 mWarning += std::to_string(nodeSize);
-                printf("%s \n", mWarning.c_str());
+                this->mLog->log(mWarning);
                 rVal = 0;
             }
         }
         else{
             /* XML Failed to load! */
-            std::string e = currentDateTime() + " [database.cpp] Load config error! ";
-            e += "manifest.db could not be parsed. Error: ";
+            std::string e = "[database.cpp] Error: novels.db could not be parsed. Error: ";
             e += res.description();
             throw(e);
         }
 
     }
     catch(mException& e){
-        setError(e.what());
-        std::string mError = currentDateTime();
-        mError += ": Error - There was an exception! \n";
-        mError += e.what();
-        printf("%s \n", mError.c_str());
+        setError();
+        this->mLog->log(e.what());
         rVal = 0;
     }
     return rVal;
@@ -127,8 +122,7 @@ bool cMain::hasNew(const std::string title){
         }
         else{
             /* XML Failed to load! */
-            std::string e = currentDateTime() + " [database.cpp] Load config error! ";
-            e += "manifest.db could not be parsed. Error: ";
+            std::string e = "New novelList could not be parsed. Error: ";
             e += res.description();
             remove(fileName.c_str());
             throw(e);
@@ -136,11 +130,10 @@ bool cMain::hasNew(const std::string title){
         remove(fileName.c_str());
     }
     catch(mException& e){
-        setError(e.what());
-        std::string mError = currentDateTime();
-        mError += ": Error - There was an exception \n";
+        setError();
+        std::string mError = "[database.cpp] Error: There was an exception \n";
         mError += e.what();
-        printf("%s \n", mError.c_str());
+        this->mLog->log(mError);
         rVal = 0;
     }
     return rVal;
@@ -148,7 +141,7 @@ bool cMain::hasNew(const std::string title){
 
 void cMain::updateDatabase(){
     std::map<std::string, std::pair<std::string, std::string> > tempNovelDB;
-    printf("Updating the database \n");
+    this->mLog->log("[database.cpp] Info: Updating the database!");
     cHttpd stream1;
     std::string tempFile = tempLoc+generateRandomName(50);
     while(fileExists(tempFile)){
@@ -178,7 +171,7 @@ void cMain::updateDatabase(){
         else{
             /* XML Failed to load! */
             std::string e = currentDateTime() + " [database.cpp] Load config error! ";
-            e += "manifest.db could not be parsed. Error: ";
+            e += "New novelList could not be parsed. Error: ";
             e += res.description();
             throw(e);
         }
@@ -186,13 +179,14 @@ void cMain::updateDatabase(){
         novelDB = tempNovelDB;
     }
     catch(mException& e){
-        setError(e.what());
+        setError();
+        this->mLog->log(e.what());
     }
-    printf("%s: [database.cpp] - Finished updating the database \n", currentDateTime().c_str());
+    this->mLog->log("[database.cpp] Info: Finished updating the database");
 }
 
 void cMain::replaceDatabase(){
-    printf("Replacing Database! \n");
+    this->mLog->log("[database.cpp] Info: Replacing Database!");
     pugi::xml_document doc;
     pugi::xml_node root = doc.append_child("novellist");
 
@@ -206,11 +200,12 @@ void cMain::replaceDatabase(){
     }
 
     if(count != novelDB.size()){
-        printf("%s: [database.cpp] - An error has occured when replacing the old database! Mismatch in numbers \n", currentDateTime().c_str());
+        this->mLog->log("[database.cpp] Error: Mismatch in numbers when replacing the database!");
     }
     else{
         if(!doc.save_file("data/novels.db")){
-            printf("%s: [database.cpp] - An error has occured when writing to data/novels.db! Aborting! \n");
+            this->mLog->log("[database.cpp] Error: Unable to write to data/novels.db! Aborting! \n");
+            setError();
         }
     }
 }
@@ -223,7 +218,12 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         std::string revID;
         std::string progress;
         int exist;
-        printf("%s: [database.cpp] - Getting Novel Details for %s. \n", currentDateTime().c_str(), title.c_str());
+        std::string logString;
+
+        logString = std::string("[database.cpp] Info: Getting novel details for ") + title;
+        this->mLog->log(logString);
+        logString.clear()
+
         cHttpd mDownload;
         cWikiParser mParser;
         tempFile = "data/temp/"+generateRandomName(50);
@@ -233,6 +233,8 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
             tempFile2 = tempFile + "2";
         }
         mDownload.download(domain+pageDetail+title, tempFile);
+
+        logString = std::string("[database.cpp] Info: Page saved to ") + tempFile;
         printf("%s: [database.cpp] - Page saved to %s. \n", currentDateTime().c_str(), tempFile.c_str());
         printf("%s: [database.cpp] - Extracting wiki text... \n", currentDateTime().c_str());
 
