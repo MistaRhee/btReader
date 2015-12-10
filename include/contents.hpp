@@ -25,7 +25,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void setFontSize(int);
             void setTextColour(SDL_Color);
             void setBackColour(SDL_Color);
-            bool inOver(int, int); //x and y position of the mouse
+            bool isOver(int, int); //x and y position of the mouse
             void inFocus(); //Turns on focus
             void offFocus(); //Turns off focus
             bool isInFocus();
@@ -50,6 +50,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
         public:
             void render(SDL_Renderer*);
             void handleUserMouse(int, int, int, bool);
+            void handleUserKeyboard(std::string, bool, unsigned int);
             std::string getSelected; //Returns the name of the object that is currently selected
         private:
             void moveSelection(int); //ds
@@ -71,6 +72,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             /* Event handling */
             void handleUserMouse(int, int, int, bool);
             void handleUserScroll(int, int);
+            void handleUserKeyboard(std::string, bool, unsigned int);
 
             /* Rendering to stuffs */
             void render(SDL_Renderer*);
@@ -103,6 +105,9 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void render(SDL_Renderer*); //Draws a section of the texture
             void move(int, int); //Moves the image around (dx, dy). Should only require to move dy (scrolling)
             std::string getSelected();
+            void handleUserMouse(int, int, int, bool);
+            void handleUserScroll(int, int);
+            void handleUserKeyboard(std::string, bool, unsigned int);
         private:
             SDL_Texture* mTexture; //Texture which stores the stuff
             SDL_Rect sauceRect;

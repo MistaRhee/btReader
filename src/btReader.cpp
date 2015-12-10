@@ -135,8 +135,7 @@ void cMain::preComp(){
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
         mList->addNovel(
                 i->first, 
-                atoi(config["novelList"]["font"].c_str()),
-                fonts["novelList"]
+                atoi(config["novelList"]["font"].c_str())
                 );
     }
 }
@@ -288,9 +287,9 @@ void cMain::render(){
     SDL_RenderClear(mRenderer);
     try{
         /* Draw the content first */
-        mContents[whereAt]->render();
+        mContents[whereAt]->render(mRenderer);
         /* Draw the "interface" over the content. */
-        mContents[menu]->render();
+        mContents[menu]->render(mRenderer);
     }
     catch(mException& e){
         /* Render errors should be logged in the respective rendering file */

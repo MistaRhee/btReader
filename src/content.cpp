@@ -39,9 +39,9 @@ namespace beatOff{
         focus = 0;
     }
 
-    bool cContent::isInFocus(){ return inFocus; }
+    bool cContent::isInFocus(){ return focus; }
 
     void cContent::inUse() { use = 1; }
     void cContent::hide() { use = 0; }
-    bool cContent::isInUse(){ return isInUse; }
+    bool cContent::isInUse(){ return use; }
 }

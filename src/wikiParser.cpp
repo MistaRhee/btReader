@@ -247,7 +247,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 													break;
 
 												default:
-												    this->mLog->log("[wikiParser.cpp] Error: Enum somehow got into default");'
+												    this->mLog->log("[wikiParser.cpp] Error: Enum somehow got into default");
                                             }
 											if(grabbing == leave){
 												break;
@@ -362,7 +362,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
     }
 	doc.save_file(outFile.c_str());
     fclose(fexist);
-    free(t);
 }
 
 void cWikiParser::cleanChapter(const std::string in, const std::string out){

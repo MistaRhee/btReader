@@ -222,7 +222,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
 
         logString = std::string("[database.cpp] Info: Getting novel details for ") + title;
         this->mLog->log(logString);
-        logString.clear()
+        logString.clear();
 
         cHttpd mDownload;
         cWikiParser mParser;
@@ -282,11 +282,10 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         }
     }
     catch(mException& e){
-        std::string mError = currentDateTime();
-        mError += ": [database.cpp] - ";
+        std::string mError = "[database.cpp] - ";
         mError += e.what();
-        setError(e.what());
-        printf("%s\n", mError.c_str());
+        setError();
+        this->mLog->log(mError);
         return std::make_pair("", "");
     }
 }

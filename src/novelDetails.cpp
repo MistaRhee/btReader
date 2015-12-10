@@ -25,24 +25,25 @@ namespace beatOff{
 
             /* Grabbing Volume + Chapter list */
             std::vector<std::vector<std::pair<std::string, std::string> > > volumes;
-            XMLNode mainNode = XMLNode::openFileHelper(sauce.c_str(), "novel");
-            std::string title = mainNode.getChildNode("info").getAttribute("title");
-            std::string author = mainNode.getChildNode("info").getAttribute("author");
-            std::string synopsis = mainNode.getChildNode("synopsis").getText();
+
+            pugi::xml_document doc;
+            doc.load_file(sauce.c_str()); //Ignoring return value (I'm a NAUGHTY BOY elegiggle)
+            pugi::xml_node mainNode = doc.child("novel");
+            std::string title = mainNode.child("info").attribute("title").value();
+            std::string author = mainNode.child("info").attribute("author").value();
+            std::string synopsis = mainNode.child("synopsis").text().get(); //Can do this, because only one text field in synopsis node
 
             /* Grab the image location to render 
              * This only grabs the cover image from the first volume. I could
              * edit it so that it would include the first cover image that
              * exists, but that is for later ~~~~~~~~~~~~~
              * ***************************************************************/
-            std::string frontLoc = mainNode.getChildNode("volume", 0).getAttribute("image"); 
+            std::string frontLoc = mainNode.child("volume").attribute("image").value();
 
-            for(int i = 0, j = mainNode.nChildNode("volume"); i < j; i++){
-                XMLNode volume = mainNode.getChildNode("volume", i);
+            for(auto currNode: mainNode.children("volume")){
                 std::vector<std::pair<std::string, std::string> > chapterDetails;
-                for(int k = 0, l = volume.nChildNode("chapter"); k < l; k++){
-                    XMLNode chapNode = volume.getChildNode("chapter", i);
-                    chapterDetails.push_back(std::make_pair(chapNode.getAttribute("title"), chapNode.getAttribute("location"))); //Wew!
+                for(auto chapterNode: mainNode.children("chapter")){
+                    chapterDetails.push_back(std::make_pair(chapterNode.attribute("title").value(), chapterNode.attribute("location").value())); //Wew!
                 }
                 volumes.push_back(chapterDetails);
             }
