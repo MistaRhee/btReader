@@ -23,18 +23,10 @@
 #include "mException.h" //For exception handling
 #include "objects.hpp" //For SDL Objects
 #include "pugixml.hpp" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
+#include "types.hpp" //To hold global types
 
 #define MAX_THREADS 5
 #define FPS_CAP 1000/60
-
-enum places_t{
-    menu = -1, //Should actually have to maually call this
-    list, //NovelList
-    settings, //Settings
-    details, //Novel Details
-    dlList //List of DLs 
-    //updates (maybe implementing later)
-};
 
 class cWebOut{
     public:
@@ -111,8 +103,7 @@ class cMain{
         void handleUserScroll(int, int); //dx, dy
 
         /* The main loop */
-        void update();
-        void processEvents();
+        void processEvents(); //Events will now also handl updating the main state because why not?
         /* NOTE: The main "overlord" class should not be rendering anything
          * itself, it should only be calling the "render" functions of all the
          * smaller subclasses of contents

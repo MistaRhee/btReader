@@ -68,7 +68,7 @@ void cMain::processEvents(){
 void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers){
     /* Sends the correct token to the appropriate content object */
     for(auto it = mContents.begin(); it != mContents.end(); ++it){
-        if(it->second->isFocused() && it->second->isInUse()){ //In use should be implied, but leaving there to be sure
+        if(it->second->isInFocus() && it->second->isInUse()){ //In use should be implied, but leaving there to be sure
             /* Send the appropriate keyID to the content */
             it->second->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
         }
@@ -83,8 +83,8 @@ void cMain::handleUserMouse(int x, int y, int button, bool isDown){
             it->second->handleUserMouse(x, y, button, isDown);
             /* Flip the other inFocus */
             for(auto ot = mContents.begin(); it != mContents.end(); ++it){
-                if(it->second->isFocused()){
-                    it->second->offFocus();
+                if(ot->second->isInFocus()){
+                    ot->second->offFocus();
                 }
             }
             it->second->inFocus();
@@ -100,7 +100,7 @@ void cMain::handleUserScroll(int dx, int dy){
     int mx = -1, my = -1;
     SDL_GetMouseState(&mx, &my);
     for(auto it = mContents.begin(); it != mContents.end(); ++it){
-        if(it->second->isOver(x, y) && it->second->isInUse()){
+        if(it->second->isOver(mx, my) && it->second->isInUse()){
             it->second->handleUserScroll(dx, dy);
             break; //No need to check any more
         }

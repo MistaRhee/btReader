@@ -1,20 +1,37 @@
 #ifndef CONTENTS_HPP
 #define CONTENTS_HPP
 
+#include <cstring>
+#include <exception>
+#include <map>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
-#include <map>
+#include <string>
 #include <utility>
 #include <vector>
-#include <cstring>
-#include <string>
 
 /* Including the base class I'm deriving this from */
 #include "objects.hpp" 
+#include "types.hpp"
 
 /* Including the XML parsing library */
 #include "pugixml.hpp"
+
+struct contentException : public std::exception{
+    const places_t* location() const throw(){
+        return this->loc;
+    }
+    const unsigned int* what() const throw(){
+        return this->what;
+    }
+    contentException(places_t* place, unsigned char what){
+        this->loc = place;
+        this->mask = what;
+    }
+    places_t loc;
+    unsigned char mask; //A bitmask for the state. Each content type has a unique mask definition
+};
 
 namespace beatOff{ //Because it's a derived class and I would like to keep namespaces
 
@@ -59,6 +76,13 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
     };
 
     class cNovelList : public cContent{ //Config part of user Profile
+        /* Content return bitmask:
+         * |7|6|5|4|3|2|1|0|
+         * |.|.|.|.|.|.|.|g|
+         *
+         * g = Go (i.e. something was selected)
+         * . = Unassigned
+         */
         public:
             /* Init and starting defines */
             cNovelList();

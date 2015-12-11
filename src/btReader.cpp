@@ -263,7 +263,6 @@ bool cMain::run(){
             startTick = SDL_GetTicks();
             while(SDL_GetTicks() < startTick+FPS_CAP){
                 processEvents();
-                update();
             }
             render();
         }
@@ -273,11 +272,6 @@ bool cMain::run(){
     runtime += std::to_string(SDL_GetTicks() - startRunTime);
     mLog->log(runtime);
     return rVal;
-}
-
-void cMain::update(){
-    /* ~~La da da~~ */
-    return;
 }
 
 void cMain::render(){

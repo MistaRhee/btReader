@@ -20,6 +20,8 @@ namespace beatOff{
         /* Handles the texturing of the novel list */
         mTexture = NULL;
         textureGen = 0;
+        mouseMoved = 0;
+        novelHeight = 20; //Defaulted to this
     }
     
     void cNovelList::setRect(SDL_Rect inRect){
@@ -137,14 +139,17 @@ namespace beatOff{
          */
         if(id == "up"){
             /* Move selection up */
-            
+            selected ++;
+            if(selected >= mNovels.size()) selected = mNovels.size();
         }
         else if (id == "down"){
             /* Move selection down */
-            
+            selected --;
+            if(selected < 0) selected = 0;
         }
         else if (id == "go"){
             /* Selected that object */
+            throw(contentException(places_t(list), 0b00000001));
         }
     }
 
@@ -171,6 +176,7 @@ namespace beatOff{
                 break;
 
             case -1: //My non-button case i.e. Mouse Motion
+                this->mouseMoved = 1; //Now highlighting what the mouse is hovering over, not what they keyboard was on
                 break;
 
             default:
