@@ -68,11 +68,12 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void render(SDL_Renderer*);
             void handleUserMouse(int, int, int, bool);
             void handleUserKeyboard(std::string, bool, unsigned int);
-            std::string getSelected; //Returns the name of the object that is currently selected
+            std::string getSelected(); //Returns the name of the object that is currently selected
         private:
             void moveSelection(int); //ds
             std::map<std::string, beatOff::cImage> images;
             std::map<std::string, beatOff::cButton> butons;
+            bool mouseMoved;
     };
 
     class cNovelList : public cContent{ //Config part of user Profile
