@@ -18,21 +18,6 @@
 /* Including the XML parsing library */
 #include "pugixml.hpp"
 
-struct contentException : public std::exception{
-    const places_t* location() const throw(){
-        return this->loc;
-    }
-    const unsigned int* what() const throw(){
-        return this->what;
-    }
-    contentException(places_t* place, unsigned char what){
-        this->loc = place;
-        this->mask = what;
-    }
-    places_t loc;
-    unsigned char mask; //A bitmask for the state. Each content type has a unique mask definition
-};
-
 namespace beatOff{ //Because it's a derived class and I would like to keep namespaces
 
     class cContent : public cObject{
@@ -46,13 +31,13 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void inFocus(); //Turns on focus
             void offFocus(); //Turns off focus
             bool isInFocus();
-            void inUse();
             void hide();
-            bool isInUse();
             /* Event Handling */
             virtual void handleUserMouse(int, int, int, bool) {}
             virtual void handleUserScroll(int, int) {}
             virtual void handleUserKeyboard(std::string, bool, unsigned int) {} //Name of the key, is pressed and the bitmask for modifiers
+
+            state_t mState; //GLOBALLY ACCESSABLE STATE. YES PLEASE!
         protected:
 //            bool changed, created; //Not sure why these are here....
             std::string fontLoc;
@@ -60,7 +45,6 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             SDL_Color textColour;
             SDL_Color backColour;
             bool focus;
-            bool use;
     };
     
     class cMenu : public cContent{ //For the main menu (headers etc.)
@@ -77,15 +61,9 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
     };
 
     class cNovelList : public cContent{ //Config part of user Profile
-        /* Content return bitmask:
-         * |7|6|5|4|3|2|1|0|
-         * |.|.|.|.|.|.|.|g|
-         *
-         * g = Go (i.e. something was selected)
-         * . = Unassigned
-         */
         public:
             /* Init and starting defines */
+
             cNovelList();
             void setRect(SDL_Rect);
 
@@ -101,6 +79,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
 
             /* Rendering to stuffs */
             void render(SDL_Renderer*);
+
         private:
             /* Internal functions */
             void genTexture(SDL_Renderer*);

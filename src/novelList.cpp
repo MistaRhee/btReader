@@ -3,29 +3,29 @@
 namespace beatOff{
 
     cNovelList::cNovelList(){
-        selected = 0;
+        this->selected = 0;
         /* Setting "defaults" just in case I forget to set them beforehand */
-        fontSize = 25;
-        textColour.r = 0;
-        textColour.g = 0;
-        textColour.b = 0;
-        textColour.a = 0;
-        backColour.r = 255;
-        backColour.g = 255;
-        backColour.b = 255;
-        backColour.a = 255;
+        this->fontSize = 25;
+        this->textColour.r = 0;
+        this->textColour.g = 0;
+        this->textColour.b = 0;
+        this->textColour.a = 0;
+        this->backColour.r = 255;
+        this->backColour.g = 255;
+        this->backColour.b = 255;
+        this->backColour.a = 255;
         setFont("system/fonts/droidsansfallback.ttf"); //Should be default
         setFontSize(20);
 
         /* Handles the texturing of the novel list */
-        mTexture = NULL;
-        textureGen = 0;
-        mouseMoved = 0;
-        novelHeight = 20; //Defaulted to this
+        this->mTexture = NULL;
+        this->textureGen = 0;
+        this->mouseMoved = 0;
+        this->novelHeight = 20; //Defaulted to this
     }
     
     void cNovelList::setRect(SDL_Rect inRect){
-        sauceRect = inRect;
+        this->sauceRect = inRect;
         setPos(inRect.x, inRect.y);
         setSize(inRect.h, inRect.w);
     }
@@ -71,7 +71,7 @@ namespace beatOff{
         newText.setFont(fontLoc);
         fprintf(stderr, "%s \n", fontLoc.c_str());
         newText.centre(); //Because text centering is nice
-        mNovels.push_back(newText);
+        this->mNovels.push_back(newText);
         h += novelHeight;
     }
 
@@ -79,47 +79,47 @@ namespace beatOff{
         /* Check if the mouse has moved -> if it has, change selection based
          * off absolute mouse position, rather than old selection position
          */
-        textureGen = 0;
-        mNovels[selected].setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
-        mNovels[selected].setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);
-        selected += ds;
-        mNovels[selected].setTextCol(255 - textColour.r, 255 - textColour.g, 255 - textColour.b, 255 - textColour.a);
-        mNovels[selected].setBoxCol(255 - backColour.r, 255 - backColour.g, 255 - backColour.b, 255 - backColour.a);
+        this->textureGen = 0;
+        this->mNovels[this->selected].setTextCol(this->textColour.r, this->textColour.g, this->textColour.b, this->textColour.a);
+        this->mNovels[this->selected].setBoxCol(this->backColour.r, this->backColour.g, this->backColour.b, this->backColour.a);
+        this->selected += ds;
+        this->mNovels[this->selected].setTextCol(255 - this->textColour.r, 255 - this->textColour.g, 255 - this->textColour.b, 255 - this->textColour.a);
+        this->mNovels[this->selected].setBoxCol(255 - this->backColour.r, 255 - this->backColour.g, 255 - this->backColour.b, 255 - this->backColour.a);
 
         /* Check to see if selection is on screen, if it isn't, move screen
          * such that it is */
         int reqY = 0; //Required value of Y to make the novel be see-able (is this a word?)
-        reqY += novelHeight*(selected+1);
-        reqY -= h-novelHeight; //I'm displaying a bunch of other stuff anyway
-        sauceRect.y = reqY;
+        reqY += this->novelHeight*(this->selected+1);
+        reqY -= this->h-this->novelHeight; //I'm displaying a bunch of other stuff anyway
+        this->sauceRect.y = reqY;
     }
 
     void cNovelList::genTexture(SDL_Renderer* mRenderer){
         SDL_DestroyTexture(mTexture);
         /* Calculate the required height of the texture */
-        int mHeight = novelHeight*mNovels.size();
+        int mHeight = this->novelHeight*this->mNovels.size();
 
         /* Render shit to a texture */
-        SDL_SetRenderTarget(mRenderer, mTexture);
-        mTexture = SDL_CreateTexture(
+        SDL_SetRenderTarget(mRenderer, this->mTexture);
+        this->mTexture = SDL_CreateTexture(
                 mRenderer,
                 SDL_PIXELFORMAT_UNKNOWN,
                 SDL_TEXTUREACCESS_TARGET,
                 w,
                 mHeight
                 );
-        for(auto it = mNovels.begin(); it != mNovels.end(); ++it){
+        for(auto it = this->mNovels.begin(); it != this->mNovels.end(); ++it){
             /* This is so bad/lazy */
             it->render(mRenderer);
         }
 
         /* Return renderer to render to the window again */
         SDL_SetRenderTarget(mRenderer, NULL);
-        textureGen = 1;
+        this->textureGen = 1;
     }
 
     std::string cNovelList::getSelected(){
-        return mNovels[selected].getText();
+        return this->mNovels[this->selected].getText();
     }
 
     void cNovelList::render(SDL_Renderer* mRenderer){
@@ -139,17 +139,17 @@ namespace beatOff{
          */
         if(id == "up"){
             /* Move selection up */
-            selected ++;
-            if(selected >= mNovels.size()) selected = mNovels.size();
+            this->selected ++;
+            if(this->selected >= this->mNovels.size()) this->selected = this->mNovels.size();
         }
         else if (id == "down"){
             /* Move selection down */
-            selected --;
-            if(selected < 0) selected = 0;
+            this->selected --;
+            if(this->selected < 0) this->selected = 0;
         }
         else if (id == "go"){
             /* Selected that object */
-            throw(contentException(places_t(list), 0b00000001));
+            this->mState = go;
         }
     }
 

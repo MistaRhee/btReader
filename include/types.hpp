@@ -10,4 +10,11 @@ enum places_t{
     //updates (maybe implementing later)
 };
 
+enum state_t{ //The state of a content object
+    rendering, //Is being displayed on screen
+    go, //Is ready for custom action
+    hidden //Isn't being rendered
+};
+
+
 #endif //TYPES_HPP

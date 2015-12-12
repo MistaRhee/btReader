@@ -103,7 +103,8 @@ class cMain{
         void handleUserScroll(int, int); //dx, dy
 
         /* The main loop */
-        void processEvents(); //Events will now also handl updating the main state because why not?
+        void processEvents();
+        void update(); //Polls every single object and updates what is being shown etc. depending on their states
         /* NOTE: The main "overlord" class should not be rendering anything
          * itself, it should only be calling the "render" functions of all the
          * smaller subclasses of contents

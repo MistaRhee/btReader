@@ -281,7 +281,18 @@ void cMain::render(){
     SDL_RenderClear(mRenderer);
     try{
         /* Draw the content first */
-        mContents[whereAt]->render(mRenderer);
+        switch(whereAt){
+            case list:
+                ((beatOff::cNovelList*)mContents[whereAt])->render(mRenderer);
+                break;
+
+            case details:
+                break;
+
+            default:
+                this->mLog->log(std::string("[btReader.cpp] Error: Invalid location reached for whereAt in render: ") + std::to_string(whereAt));
+
+        }
         /* Draw the "interface" over the content. */
         mContents[menu]->render(mRenderer);
     }
@@ -292,6 +303,10 @@ void cMain::render(){
     /* Display the image \0/ */
     SDL_RenderPresent(mRenderer);
     /* Come again to render more shit :D */
+}
+
+void cMain::update(){
+    return; //TODO
 }
 
 void cMain::commitSudoku(){
