@@ -79,8 +79,9 @@ cMain::cMain(){
 }
 
 cMain::~cMain(){
+    this->mLog->log("[btReader.cpp] Info: Shutting down logging system! Goodbye, cruel world");
     this->mLog->kill();
-    delete(this->mLog);
+    delete(this->mLog); //THIS MAY CAUSE A CRASH (Check to make sure later)
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
     SDL_Quit();
@@ -267,7 +268,9 @@ bool cMain::run(){
             render();
         }
     }
+    mLog->log("[btReader.cpp] Info: Currently exiting from the main loop just fine. Replacing database!");
     replaceDatabase();
+    mLog->log("[btReader.cpp] Info: Database successfully replaced! Now shutting down!");
     std::string runtime = "Runtime = ";
     runtime += std::to_string(SDL_GetTicks() - startRunTime);
     mLog->log(runtime);
@@ -306,7 +309,33 @@ void cMain::render(){
 }
 
 void cMain::update(){
-    return; //TODO
+    for(auto it = mContents.begin(); it != mContents.end(); ++it){
+        if(it->second->state == go){ //The current object being polled has had an event and reqires attention
+
+            switch(it->first){
+                case menu: //TODO on completino of menu
+                    break;
+
+                case list:
+                    break;
+
+                case details: //TODO on completion of novelDetails
+                    break;
+
+                case settings: //TODO on completion of settings
+                    break;
+
+                case dlList: //TODO on completion of DL List
+                    break;
+
+                default:
+                    this->mLog->log("[btReader.cpp] Error: Entered invalid whereAt state during Update checking! Aborting!");
+                    setError();
+                    break;
+
+            }
+        }
+    }
 }
 
 void cMain::commitSudoku(){

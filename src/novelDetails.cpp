@@ -114,5 +114,9 @@ namespace beatOff{
         return; //TODO
     }
 
+    void cNovelDetails::handleUserScroll(int dx, int dy){
+        return; //TODO
+    }
+
 }
 

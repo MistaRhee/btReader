@@ -105,6 +105,9 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             /* Flags flags fags... */
             bool textureGen;
             bool mouseMoved;
+            bool freeScroll;
+            int fsX; //The starting point of the free scroll
+            int fsY; //The ending point of the free scroll
     };
 
     class cNovelDetails : public cContent{

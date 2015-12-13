@@ -22,6 +22,9 @@ namespace beatOff{
         this->textureGen = 0;
         this->mouseMoved = 0;
         this->novelHeight = 20; //Defaulted to this
+        this->freeScroll = 0;
+        this->fsX = -1;
+        this->fsY = -1;
     }
     
     cNovelList::~cNovelList(){}
@@ -165,20 +168,35 @@ namespace beatOff{
         /* Note to self: if mouseType = -1, then this is a mouse MOTION event
          * */
         switch(mouseType){
-            case SDL_BUTTON_LEFT:
+            case SDL_BUTTON_LEFT: //TODO
                 /* Left click */
                 break;
 
             case SDL_BUTTON_RIGHT:
                 /* Right click */
+                //Doing nothing with right click ATM (maybe later)
                 break;
 
             case SDL_BUTTON_MIDDLE:
                 /* Middle mouse */
+                //Start free scrolling
+                this->freeScroll = !this->freeScroll; //Flip the bit
+                if(this->freeScroll){ //Only set these variables if freeScroll is active
+                    this->fsX = x;
+                    this->fsY = y;
+                }
                 break;
 
             case -1: //My non-button case i.e. Mouse Motion
-                this->mouseMoved = 1; //Now highlighting what the mouse is hovering over, not what they keyboard was on
+                if(this->freeScroll){
+                    /* Since we dont' move X around */
+                    move(0, y-fsY);
+                }
+                else{ //TODO
+                    this->mouseMoved = 1; //Now highlighting what the mouse is hovering over, not what they keyboard was on
+                    /* Work out what I'm hovering over */
+
+                }
                 break;
 
             default:
