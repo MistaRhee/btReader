@@ -67,28 +67,76 @@ void cMain::processEvents(){
 
 void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers){
     /* Sends the correct token to the appropriate content object */
-    for(auto it = mContents.begin(); it != mContents.end(); ++it){
-        if(it->second->isInFocus() && it->second->isInUse()){ //In use should be implied, but leaving there to be sure
-            /* Send the appropriate keyID to the content */
-            it->second->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
+
+    /* Either the menu is in focus or the actual element is in focus */
+
+    if(mContents[whereAt]->isInFocus()){
+        switch(whereAt){
+            case list:
+                ((beatOff::cNovelDetails*)mContents[list])->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
+                break;
+
+            case details:
+                ((beatOff::cNovelDetails*)mContents[details])->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
+                break;
+
+            case settings:
+                /* Not ready yet */
+                //TODO on completion of settings menu
+                break;
+
+            case dlList:
+                /* Not ready yet */
+                //TODO on completion of dlList menu
+                break;
+
+            default:
+                this->mLog->log("[events.cpp] Error: Entered invalid whereAt state during handling user keyboard! Aborting!");
+                setError();
+                break;
+        }
+    }
+    else{ //It was meant for the menu
+        /* Sanity check anyway just in case I forgot an edge case! */
+        if(!mContents[menu]->isInFocus()){
+            this->mLog->log("[events.cpp] Error: Neither whereAt nor menu was in focus! Aborting!");
+            setError();
+        }
+        else{ //Satisfies sanity check, throw it to the appropraite handler
+            ((beatOff::cMenu*)mContents[menu])->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
         }
     }
 }
 
 void cMain::handleUserMouse(int x, int y, int button, bool isDown){
     /* Check which "content" the user's mouse is over */
-    for(auto it = mContents.begin(); it != mContents.end(); ++it){
-        if(it->second->isOver(x, y) && it->second->isInUse()){
-            /* Send the signal to the appropriate content */
-            it->second->handleUserMouse(x, y, button, isDown);
-            /* Flip the other inFocus */
-            for(auto ot = mContents.begin(); it != mContents.end(); ++it){
-                if(ot->second->isInFocus()){
-                    ot->second->offFocus();
-                }
-            }
-            it->second->inFocus();
-            break; //No need to check any more
+    /* It is either the menu or the actual content */
+    if(!mContents[menu]->isOver(x, y)){ //Check menu first because it's always rendered "on top" of the content (although they should be in separate regions)
+        ((beatOff::cMenu*)mContents[menu])->handleUserMouse(x, y, button, isDown);
+    }
+    else{
+        switch(whereAt){
+            case list:
+                ((beatOff::cNovelList*)mContents[list])->handleUserMouse(x, y, button, isDown);
+                break;
+
+            case details:
+                ((beatOff::cNovelDetails*)mContents[details])->handleUserMouse(x, y, button, isDown);
+                break;
+
+            case settings:
+                //TODO on completion of settings menu
+                break;
+
+            case dlList:
+                //TODO on completion of DLList
+                break;
+
+            default:
+                this->mLog->log("[events.cpp] Error: Entered invalid whereAt state during handling user mouse! Aborting!");
+                setError();
+                break;
+
         }
     }
 }

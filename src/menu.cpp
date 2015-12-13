@@ -2,11 +2,11 @@
 
 namespace beatOff{
 
-    void cMenu::render(SDL_Renderer* mRenderer){
+    void cMenu::render(SDL_Renderer* mRenderer){ //TODO
         return;
     }
 
-    void cMenu::handleUserMouse(int x, int y, int button, bool isPressed){
+    void cMenu::handleUserMouse(int x, int y, int button, bool isPressed){ //TODO
         switch(button){
             case SDL_BUTTON_LEFT:
                 break;
@@ -27,4 +27,7 @@ namespace beatOff{
         }
     }
 
+    void cMenu::handleUserKeyboard(std::string key, bool isDown, unsigned int modifiers){ //TODO
+        return;
+    }
 }

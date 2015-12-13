@@ -31,13 +31,12 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void inFocus(); //Turns on focus
             void offFocus(); //Turns off focus
             bool isInFocus();
-            void hide();
             /* Event Handling */
             virtual void handleUserMouse(int, int, int, bool) {}
             virtual void handleUserScroll(int, int) {}
             virtual void handleUserKeyboard(std::string, bool, unsigned int) {} //Name of the key, is pressed and the bitmask for modifiers
 
-            state_t mState; //GLOBALLY ACCESSABLE STATE. YES PLEASE!
+            state_t state; //GLOBALLY ACCESSABLE STATE. YES PLEASE!
         protected:
 //            bool changed, created; //Not sure why these are here....
             std::string fontLoc;
