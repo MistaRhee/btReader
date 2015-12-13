@@ -15,7 +15,7 @@ namespace beatOff{
         setSize(inRect.h, inRect.w); 
     }
 
-    void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer, std::string fontLoc){
+    void cNovelDetails::openNovel(std::string sauce, SDL_Renderer* mRenderer, std::string fontLoc){ //TODO: WIP. Just need to pre-calculate the height then render it to a texture
         try{
             /* Clearing out old textures */
             if(mTexture){
@@ -88,13 +88,13 @@ namespace beatOff{
         }
     }
 
-    void cNovelDetails::move(int dx, int dy){
+    void cNovelDetails::move(int dx, int dy){ //TODO: Verify that this still works
         /*Ignoring dx at the momemnt, until I can get zoom working. */
         sauceRect.y += dy;
         //sauceRect.x += dx;
     }
 
-    void cNovelDetails::render(SDL_Renderer* mRenderer){
+    void cNovelDetails::render(SDL_Renderer* mRenderer){ //TODO: Verify that this still works
         if(!loaded){
             std::string mError = currentDateTime() = ": ";
             mError += "[novelDetails.cpp] File wasn't loaded before calling render \n";
@@ -104,6 +104,14 @@ namespace beatOff{
         else{
             SDL_RenderCopy(mRenderer, mTexture, &sauceRect, NULL);
         }
+    }
+
+    void cNovelDetails::handleUserMouse(int x, int y, int button, bool isDown){
+        return; //TODO
+    }
+
+    void cNovelDetails::handleUserKeyboard(std::string key, bool isDown, unsigned int modifiers){
+        return; //TODO
     }
 
 }

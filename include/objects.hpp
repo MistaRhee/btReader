@@ -17,6 +17,7 @@ namespace beatOff{
     class cObject{
         public:
             cObject();
+            virtual ~cObject() {}
             virtual void render(SDL_Renderer*) {}
             void setPos(int, int); //x, y
             void setSize(int, int); //h, w
@@ -38,7 +39,7 @@ namespace beatOff{
         public:
             cTextBox(); //Initialise
             cTextBox(std::string contesnts, std::string fontLoc, int fontSize, int inX, int inY, int inW, int inH = -1);
-            ~cTextBox();
+            virtual ~cTextBox();
             void setText(std::string);
             void setTextSize(int);
             void showBox();

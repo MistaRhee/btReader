@@ -24,6 +24,8 @@ namespace beatOff{
         this->novelHeight = 20; //Defaulted to this
     }
     
+    cNovelList::~cNovelList(){}
+
     void cNovelList::setRect(SDL_Rect inRect){
         this->sauceRect = inRect;
         setPos(inRect.x, inRect.y);
@@ -149,7 +151,7 @@ namespace beatOff{
         }
         else if (id == "go"){
             /* Selected that object */
-            this->mState = go;
+            this->state = go;
         }
     }
 

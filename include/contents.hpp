@@ -23,6 +23,8 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
     class cContent : public cObject{
         public:
             /* Setting functions */
+            virtual ~cContent(){}
+
             void setFont(std::string);
             void setFontSize(int);
             void setTextColour(SDL_Color);
@@ -48,15 +50,19 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
     
     class cMenu : public cContent{ //For the main menu (headers etc.)
         public:
+            cMenu();
+            ~cMenu() {}
             void render(SDL_Renderer*);
             void handleUserMouse(int, int, int, bool);
             void handleUserKeyboard(std::string, bool, unsigned int);
-            std::string getSelected(); //Returns the name of the object that is currently selected
+            places_t getSelected(); //Returns the locationID of where to go next
         private:
             void moveSelection(int); //ds
             std::map<std::string, beatOff::cImage> images;
             std::map<std::string, beatOff::cButton> butons;
             bool mouseMoved;
+
+            places_t next; //The location that has been selected
     };
 
     class cNovelList : public cContent{ //Config part of user Profile
@@ -64,6 +70,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             /* Init and starting defines */
 
             cNovelList();
+            ~cNovelList();
             void setRect(SDL_Rect);
 
             /* "User" interactions */
@@ -103,6 +110,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
     class cNovelDetails : public cContent{
         public:
             cNovelDetails();
+            ~cNovelDetails() {}
             void setRect(SDL_Rect); //Only care about the rectangle's xPos and yPos and width
             void openNovel(std::string, SDL_Renderer*, std::string); //Opens up a novel from XML and then renders it to a texture
             void render(SDL_Renderer*); //Draws a section of the texture

@@ -2,6 +2,11 @@
 
 namespace beatOff{
 
+    cMenu::cMenu(){
+        this->next = list;
+        this->mouseMoved = 0;
+    }
+
     void cMenu::render(SDL_Renderer* mRenderer){ //TODO
         return;
     }
