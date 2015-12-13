@@ -89,6 +89,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
         private:
             /* Internal functions */
             void genTexture(SDL_Renderer*);
+            void move(int, int); //Overriding the cObject move function with one that moves the sauceRect instead of the dRect
 
             /* Settings constants */
             int novelHeight;
@@ -97,14 +98,13 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
 
             /* Rendering objects */
             SDL_Texture* mTexture;
-            SDL_Rect sauceRect;
+            SDL_Rect sRect;
 
             /* Storage */
             std::vector<cTextBox> mNovels;
 
             /* Flags flags fags... */
             bool textureGen;
-            bool mouseMoved;
             bool freeScroll;
             int fsX; //The starting point of the free scroll
             int fsY; //The ending point of the free scroll

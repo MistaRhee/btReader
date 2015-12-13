@@ -53,6 +53,7 @@ namespace beatOff{
             void render(SDL_Renderer*);
             void renderWikiText(SDL_Renderer*);
             void centre();
+            void invert(); //Inverts text and box colour
             bool isCentered();
         protected:
             std::string text;

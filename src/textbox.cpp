@@ -131,6 +131,11 @@ namespace beatOff{
         boxA = inA;
     }
 
+    void cTextBox::invert(){
+        setTextCol(255-textR, 255-textG, 255-textB, 255-textA);
+        setBoxCol(255-boxR, 255-boxG, 255-boxB, 255-boxA);
+    }
+
     int cTextBox::wrappedHeight(){
         int renderedHeight = -1;
         if(!fileExists(font)){

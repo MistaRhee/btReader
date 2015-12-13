@@ -20,7 +20,6 @@ namespace beatOff{
         /* Handles the texturing of the novel list */
         this->mTexture = NULL;
         this->textureGen = 0;
-        this->mouseMoved = 0;
         this->novelHeight = 20; //Defaulted to this
         this->freeScroll = 0;
         this->fsX = -1;
@@ -30,7 +29,9 @@ namespace beatOff{
     cNovelList::~cNovelList(){}
 
     void cNovelList::setRect(SDL_Rect inRect){
-        this->sauceRect = inRect;
+        this->sRect = inRect; //To set appropriate height and width.
+        this->sRect.x = 0;
+        this->sRect.y = 0;
         setPos(inRect.x, inRect.y);
         setSize(inRect.h, inRect.w);
     }
@@ -80,23 +81,24 @@ namespace beatOff{
         h += novelHeight;
     }
 
+    void cNovelList::move(int dx, int dy){ //Overwriting move function to move the source rect anyway
+        /* Ignoring dx simply because it shouldn't exist anyway */
+        this->sRect.y += dy;
+    }
+
     void cNovelList::moveSelection(int ds){
-        /* Check if the mouse has moved -> if it has, change selection based
-         * off absolute mouse position, rather than old selection position
-         */
+        /* Move it according to ds -> DOES NOT DO SANITY CHECK */
         this->textureGen = 0;
-        this->mNovels[this->selected].setTextCol(this->textColour.r, this->textColour.g, this->textColour.b, this->textColour.a);
-        this->mNovels[this->selected].setBoxCol(this->backColour.r, this->backColour.g, this->backColour.b, this->backColour.a);
+        this->mNovels[this->selected].invert();
         this->selected += ds;
-        this->mNovels[this->selected].setTextCol(255 - this->textColour.r, 255 - this->textColour.g, 255 - this->textColour.b, 255 - this->textColour.a);
-        this->mNovels[this->selected].setBoxCol(255 - this->backColour.r, 255 - this->backColour.g, 255 - this->backColour.b, 255 - this->backColour.a);
+        this->mNovels[this->selected].invert();
 
         /* Check to see if selection is on screen, if it isn't, move screen
          * such that it is */
         int reqY = 0; //Required value of Y to make the novel be see-able (is this a word?)
         reqY += this->novelHeight*(this->selected+1);
         reqY -= this->h-this->novelHeight; //I'm displaying a bunch of other stuff anyway
-        this->sauceRect.y = reqY;
+        this->sRect.y = reqY;
     }
 
     void cNovelList::genTexture(SDL_Renderer* mRenderer){
@@ -135,7 +137,7 @@ namespace beatOff{
         dRect.h = h;
         dRect.w = w;
         /* Sauce rect h and w should be equal to dRect */
-        SDL_RenderCopy(mRenderer, mTexture, &sauceRect, &dRect);
+        SDL_RenderCopy(mRenderer, mTexture, &sRect, &dRect);
     }
     
     void cNovelList::handleUserKeyboard(std::string id, bool isPressed, unsigned int bitmask){
@@ -144,13 +146,16 @@ namespace beatOff{
          */
         if(id == "up"){
             /* Move selection up */
-            this->selected ++;
-            if(this->selected >= this->mNovels.size()) this->selected = this->mNovels.size();
+            if(this->selected < this->mNovels.size()-1){ //I can still scroll down (increase the selection number)
+                moveSelection(1);
+            }
+            /* Otherwise ignore it since I'm at the bottom anyway -> NO WRAPPING AROUND THE LIST */
         }
         else if (id == "down"){
             /* Move selection down */
-            this->selected --;
-            if(this->selected < 0) this->selected = 0;
+            if(this->selected > 0){ //I can still move up (decrase the selection number)
+                moveSelection(-1);
+            }
         }
         else if (id == "go"){
             /* Selected that object */
@@ -168,9 +173,24 @@ namespace beatOff{
         /* Note to self: if mouseType = -1, then this is a mouse MOTION event
          * */
         switch(mouseType){
-            case SDL_BUTTON_LEFT: //TODO
-                /* Left click */
-                break;
+            case SDL_BUTTON_LEFT: 
+                {
+                    /* Left click */
+                    /* Work out what I'm hovering over */
+                    int currHeight = this->sRect.y + y;
+                    int novelsDown = currHeight/this->novelHeight;
+                    /* Check if the top is cutting off a novel block */
+                    if(!currHeight%this->novelHeight){
+                        novelsDown++;
+                    }
+                    this->mNovels[this->selected].invert();
+                    this->selected = novelsDown;
+                    this->mNovels[this->selected].invert();
+
+                    /* Flag that it has done something */
+                    this->state = go;
+                    break;
+                }
 
             case SDL_BUTTON_RIGHT:
                 /* Right click */
@@ -188,16 +208,25 @@ namespace beatOff{
                 break;
 
             case -1: //My non-button case i.e. Mouse Motion
-                if(this->freeScroll){
-                    /* Since we dont' move X around */
-                    move(0, y-fsY);
+                {
+                    if(this->freeScroll){
+                        /* Since we dont' move X around */
+                        move(0, y-fsY);
+                    }
+                    else{
+                        /* Work out what I'm hovering over */
+                        int currHeight = this->sRect.y + y;
+                        int novelsDown = currHeight/this->novelHeight;
+                        /* Check if the top is cutting off a novel block */
+                        if(!currHeight%this->novelHeight){
+                            novelsDown++;
+                        }
+                        this->mNovels[this->selected].invert();
+                        this->selected = novelsDown;
+                        this->mNovels[this->selected].invert();
+                    }
+                    break;
                 }
-                else{ //TODO
-                    this->mouseMoved = 1; //Now highlighting what the mouse is hovering over, not what they keyboard was on
-                    /* Work out what I'm hovering over */
-
-                }
-                break;
 
             default:
                 /* Should only reach here on non-conventional mouse keys which I don't handle ROFL */
