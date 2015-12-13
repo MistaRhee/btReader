@@ -37,6 +37,7 @@ namespace beatOff{
             printf("%s \n", mError.c_str());
         } 
         else{
+            textSize = 12; //Defaulted to this ATM
             textR = 0;
             textG = 0;
             textB = 0;
