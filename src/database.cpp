@@ -45,7 +45,7 @@ void cMain::createDatabase(){
         pugi::xml_document doc;
         pugi::xml_parse_result res = doc.load_file(mainPageFileName.c_str());
         if(res){
-            pugi::xml_node category = doc.child("api").child("query").child("cagetorymembers");
+            pugi::xml_node category = doc.child("api").child("query").child("categorymembers");
             for(auto cmNode: category.children("cm")){
                 tempStr = cmNode.attribute("title").value();
                 novelDB[convTitle(tempStr)] = std::make_pair("","");
