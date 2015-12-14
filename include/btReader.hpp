@@ -88,6 +88,7 @@ class cMain{
 
         /* Error Handling */
         void setError();
+        void close();
     private:
         /* Initialization functions */
         bool checkDependencies();

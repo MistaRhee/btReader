@@ -34,6 +34,7 @@ void cMain::createDatabase(){
     //This is the lengthy process of getting the novels when the program first
     //starts up. Just so the user doesn't have to do it themselves
     try{
+        this->mLog->log("[database.cpp] Info: Creating database!");
         cHttpd stream1;
         std::string mainPageFileName = tempLoc+generateRandomName(50);
         while(fileExists(mainPageFileName)){

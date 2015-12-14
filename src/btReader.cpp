@@ -47,7 +47,7 @@ inline bool fileExists (const std::string& name) {
 
 cMain::cMain(){
     std::string logLoc = "logs/";
-    logLoc = currentDateTime() + " btReader.log";
+    logLoc += "btReader.log";
     mLog = new __logger::cLogger(logLoc);
     logLoc.clear();
     mLog->start().detach();
@@ -74,14 +74,18 @@ cMain::cMain(){
         this->startRunTime = SDL_GetTicks();
         this->whereAt = list;
         this->running = 1;
+        this->error = 0;
     }
     else this->running = 0;
 }
 
 cMain::~cMain(){
+    close();
+}
+
+void cMain::close(){
     this->mLog->log("[btReader.cpp] Info: Shutting down logging system! Goodbye, cruel world");
     this->mLog->kill();
-    delete(this->mLog); //THIS MAY CAUSE A CRASH (Check to make sure later)
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
     SDL_Quit();
@@ -254,6 +258,7 @@ void cMain::setError(){
 bool cMain::run(){
     bool rVal = 0;
     int startTick = SDL_GetTicks();
+
     while(running){
         rVal = 1;
         if(error){

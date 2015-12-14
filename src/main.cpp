@@ -12,12 +12,10 @@ int main(int argc, char* argv[]){
         }
     }
     if(mProg.run()){
-        delete(&mProg);
         return 0;
     }
     else{
         fprintf(stderr, "An error had occured. Please look at the log files for more details \n");
-        delete(&mProg);
         return -1;
     }
 }
