@@ -226,7 +226,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         logString.clear();
 
         cHttpd mDownload;
-        cWikiParser mParser;
+        cWikiParser mParser(this->mLog);
         tempFile = "data/temp/"+generateRandomName(50);
         tempFile2 = tempFile + "2";
         while(fileExists(tempFile)||fileExists(tempFile2)){
