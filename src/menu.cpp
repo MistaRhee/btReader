@@ -17,9 +17,11 @@ namespace beatOff{
                 break;
 
             case SDL_BUTTON_RIGHT:
+                /* We don't handle right click at this stage (no need to) */
                 break;
 
             case SDL_BUTTON_MIDDLE:
+                /* Don't handle middle-mouse at all */
                 break;
 
             case -1:
@@ -33,6 +35,11 @@ namespace beatOff{
     }
 
     void cMenu::handleUserKeyboard(std::string key, bool isDown, unsigned int modifiers){ //TODO
+        return;
+    }
+
+    void cMenu::handleUserScroll(int dx, int dy){
+        /* Menu doesn't handle scrolling for obvious reasons */
         return;
     }
 }

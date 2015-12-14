@@ -55,6 +55,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void render(SDL_Renderer*);
             void handleUserMouse(int, int, int, bool);
             void handleUserKeyboard(std::string, bool, unsigned int);
+            void handleUserScroll(int, int);
             places_t getSelected(); //Returns the locationID of where to go next
         private:
             void moveSelection(int); //ds
