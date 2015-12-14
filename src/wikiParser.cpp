@@ -24,7 +24,7 @@ inline bool fileExists (const std::string& name) {
 
 cWikiParser::cWikiParser(){
     std::string logLoc = "logs/";
-    logLoc += currentDateTime() + " wikiParser.log";
+    logLoc += "wikiParser.log";
     this->mLog = new __logger::cLogger(logLoc);
     logLoc.clear();
 }

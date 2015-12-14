@@ -25,6 +25,7 @@ namespace beatOff{
             void setError(std::string);
             void setWarning(std::string);
             bool hasWarning();
+            bool isOver(int, int); //x and y position of the mouse
             std::string getWarning();
             std::string getError();
             bool hasError();

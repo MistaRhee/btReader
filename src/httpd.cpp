@@ -44,7 +44,7 @@ bool cHttpd::checkExist(const std::string url){
 }
 */
 
-void cHttpd::download(const std::string url, const std::string fileName){
+void cHttpd::download(const std::string url, const std::string fileName){ //TODO Write something that will handle curl being offline so it won't terminate
     try{
 /*
         if(!checkExist(url)){

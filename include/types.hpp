@@ -11,6 +11,8 @@ enum places_t{
 };
 
 enum state_t{ //The state of a content object
+    stuck, //It has an error that needs to be logged
+    broken, //It has an error that has broken the program
     rendering, //Is being displayed on screen
     go, //Is ready for custom action
     hidden //Isn't being rendered

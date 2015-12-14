@@ -29,6 +29,40 @@
 
 #include "logger.hpp"
 
+#ifdef _WIN32
+#include <windows.h>
+
+inline bool dirExists(const std::string& dirName) {
+    DWORD ftyp = GetFileAttributesA(dirName.c_str());
+    if (ftyp == INVALID_FILE_ATTRIBUTES) return false;
+    if (ftyp & FILE_ATTRIBUTE_DIRECTORY) return true;
+    return false;
+}
+
+inline void createFolder(const std::string& dirName){
+    std::string command;
+    command = "mkdir "+dirName;
+    system(command.c_str());
+}
+#endif
+
+#if __unix__
+#include <dirent.h>
+
+inline bool dirExists(const std::string& dirName){
+    DIR* myDir = NULL;
+    myDir = opendir(dirName.c_str());
+    if(myDir == NULL) return false;
+    else return true;
+}
+
+inline void createFolder(const std::string& dirName){
+    std::string command;
+    command = "mkdir "+dirName;
+    system(command.c_str());
+}
+#endif
+
 namespace __logger{
 
     inline std::string currentDateTime(){
@@ -55,6 +89,20 @@ namespace __logger{
     }
 
     cLogger::cLogger(std::string fileLoc){
+        /* Check if there is a folder in the location -> ensure that the folder exists */
+        std::string tempStr;
+        for(int i = 0; i < fileLoc.size(); i++){
+            if(fileLoc[i] == '/'){
+                /* There is folder */
+                if(!dirExists(tempStr)){
+                    if(!tempStr.empty()) createFolder(tempStr);
+                }
+            }
+            else{
+                tempStr += fileLoc[i];
+            }
+        }
+        tempStr.clear();
         flog = NULL;
         flog = fopen(fileLoc.c_str(), "w+");
         if(!flog){
@@ -67,16 +115,12 @@ namespace __logger{
     }
         
     cLogger::~cLogger(){
-#ifndef __NOTHREAD__
-        this->dead = 1;
-#endif
         fflush(flog);
         fclose(flog);
     }
 
     void cLogger::log(std::string out){
-        std::string output = currentDateTime() + ": ";
-        output += out;
+        std::string output = currentDateTime() + out;
         while(output[output.size()-1] == '\n') output.erase(output.end()-1); //Remove trailing new-lines
 #ifdef __NOTHREAD__
         fprintf(this->flog, "%s \n", output.c_str());

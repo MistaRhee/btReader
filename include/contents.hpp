@@ -29,23 +29,18 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void setFontSize(int);
             void setTextColour(SDL_Color);
             void setBackColour(SDL_Color);
-            bool isOver(int, int); //x and y position of the mouse
-            void inFocus(); //Turns on focus
-            void offFocus(); //Turns off focus
-            bool isInFocus();
-            /* Event Handling */
             virtual void handleUserMouse(int, int, int, bool) {}
             virtual void handleUserScroll(int, int) {}
             virtual void handleUserKeyboard(std::string, bool, unsigned int) {} //Name of the key, is pressed and the bitmask for modifiers
 
             state_t state; //GLOBALLY ACCESSABLE STATE. YES PLEASE!
+            std::string err; //Set if the state is stuck/broken. Indicates what needs to be logged with mLog->log()
         protected:
 //            bool changed, created; //Not sure why these are here....
             std::string fontLoc;
             int fontSize;
             SDL_Color textColour;
             SDL_Color backColour;
-            bool focus;
     };
     
     class cMenu : public cContent{ //For the main menu (headers etc.)
@@ -58,7 +53,6 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void handleUserScroll(int, int);
             places_t getSelected(); //Returns the locationID of where to go next
         private:
-            void moveSelection(int); //ds
             /* TODO: Use polymorphism to make this nicer (ceebs ATM because I just want to get
              * something out)
              */

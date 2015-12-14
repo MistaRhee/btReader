@@ -11,7 +11,7 @@ void cMain::processEvents(){
                         e.key.keysym.mod
                         );
                 break;
-                
+
             case SDL_KEYUP:
                 handleUserKey(
                         e.key.keysym.sym,
@@ -57,7 +57,7 @@ void cMain::processEvents(){
             case SDL_QUIT:
                 commitSudoku(); //I'm sorry I failed you QQ
                 break;
-                
+
             default:
                 /* Not handling other events at the moment */
                 break;
@@ -68,43 +68,31 @@ void cMain::processEvents(){
 void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers){
     /* Sends the correct token to the appropriate content object */
 
-    /* Either the menu is in focus or the actual element is in focus */
+    /* Only the content recieves keyboard signals */
 
-    if(mContents[whereAt]->isInFocus()){
-        switch(whereAt){
-            case list:
-                ((beatOff::cNovelDetails*)mContents[list])->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
-                break;
+    switch(whereAt){
+        case list:
+            ((beatOff::cNovelDetails*)mContents[list])->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
+            break;
 
-            case details:
-                ((beatOff::cNovelDetails*)mContents[details])->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
-                break;
+        case details:
+            ((beatOff::cNovelDetails*)mContents[details])->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
+            break;
 
-            case settings:
-                /* Not ready yet */
-                //TODO on completion of settings menu
-                break;
+        case settings:
+            /* Not ready yet */
+            //TODO on completion of settings menu
+            break;
 
-            case dlList:
-                /* Not ready yet */
-                //TODO on completion of dlList menu
-                break;
+        case dlList:
+            /* Not ready yet */
+            //TODO on completion of dlList menu
+            break;
 
-            default:
-                this->mLog->log("[events.cpp] Error: Entered invalid whereAt state during handling user keyboard! Aborting!");
-                setError();
-                break;
-        }
-    }
-    else{ //It was meant for the menu
-        /* Sanity check anyway just in case I forgot an edge case! */
-        if(!mContents[menu]->isInFocus()){
-            this->mLog->log("[events.cpp] Error: Neither whereAt nor menu was in focus! Aborting!");
+        default:
+            this->mLog->log("[events.cpp] Error: Entered invalid whereAt state during handling user keyboard! Aborting!");
             setError();
-        }
-        else{ //Satisfies sanity check, throw it to the appropraite handler
-            ((beatOff::cMenu*)mContents[menu])->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
-        }
+            break;
     }
 }
 
@@ -183,6 +171,6 @@ void cMain::handleUserScroll(int dx, int dy){
         this->mLog->log(std::string("[events.cpp] Info: Recieved mouse event off the screen with coordinates: x->")+
                 std::to_string(mx) +
                 std::string(" y->") + std::to_string(my)
-        ); //Wew
+                ); //Wew
     }
 }
