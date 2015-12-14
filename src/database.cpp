@@ -268,7 +268,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
             }
             this->mLog->log("[database.cpp] - Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n");
             mParser.cleanNovel(tempFile, tempFile2, novelStore);
-            this->mLog->log(std::string("[database.cpp] - Cleaned page stored in "+ novelStore);
+            this->mLog->log(std::string("[database.cpp] - Cleaned page stored in ")+ novelStore);
             this->mLog->log("[database.cpp] - Deleting temp files");
             remove (tempFile.c_str());
             remove (tempFile2.c_str());
