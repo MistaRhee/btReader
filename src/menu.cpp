@@ -8,6 +8,12 @@ namespace beatOff{
     }
 
     void cMenu::render(SDL_Renderer* mRenderer){ //TODO
+        for(auto it = images.begin(); it != images.end(); ++it){
+            it->second.render(mRenderer);
+        }
+        for(auto it = buttons.begin(); it != buttons.end(); ++it){
+            it->second.render(mRenderer);
+        }
         return;
     }
 

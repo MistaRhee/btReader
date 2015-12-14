@@ -59,8 +59,11 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             places_t getSelected(); //Returns the locationID of where to go next
         private:
             void moveSelection(int); //ds
+            /* TODO: Use polymorphism to make this nicer (ceebs ATM because I just want to get
+             * something out)
+             */
             std::map<std::string, beatOff::cImage> images;
-            std::map<std::string, beatOff::cButton> butons;
+            std::map<std::string, beatOff::cButton> buttons;
             bool mouseMoved;
 
             places_t next; //The location that has been selected

@@ -236,8 +236,8 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         mDownload.download(domain+pageDetail+title, tempFile);
 
         logString = std::string("[database.cpp] Info: Page saved to ") + tempFile;
-        printf("%s: [database.cpp] - Page saved to %s. \n", currentDateTime().c_str(), tempFile.c_str());
-        printf("%s: [database.cpp] - Extracting wiki text... \n", currentDateTime().c_str());
+        this->mLog->log(logString);
+        this->mLog->log("[database.cpp] - Extracting wiki text...");
 
         pugi::xml_document doc;
         pugi::xml_parse_result res = doc.load_file(tempFile.c_str());
@@ -261,15 +261,15 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
             }
             fclose(fexist);
 
-            printf("%s: [database.cpp] - Extraction complete! \n", currentDateTime().c_str());
+            this->mLog->log("[database.cpp] - Extraction complete!"); 
             novelStore = "data/novels/"+generateRandomName(50);
             while(fileExists(novelStore)){
                 novelStore = "data/novels/"+generateRandomName(50);
             }
-            printf("%s: [database.cpp] - Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n", currentDateTime().c_str());
+            this->mLog->log("[database.cpp] - Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n");
             mParser.cleanNovel(tempFile, tempFile2, novelStore);
-            printf("%s: [database.cpp] - Cleaned page stored in %s. \n", currentDateTime().c_str(), novelStore.c_str());
-            printf("%s: [database.cpp] - Deleting temp file \n", currentDateTime().c_str());
+            this->mLog->log(std::string("[database.cpp] - Cleaned page stored in "+ novelStore);
+            this->mLog->log("[database.cpp] - Deleting temp files");
             remove (tempFile.c_str());
             remove (tempFile2.c_str());
             return std::make_pair(novelStore, revID);
