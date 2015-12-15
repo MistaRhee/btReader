@@ -44,13 +44,13 @@ namespace beatOff{
                         }
                         else{
                             this->state = stuck;
-                            this->err = std::string("[menu.cpp] Error: Registered a button click, but there is an unrecognised object ") + name;
+                            this->err += std::string("[menu.cpp] Error: Registered a button click, but there is an unrecognised object ") + name + "\n";
                         }
                     }
                     else{
                         /* We have an issue right now */
                         this->state = stuck;
-                        this->err = std::string("[menu.cpp] Error: Handle usermouse was called but the mouse was not over any object! Skipping that event (not critical)!");
+                        this->err += std::string("[menu.cpp] Error: Handle usermouse was called but the mouse was not over any object! Skipping that event (not critical)! \n");
                     }
                     break;
                 }
