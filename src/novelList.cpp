@@ -14,7 +14,7 @@ namespace beatOff{
         this->backColour.g = 255;
         this->backColour.b = 255;
         this->backColour.a = 255;
-        setFont("system/fonts/droidsansfallback.ttf"); //Should be default
+        setFont(std::string("system/fonts/droidsansfallback.ttf")); //Should be default
         setFontSize(20);
 
         /* Handles the texturing of the novel list */

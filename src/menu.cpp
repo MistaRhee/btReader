@@ -39,7 +39,13 @@ namespace beatOff{
                     }
                     if(!name.empty()){
                         /* Check what the name is, and then set what we're going to next */
-                        if(name == ""){
+                        if(name == "settings"){
+
+                        }
+                        else if(name == "novelList"){
+
+                        }
+                        else if(name == "downloads"){
 
                         }
                         else{

@@ -55,6 +55,8 @@ namespace __logger{
             std::thread start();
             void run();
             void kill();
+
+            std::mutex done; //A blocking mutex to ensure that all things have been logged before deleting the object (usually used if the main function has a deconstructor or something(
 #endif
 
         private:

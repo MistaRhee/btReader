@@ -86,6 +86,9 @@ cMain::~cMain(){
 void cMain::close(){
     this->mLog->log("[btReader.cpp] Info: Shutting down logging system! Goodbye, cruel world");
     this->mLog->kill();
+    /* Block until the logger has finished */
+    this->mLog->done.lock();
+    this->mLog->done.unlock();
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
     SDL_Quit();
@@ -119,10 +122,18 @@ void cMain::preComp(){
      * exists
      */
     /* Clearing the maps, just in case data is leaked (shouldn't though) */
-    fonts.clear();
-    colours.clear();
-    mContents.clear();
+    this->fonts.clear();
+    this->colours.clear();
+    this->mContents.clear();
     replaceDatabase();
+
+    /* Add the content objects */
+    this->mContents[menu] = new beatOff::cMenu();
+    this->mContents[list] = new beatOff::cNovelList();
+    this->mContents[details] = new beatOff::cNovelDetails();
+    /* Uncomment when appropriate object is completed */
+    //this->mContents[settings] = new beatOff::cSettings();
+    //this->mContents[dlList] = new beatOff::dlList();
 
     /* Creating a colour map */
     SDL_Colour temp;
@@ -276,7 +287,7 @@ bool cMain::run(){
     mLog->log("[btReader.cpp] Info: Currently exiting from the main loop just fine. Replacing database!");
     replaceDatabase();
     mLog->log("[btReader.cpp] Info: Database successfully replaced! Now shutting down!");
-    std::string runtime = "Runtime = ";
+    std::string runtime = "[btReader.cpp] Info: Runtime = ";
     runtime += std::to_string(SDL_GetTicks() - startRunTime);
     mLog->log(runtime);
     return rVal;
@@ -306,6 +317,7 @@ void cMain::render(){
     }
     catch(mException& e){
         /* Render errors should be logged in the respective rendering file */
+        this->mLog->log(e.what());
         setError();
     }
     /* Display the image \0/ */

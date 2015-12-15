@@ -52,18 +52,14 @@ void cMain::createDatabase(){
             }
         }
         else{
-            /* XML Failed to load! */
-            std::string e = "Remote novelList could not be parsed. Error: ";
-            e += res.description();
-            remove(mainPageFileName.c_str()); //Clean useless junk
-            throw(e);
+            /* XML Failed to load -> Either invalid XML recieved or just offline */
+            throw(mException(std::string("[database.cpp] Warning: Recieved invalid XML during createDatabase or client is currently offline! Skipping database creation")));
         }
         remove(mainPageFileName.c_str());
         updateDatabase();
     }
     catch(mException& e){
         this->mLog->log(e.what());
-        setError();
     }
 }
 
@@ -91,7 +87,7 @@ bool cMain::readDatabase(){
             /* XML Failed to load! */
             std::string e = "[database.cpp] Error: novels.db could not be parsed. Error: ";
             e += res.description();
-            throw(e);
+            throw(mException(e));
         }
 
     }
@@ -122,11 +118,10 @@ bool cMain::hasNew(const std::string title){
             if(original.compare(rootNode.child("query").child("novels").child("novel").child("revisions").child("rev").attribute("revid").value()) != 0) rVal = 0;
         }
         else{
-            /* XML Failed to load! */
-            std::string e = "New novelList could not be parsed. Error: ";
-            e += res.description();
+            /* XML Failed to load! Since we got here, it should be that the XML is invalid (but user
+             * could've lost net connection) */
             remove(fileName.c_str());
-            throw(e);
+            throw(mException(std::string("[database.cpp] Warning: Recieved invalid XML during hasNew or client is currently offline! Skipping database creation")));
         }
         remove(fileName.c_str());
     }
@@ -170,17 +165,13 @@ void cMain::updateDatabase(){
             }
         }
         else{
-            /* XML Failed to load! */
-            std::string e = currentDateTime() + " [database.cpp] Load config error! ";
-            e += "New novelList could not be parsed. Error: ";
-            e += res.description();
-            throw(e);
+            /* XML Failed to load -> Either invalid XML recieved or just offline */
+            throw(mException(std::string("[database.cpp] Warning: Recieved invalid XML during UpdateDatabase or client is currently offline! Skipping database creation")));
         }
         novelDB.clear(); //To prevent removed novels from staying (i.e. abiding by BT rules)
         novelDB = tempNovelDB;
     }
     catch(mException& e){
-        setError();
         this->mLog->log(e.what());
     }
     this->mLog->log("[database.cpp] Info: Finished updating the database");

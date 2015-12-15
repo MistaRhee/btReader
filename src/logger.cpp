@@ -122,7 +122,7 @@ namespace __logger{
     }
 
     void cLogger::log(std::string out){
-        //printf("Logger recieved %d! \n", ++this->count);
+        printf("Logger count: %d \n", ++this->count);
         std::string output = currentDateTime() + out;
         while(output[output.size()-1] == '\n') output.erase(output.end()-1); //Remove trailing new-lines
 #ifdef __NOTHREAD__
@@ -140,6 +140,7 @@ namespace __logger{
     }
 
     void cLogger::run(){
+        this->done.lock();
         while(!this->dead){
             std::this_thread::sleep_for(std::chrono::seconds(1)); //So I don't rape the CPU
             this->lock.lock();
@@ -156,6 +157,7 @@ namespace __logger{
             this->q.pop();
             fprintf(this->flog, "%s \n", out.c_str());
         }
+        this->done.unlock();
     }
 
     void cLogger::kill(){
