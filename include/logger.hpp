@@ -63,6 +63,7 @@ namespace __logger{
             bool dead;
             std::mutex lock;
 #endif
+            unsigned int count;
             FILE* flog;
 
     };

@@ -293,7 +293,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                          */
                                         fileName.clear();
                                         bool shouldGrab = 0;
-                                        if(newVol.attribute("image")){
+                                        if(!newVol.attribute("image")){
                                             for(int i = 1, j = strlen(buffer); i < j; i++){
                                                 if(buffer[i] == '['){
                                                     /* Iss 13 fix */
@@ -316,7 +316,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                              * of my image file is "File"
                                              */
                                             std::string tempString(fileName.begin(), fileName.begin()+4);
-                                            if(tempString == "File"){
+                                            if(tempString == "File" or tempString == "Image"){
                                                 cGetImage newImageGrab;
                                                 std::string savedTo = newImageGrab.getImage(fileName);
                                                 pugi::xml_attribute tempAtt = newVol.append_attribute("image");

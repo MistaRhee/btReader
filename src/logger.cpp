@@ -77,6 +77,7 @@ namespace __logger{
 
     cLogger::cLogger(){
         this->flog = NULL;
+        this->count = 0;
         this->flog = fopen("wooden.log", "w+");
         if(!this->flog){
             fprintf(stderr, "Critical Hit! flog failed to open the file! \n");
@@ -91,6 +92,7 @@ namespace __logger{
     cLogger::cLogger(std::string fileLoc){
         /* Check if there is a folder in the location -> ensure that the folder exists */
         std::string tempStr;
+        this->count = 0;
         for(int i = 0; i < fileLoc.size(); i++){
             if(fileLoc[i] == '/'){
                 /* There is folder */
@@ -103,9 +105,9 @@ namespace __logger{
             }
         }
         tempStr.clear();
-        flog = NULL;
-        flog = fopen(fileLoc.c_str(), "w+");
-        if(!flog){
+        this->flog = NULL;
+        this->flog = fopen(fileLoc.c_str(), "w+");
+        if(!this->flog){
             fprintf(stderr, "Critical Hit! flog failed to open the file! \n");
             exit(322);
         }
@@ -120,6 +122,7 @@ namespace __logger{
     }
 
     void cLogger::log(std::string out){
+        //printf("Logger recieved %d! \n", ++this->count);
         std::string output = currentDateTime() + out;
         while(output[output.size()-1] == '\n') output.erase(output.end()-1); //Remove trailing new-lines
 #ifdef __NOTHREAD__
