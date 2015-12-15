@@ -58,7 +58,6 @@ std::string cWikiParser::generateRandomName(int length){
 void cWikiParser::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile){
     FILE*fin = fopen(inFile.c_str(), "r");
 	FILE*fexist = fopen(existFile.c_str(), "r");
-    FILE*fout = fopen(outFile.c_str(), "w+");
     char buffer[4096];
 
     pugi::xml_document doc;
