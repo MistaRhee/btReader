@@ -91,7 +91,7 @@ namespace beatOff{
     }
 
     void cMenu::addButton(std::string name, std::string text, std::string font, int size, int x, int y, int h, int w){
-        beatOff::cButton newButt(text, font, size x, y, w, h);
+        beatOff::cButton newButt(text, font, size, x, y, w, h);
         this->buttons[name] = newButt;
     }
 

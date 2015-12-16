@@ -52,6 +52,7 @@ cMain::cMain(){
     logLoc.clear();
     mLog->start().detach();
     mLog->log("[btReader.cpp] - Started logging.");
+    this->error = 0; //Program can break during preComp and Check dependencies
     if(checkDependencies()){
         preComp();
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
@@ -74,7 +75,6 @@ cMain::cMain(){
         this->startRunTime = SDL_GetTicks();
         this->whereAt = list;
         this->running = 1;
-        this->error = 0;
     }
     else this->running = 0;
 }
@@ -131,8 +131,19 @@ void cMain::preComp(){
     this->mContents[menu] = new beatOff::cMenu();
     this->mContents[list] = new beatOff::cNovelList();
     this->mContents[details] = new beatOff::cNovelDetails();
-    
-    SDL_Rect mRect;this->config["menu"]["content"] 
+
+    SDL_Rect mRect;
+    mRect.x = atoi(this->config["interface"]["content"]["x"].c_str());
+    mRect.y = atoi(this->config["interface"]["content"]["y"].c_str());
+    mRect.h = atoi(this->config["interface"]["content"]["h"].c_str());
+    mRect.w = atoi(this->config["interface"]["content"]["w"].c_str());
+
+    ((beatOff::cNovelList*)this->mContents[list])->setRect(mRect);
+    ((beatOff::cNovelDetails*)this->mContents[details])->setRect(mRect);
+
+    /* TODO: Uncomment when appropriate contents are implemented */
+    //((beatOff::cSettings*)this->mContents[settings])->setRect(mRect);
+    //((beatOff::cDlList*)this->mContents[dlList])->setRect(mRect);
 
     /* Uncomment when appropriate object is completed */
     //this->mContents[settings] = new beatOff::cSettings();
@@ -223,7 +234,7 @@ void cMain::getUserProfile(){
         try{
             pugi::xml_document doc;
             pugi::xml_parse_result res = doc.load_file("system/user.profile");
-            pugi::xml_node rootNode = doc.child("profile");
+            pugi::xml_node rootNode = doc.child("config");
             if(res){
                 /* Load XML File into the map */
                 for(auto it: rootNode.children()){
@@ -245,8 +256,16 @@ void cMain::getUserProfile(){
                 }
                 else{
                     /* Extract keys */
-                    for(auto it = config["keyBindings"]["key"].begin(); it != config["keyBindings"]["key"].end(); ++it){
-                        this->mKeys.addMapping(atoi(it->first.c_str()), it->second);
+                    std::string id;
+                    for(auto it = this->config["keybindings"].begin(); it != this->config["keybindings"].end(); ++it){
+                        /* Do a sanity check -> First should be key */
+                        if(it->first != "key"){
+                            /* Log it! Don't set exit */
+                            this->mLog->log(std::string("[btReader.cpp] Error: Keybindings has an non-\"key\" entry! Entry type: ")+it->first);
+                        }
+                        else{
+                            this->mKeys.addMapping(atoi(it->second.find("code")->second.c_str()), it->second.find("id")->second);
+                        }
                     }
 
                     /* Remove that entry from the map to save memory */
@@ -259,16 +278,16 @@ void cMain::getUserProfile(){
                     setError();
                 }
                 else{
-                    beatOff::cMenu* mMenu = this->mContents[menu];
+                    beatOff::cMenu* mMenu = (beatOff::cMenu*)this->mContents[menu];
                     for(auto it = this->config["menu"].begin(); it != this->config["menu"].end(); ++it){
                         if(it->first == "image"){
                             mMenu->addImage(
-                                    it->second["name"],
-                                    it->second["sauce"],
-                                    atoi(it->second["x"].c_str()),
-                                    atoi(it->second["y"].c_str()),
-                                    atoi(it->second["h"].c_str()),
-                                    atoi(it->second["w"].c_str())
+                                    it->second.find("name")->second,
+                                    it->second.find("sauce")->second,
+                                    atoi(it->second.find("x")->second.c_str()),
+                                    atoi(it->second.find("y")->second.c_str()),
+                                    atoi(it->second.find("h")->second.c_str()),
+                                    atoi(it->second.find("w")->second.c_str())
                                     );
                         }
                         else if (it->first == "button"){
@@ -375,7 +394,8 @@ void cMain::update(){
         if(it->second->state == go){ //The current object being polled has had an event and reqires attention
 
             switch(it->first){
-                case menu: //TODO on completino of menu
+                case menu: 
+                    /* Grab the current selection and then return something */
                     break;
 
                 case list:
