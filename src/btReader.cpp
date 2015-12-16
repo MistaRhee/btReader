@@ -131,6 +131,9 @@ void cMain::preComp(){
     this->mContents[menu] = new beatOff::cMenu();
     this->mContents[list] = new beatOff::cNovelList();
     this->mContents[details] = new beatOff::cNovelDetails();
+    
+    SDL_Rect mRect;this->config["menu"]["content"] 
+
     /* Uncomment when appropriate object is completed */
     //this->mContents[settings] = new beatOff::cSettings();
     //this->mContents[dlList] = new beatOff::dlList();
@@ -151,7 +154,7 @@ void cMain::preComp(){
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
         mList->addNovel(
                 i->first, 
-                atoi(config["novelList"]["font"].c_str())
+                atoi(config["novelList"]["font"]["value"].c_str())
                 );
     }
 }
@@ -223,10 +226,12 @@ void cMain::getUserProfile(){
             pugi::xml_node rootNode = doc.child("profile");
             if(res){
                 /* Load XML File into the map */
-                for(auto it = rootNode.begin(); it != rootNode.end(); ++it){
-                    std::string name = it->name();
-                    for(auto ot = it->begin(); ot != it->end(); ++ot){
-                        config[name][ot->attribute("key").value()] = ot->attribute("value").value();
+                for(auto it: rootNode.children()){
+                    std::string name = it.name();
+                    for(auto ot: it.children()){
+                        for(auto attribute: ot.attributes()){
+                            this->config[name][ot.name()][attribute.name()] = attribute.value();
+                        }
                     }
                 }
 
@@ -240,12 +245,52 @@ void cMain::getUserProfile(){
                 }
                 else{
                     /* Extract keys */
-                    for(auto it = config["keyBindings"].begin(); it != config["keyBindings"].end(); ++it){
+                    for(auto it = config["keyBindings"]["key"].begin(); it != config["keyBindings"]["key"].end(); ++it){
                         this->mKeys.addMapping(atoi(it->first.c_str()), it->second);
                     }
 
                     /* Remove that entry from the map to save memory */
                     config.erase("keyBindings");
+                }
+
+                if(!config.count("menu")){
+                    /* Something bad just happened, the menu doesn't exist in the user.profile file */
+                    this->mLog->log("[btReader.cpp] Fatal: User.profile doesn't contain an entry for menu! ");
+                    setError();
+                }
+                else{
+                    beatOff::cMenu* mMenu = this->mContents[menu];
+                    for(auto it = this->config["menu"].begin(); it != this->config["menu"].end(); ++it){
+                        if(it->first == "image"){
+                            mMenu->addImage(
+                                    it->second["name"],
+                                    it->second["sauce"],
+                                    atoi(it->second["x"].c_str()),
+                                    atoi(it->second["y"].c_str()),
+                                    atoi(it->second["h"].c_str()),
+                                    atoi(it->second["w"].c_str())
+                                    );
+                        }
+                        else if (it->first == "button"){
+                            mMenu->addButton(
+                                    it->second["name"],
+                                    it->second["sauce"],
+                                    it->second["font"],
+                                    atoi(it->second["size"].c_str()),
+                                    atoi(it->second["x"].c_str()),
+                                    atoi(it->second["y"].c_str()),
+                                    atoi(it->second["h"].c_str()),
+                                    atoi(it->second["w"].c_str())
+                                    );
+                        }
+                        else if (it->first == "font"){
+                            mMenu->setFont(this->fonts[it->second["name"]]);
+                        }
+                        else{
+                            /* Invalid config name, logging it */
+                            this->mLog->log(std::string("[btReader.cpp] Warning: Menu config has invalid handle ") + it->first + ". Ignoring");
+                        }
+                    }
                 }
             }
             else{

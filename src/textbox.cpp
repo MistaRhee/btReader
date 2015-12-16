@@ -194,7 +194,7 @@ namespace beatOff{
         }
         else{
             TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
-            if(h > 0){
+            if(h > 0){ //If we have a set height
                 int expected = wrappedHeight(), tempW;
                 if(h > expected){
                     std::string mWarning = currentDateTime() + ": ";

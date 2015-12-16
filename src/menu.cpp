@@ -89,4 +89,14 @@ namespace beatOff{
         /* Menu doesn't handle scrolling for obvious reasons */
         return;
     }
+
+    void cMenu::addButton(std::string name, std::string text, std::string font, int size, int x, int y, int h, int w){
+        beatOff::cButton newButt(text, font, size x, y, w, h);
+        this->buttons[name] = newButt;
+    }
+
+    void cMenu::addImage(std::string name, std::string sauce, int x, int y, int h, int w){
+        beatOff::cImage newIma(sauce, x, y, h, w);
+        this->images[name] = newIma;
+    }
 }

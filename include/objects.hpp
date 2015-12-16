@@ -83,7 +83,7 @@ namespace beatOff{
     class cButton : public cTextBox {
         public:
             cButton(); //Initialise
-            cButton(std::string inText, std::string fontLoc, int inX, int inY, int inW, int inSize);
+            cButton(std::string inText, std::string fontLoc, int inSize, int inX, int inY, int inW, int inH = -1);
             void select();
             void deselect();
         private:

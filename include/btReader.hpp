@@ -159,7 +159,7 @@ class cMain{
         beatOff::cKeyMap mKeys;
 
         /* Settings */
-        std::map<std::string, std::map<std::string, std::string> > config;
+        std::map<std::string, std::map<std::string, std::map<std::string, std::string> > > config; //Group, tagName, attributeKey -> Attribute Value (wew)
         /* Config formatted as
          *  -> Subsection:  Key->value
          */
