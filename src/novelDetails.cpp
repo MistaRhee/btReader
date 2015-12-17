@@ -42,7 +42,7 @@ namespace beatOff{
 
             for(auto currNode: mainNode.children("volume")){
                 std::vector<std::pair<std::string, std::string> > chapterDetails;
-                for(auto chapterNode: mainNode.children("chapter")){
+                for(auto chapterNode: currNode.children("chapter")){
                     chapterDetails.push_back(std::make_pair(chapterNode.attribute("title").value(), chapterNode.attribute("location").value())); //Wew!
                 }
                 volumes.push_back(chapterDetails);

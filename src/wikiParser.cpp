@@ -293,7 +293,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                          */
                                         fileName.clear();
                                         bool shouldGrab = 0;
-                                        if(!newVol.attribute("image")){
+//                                        if(!newVol.attribute("image")){
                                             for(int i = 1, j = strlen(buffer); i < j; i++){
                                                 if(buffer[i] == '['){
                                                     /* Iss 13 fix */
@@ -327,7 +327,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                                 err += tempString + " -> Ignoring";
                                                 this->mLog->log(err);
                                             }
-                                        }
+//                                        }
                                     }
                                     else if(strlen(buffer) == 1 or buffer[0] == '<' or buffer[0] == '\'' or buffer[0] == '&'){
                                         /* Ignore this, because it's just a
