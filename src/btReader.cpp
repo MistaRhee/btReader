@@ -241,7 +241,7 @@ void cMain::getUserProfile(){
                     std::string name = it.name();
                     for(auto ot: it.children()){
                         for(auto attribute: ot.attributes()){
-                            this->config[name][ot.name()][attribute.name()] = attribute.value();
+                            this->config[name].find(ot.name())->second.find(attribute.name())->second = attribute.value();
                         }
                     }
                 }
