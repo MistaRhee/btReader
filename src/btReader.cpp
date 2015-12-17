@@ -136,7 +136,7 @@ void cMain::preComp(){
     mRect.x = std::stoi(this->config["interface"].find("content")->second.find("x")->second);
     mRect.y = std::stoi(this->config["interface"].find("content")->second.find("y")->second);
     mRect.h = std::stoi(this->config["interface"].find("content")->second.find("h")->second);
-    mRect.w = std::stoi(this->config["interface"].find("content")->second.find("w")->second;
+    mRect.w = std::stoi(this->config["interface"].find("content")->second.find("w")->second);
 
     ((beatOff::cNovelList*)this->mContents[list])->setRect(mRect);
     ((beatOff::cNovelDetails*)this->mContents[details])->setRect(mRect);
