@@ -133,10 +133,10 @@ void cMain::preComp(){
     this->mContents[details] = new beatOff::cNovelDetails();
 
     SDL_Rect mRect;
-    mRect.x = atoi(this->config["interface"]["content"]["x"].c_str());
-    mRect.y = atoi(this->config["interface"]["content"]["y"].c_str());
-    mRect.h = atoi(this->config["interface"]["content"]["h"].c_str());
-    mRect.w = atoi(this->config["interface"]["content"]["w"].c_str());
+    mRect.x = atoi(this->config["interface"].find("content")->second.find("x")->second.c_str());
+    mRect.y = atoi(this->config["interface"].find("content")->second.find("y")->second.c_str());
+    mRect.h = atoi(this->config["interface"].find("content")->second.find("h")->second.c_str());
+    mRect.w = atoi(this->config["interface"].find("content")->second.find("w")->second.c_str());
 
     ((beatOff::cNovelList*)this->mContents[list])->setRect(mRect);
     ((beatOff::cNovelDetails*)this->mContents[details])->setRect(mRect);
@@ -165,7 +165,7 @@ void cMain::preComp(){
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
         mList->addNovel(
                 i->first, 
-                atoi(config["novelList"]["font"]["value"].c_str())
+                atoi(config["novelList"].find("font")->second.find("value")->second.c_str())
                 );
     }
 }
@@ -292,18 +292,18 @@ void cMain::getUserProfile(){
                         }
                         else if (it->first == "button"){
                             mMenu->addButton(
-                                    it->second["name"],
-                                    it->second["sauce"],
-                                    it->second["font"],
-                                    atoi(it->second["size"].c_str()),
-                                    atoi(it->second["x"].c_str()),
-                                    atoi(it->second["y"].c_str()),
-                                    atoi(it->second["h"].c_str()),
-                                    atoi(it->second["w"].c_str())
+                                    it->second.find("name")->second,
+                                    it->second.find("sauce")->second,
+                                    it->second.find("font")->second,
+                                    atoi(it->second.find("size")->second.c_str()),
+                                    atoi(it->second.find("x")->second.c_str()),
+                                    atoi(it->second.find("y")->second.c_str()),
+                                    atoi(it->second.find("h")->second.c_str()),
+                                    atoi(it->second.find("w")->second.c_str())
                                     );
                         }
                         else if (it->first == "font"){
-                            mMenu->setFont(this->fonts[it->second["name"]]);
+                            mMenu->setFont(this->fonts[it->second.find("name")->second]);
                         }
                         else{
                             /* Invalid config name, logging it */
