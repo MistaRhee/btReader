@@ -133,10 +133,10 @@ void cMain::preComp(){
     this->mContents[details] = new beatOff::cNovelDetails();
 
     SDL_Rect mRect;
-    mRect.x = atoi(this->config["interface"].find("content")->second.find("x")->second.c_str());
-    mRect.y = atoi(this->config["interface"].find("content")->second.find("y")->second.c_str());
-    mRect.h = atoi(this->config["interface"].find("content")->second.find("h")->second.c_str());
-    mRect.w = atoi(this->config["interface"].find("content")->second.find("w")->second.c_str());
+    mRect.x = std::stoi(this->config["interface"].find("content")->second.find("x")->second);
+    mRect.y = std::stoi(this->config["interface"].find("content")->second.find("y")->second);
+    mRect.h = std::stoi(this->config["interface"].find("content")->second.find("h")->second);
+    mRect.w = std::stoi(this->config["interface"].find("content")->second.find("w")->second;
 
     ((beatOff::cNovelList*)this->mContents[list])->setRect(mRect);
     ((beatOff::cNovelDetails*)this->mContents[details])->setRect(mRect);
@@ -165,8 +165,8 @@ void cMain::preComp(){
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
         mList->addNovel(
                 i->first, 
-                atoi(config["novelList"].find("font")->second.find("value")->second.c_str())
-                );
+                std::stoi(config["novelList"].find("font")->second.find("value")->second)
+            );
     }
 }
 
@@ -264,7 +264,7 @@ void cMain::getUserProfile(){
                             this->mLog->log(std::string("[btReader.cpp] Error: Keybindings has an non-\"key\" entry! Entry type: ")+it->first);
                         }
                         else{
-                            this->mKeys.addMapping(atoi(it->second.find("code")->second.c_str()), it->second.find("id")->second);
+                            this->mKeys.addMapping(std::stoi(it->second.find("code")->second), it->second.find("id")->second);
                         }
                     }
 
@@ -284,10 +284,10 @@ void cMain::getUserProfile(){
                             mMenu->addImage(
                                     it->second.find("name")->second,
                                     it->second.find("sauce")->second,
-                                    atoi(it->second.find("x")->second.c_str()),
-                                    atoi(it->second.find("y")->second.c_str()),
-                                    atoi(it->second.find("h")->second.c_str()),
-                                    atoi(it->second.find("w")->second.c_str())
+                                    std::stoi(it->second.find("x")->second),
+                                    std::stoi(it->second.find("y")->second),
+                                    std::stoi(it->second.find("h")->second),
+                                    std::stoi(it->second.find("w")->second)
                                     );
                         }
                         else if (it->first == "button"){
@@ -295,11 +295,11 @@ void cMain::getUserProfile(){
                                     it->second.find("name")->second,
                                     it->second.find("sauce")->second,
                                     it->second.find("font")->second,
-                                    atoi(it->second.find("size")->second.c_str()),
-                                    atoi(it->second.find("x")->second.c_str()),
-                                    atoi(it->second.find("y")->second.c_str()),
-                                    atoi(it->second.find("h")->second.c_str()),
-                                    atoi(it->second.find("w")->second.c_str())
+                                    std::stoi(it->second.find("size")->second),
+                                    std::stoi(it->second.find("x")->second),
+                                    std::stoi(it->second.find("y")->second),
+                                    std::stoi(it->second.find("h")->second),
+                                    std::stoi(it->second.find("w")->second)
                                     );
                         }
                         else if (it->first == "font"){

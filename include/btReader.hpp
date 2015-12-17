@@ -2,17 +2,17 @@
 #define BTREADER_HPP
 
 #include <algorithm>
-#include <ctime>
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>
 #include <dirent.h>
 #include <exception>
 #include <map>
 #include <queue>
 #include <SDL2/SDL.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <thread>
+#include <time.h>
 #include <utility>
 #include <vector>
 
