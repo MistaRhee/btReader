@@ -160,8 +160,8 @@ void cMain::updateDatabase(){
                             remove(found->second.first.c_str()); //Remove the old file
                         }
                     }
-                    else tempNovelDB[novelName] = getNovelDetails(novelName);//New novel, just get the details
                 }
+                else tempNovelDB[novelName] = getNovelDetails(novelName);//New novel, just get the details
             }
         }
         else{

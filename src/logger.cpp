@@ -122,7 +122,6 @@ namespace __logger{
     }
 
     void cLogger::log(std::string out){
-        printf("Logger count: %d \n", ++this->count);
         std::string output = currentDateTime() + out;
         while(output[output.size()-1] == '\n') output.erase(output.end()-1); //Remove trailing new-lines
 #ifdef __NOTHREAD__

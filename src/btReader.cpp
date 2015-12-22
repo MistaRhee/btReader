@@ -97,9 +97,7 @@ void cMain::close(){
 void cMain::preComp(){
     if(!fileExists("data/novels.db")){
         /* Remove any old data that might still be there */
-        remove("data/novels");
-        remove("data/images");
-        remove("data/temp");
+        remove("data/");
 
         /* Recreate the non-essential folders */
         checkDependencies();
@@ -108,10 +106,7 @@ void cMain::preComp(){
     }
     else if(!readDatabase()){
         /* Remove any old data that might still be there */
-        remove("data/novels");
-        remove("data/images");
-        remove("data/temp");
-        remove("data/novels.db");
+        remove("data/");
 
         /* Recreate the non-essential folders */
         checkDependencies();
