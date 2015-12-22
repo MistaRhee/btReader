@@ -54,7 +54,6 @@ class cGetImage{
 
         __logger::cLogger* mLog;
         std::string generateRandomName(int len);
-        bool isFromBT(std::string);
         std::string sanatize(const std::string);
         const std::string imageQuery = "http://www.baka-tsuki.org/project/api.php?action=query&prop=imageinfo&iiprop=url&format=xml&titles=";
         const std::string imageStore = "data/images/";

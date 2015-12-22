@@ -319,7 +319,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                             std::string tempString(fileName.begin(), fileName.begin()+4);
                                             if(tempString == "File" or tempString == "Image"){
                                                 this->mLog->log(std::string("[wikiParser.cpp] Info: Calling cGetImage with ") + fileName);
-                                                cGetImage newImageGrab;
+                                                cGetImage newImageGrab(this->mLog);
                                                 std::string savedTo = newImageGrab.getImage(fileName);
                                                 pugi::xml_attribute tempAtt = newVol.append_attribute("image");
                                                 tempAtt.set_value(savedTo.c_str());
@@ -385,7 +385,7 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
                         fileName += buffer[i];
                     }
                 }
-                cGetImage newImage;
+                cGetImage newImage(this->mLog);
                 text += "[[";
                 text += newImage.getImage(fileName);
                 text += "]]";

@@ -75,36 +75,11 @@ std::string sanitize(const std::string filename){
     return newString;
 }
 
-bool cGetImage::isFromBT(std::string sauce){
-    /* Should only have one http:// so I'll use this as base and if this isn't
-     * good enough, I'll improve it */
-    std::string locSauce = sauce;
-    bool seenHTTP = 0, rVal = 1;
-    for(int i = 0, j = sauce.size(); i < j; i++){
-        if(locSauce[0] != 'h') locSauce.erase(locSauce.begin());
-        else{
-            if( locSauce[1] == 't' &&
-                    locSauce[2] == 't' &&
-                    locSauce[3] == 'p'
-              ){
-                if(!seenHTTP) seenHTTP = 1;
-                else{
-                    rVal = 0;
-                    break;
-                }
-            }
-
-        }
-    }
-    return rVal;
-}
-
 std::string cGetImage::getImage(const std::string fileName){
     std::string logInfo;
     if(fileName.size() > 0){
         std::string sauce = sanitize(fileName);
         try{
-            if(!isFromBT(fileName)) throw("IMAGE URL NOT FROM BT PANIC!!!");
             logInfo = "[getImage.cpp] Info: Grabbing image ";
             logInfo += sauce;
             this->mLog->log(logInfo);
@@ -118,17 +93,18 @@ std::string cGetImage::getImage(const std::string fileName){
             }
             mDownload.download(imageInfo, tempFile.c_str());
             pugi::xml_document doc;
-            pugi::xml_parse_result res;
+            pugi::xml_parse_result res = doc.load_file(tempFile.c_str());
 
             if(res){
                 pugi::xml_node mainNode = doc.child("api");
                 std::string check = mainNode.child("query").child("pages").child("page").attribute("imagerepository").value();
                 if(check.compare("local") != 0){
+                    this->mLog->log("[getImage.cpp] Warning: Invalid or missing image! Allocating to the notHere.jpg image!");
+                    remove(tempFile.c_str());
                     return "system/images/notHere.jpg";
                 }
                 else{
                     std::string imageSauce = mainNode.child("query").child("pages").child("page").child("imageinfo").child("ii").attribute("url").value();
-                    remove(tempFile.c_str());
                     /* Pull their naming system and create the folders needed to use this
                      * Guaranteed to be unique because they use this system
                      */
@@ -136,14 +112,16 @@ std::string cGetImage::getImage(const std::string fileName){
                     tempFile = imageSauce;
                     /* Remove fluff */
                     for(int i = 0; i < imageSauce.size(); i++){
-                        if(tempFile[i] == '/'){
-                            if(temp == "image"){
+                        if(imageSauce[i] == '/'){
+                            if(temp == "image" or temp == "images"){
                                 tempFile.erase(0, temp.size()+1);
+                                printf("Break tempFile is: %s ImageSauce is: %s\n", tempFile.c_str(), imageSauce.c_str());
                                 temp.clear();
                                 break;
                             }
                             else{
                                 tempFile.erase(0, temp.size()+1);
+                                printf("tempFile is: %s temp is: %s\n", tempFile.c_str(), temp.c_str());
                                 temp.clear();
                             }
                         }
@@ -152,9 +130,12 @@ std::string cGetImage::getImage(const std::string fileName){
                         }
                     }
                     /* Grab subfolders, check their existence and create them if necessary */
+                    temp.clear();
+                    tempFile = std::string("data/images/") + tempFile;
                     for(int i = 0; i < tempFile.size(); i++){
                         if(tempFile[i] == '/'){
                             if(!dirExists(temp)){
+                                printf("Creating folder %s \n", temp.c_str());
                                 createFolder(temp);
                             }
                             temp += tempFile[i];
@@ -163,6 +144,7 @@ std::string cGetImage::getImage(const std::string fileName){
                             temp += tempFile[i];
                         }
                     }
+                    printf("TempFile: %s ImageSource: %s \n", tempFile.c_str(), imageSauce.c_str());
 
                     mDownload.download(imageSauce, tempFile);
                     return tempFile;
@@ -174,18 +156,19 @@ std::string cGetImage::getImage(const std::string fileName){
                 e += imageInfo;
                 e += " could not be parsed. Description: ";
                 e += res.description();
+                remove(tempFile.c_str());
                 throw(mException(e));
             }
         }
         catch(mException& e){
-            std::string mErr = "[getImage.cpp] Error: ";
-            mErr += e.what();
-            this->mLog->log(mErr);
+            printf("Caught? \n");
+            this->mLog->log(e.what());
             return "system/images/notHere.jpg";
         }
     }
     else{
-        this->mLog->log("[getImage.cpp] Warning: Image requested was empty! Returning notHere");
+        printf("Size = 0 \n");
+        this->mLog->log("[getImage.cpp] Warning: Invalid or missing image! Allocating to the notHere.jpg image!");
         return "system/images/notHere.jpg";
     }
 }
