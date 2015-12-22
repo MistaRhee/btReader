@@ -270,7 +270,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
             std::string e = currentDateTime() + " [database.cpp] Load config error! ";
             e += "manifest.db could not be parsed. Error: ";
             e += res.description();
-            throw(e);
+            throw(mException(e));
         }
     }
     catch(mException& e){

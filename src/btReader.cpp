@@ -311,7 +311,7 @@ void cMain::getUserProfile(){
                 std::string e = "[btReader.cpp] Error: ";
                 e += "user.profile could not be parsed. Description: ";
                 e += res.description();
-                throw(e);
+                throw(mException(e));
             }
         }
         catch(mException& e){

@@ -174,7 +174,7 @@ std::string cGetImage::getImage(const std::string fileName){
                 e += imageInfo;
                 e += " could not be parsed. Description: ";
                 e += res.description();
-                throw(e);
+                throw(mException(e));
             }
         }
         catch(mException& e){
