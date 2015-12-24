@@ -115,13 +115,11 @@ std::string cGetImage::getImage(const std::string fileName){
                         if(imageSauce[i] == '/'){
                             if(temp == "image" or temp == "images"){
                                 tempFile.erase(0, temp.size()+1);
-                                printf("Break tempFile is: %s ImageSauce is: %s\n", tempFile.c_str(), imageSauce.c_str());
                                 temp.clear();
                                 break;
                             }
                             else{
                                 tempFile.erase(0, temp.size()+1);
-                                printf("tempFile is: %s temp is: %s\n", tempFile.c_str(), temp.c_str());
                                 temp.clear();
                             }
                         }
@@ -135,7 +133,6 @@ std::string cGetImage::getImage(const std::string fileName){
                     for(int i = 0; i < tempFile.size(); i++){
                         if(tempFile[i] == '/'){
                             if(!dirExists(temp)){
-                                printf("Creating folder %s \n", temp.c_str());
                                 createFolder(temp);
                             }
                             temp += tempFile[i];
@@ -144,8 +141,6 @@ std::string cGetImage::getImage(const std::string fileName){
                             temp += tempFile[i];
                         }
                     }
-                    printf("TempFile: %s ImageSource: %s \n", tempFile.c_str(), imageSauce.c_str());
-
                     mDownload.download(imageSauce, tempFile);
                     return tempFile;
                 }
@@ -161,13 +156,11 @@ std::string cGetImage::getImage(const std::string fileName){
             }
         }
         catch(mException& e){
-            printf("Caught? \n");
             this->mLog->log(e.what());
             return "system/images/notHere.jpg";
         }
     }
     else{
-        printf("Size = 0 \n");
         this->mLog->log("[getImage.cpp] Warning: Invalid or missing image! Allocating to the notHere.jpg image!");
         return "system/images/notHere.jpg";
     }
