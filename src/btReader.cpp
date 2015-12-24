@@ -26,7 +26,10 @@ inline bool dirExists(const std::string& dirName){
     DIR* myDir = NULL;
     myDir = opendir(dirName.c_str());
     if(myDir == NULL) return false;
-    else return true;
+    else{
+        closedir(myDir);
+        return true;
+    }
 }
 
 inline void createFolder(const std::string& dirName){
@@ -36,11 +39,12 @@ inline void createFolder(const std::string& dirName){
 }
 #endif
 
-inline bool fileExists (const std::string& name) {
-    if (FILE *file = fopen(name.c_str(), "r")) {
+inline bool fileExists (const std::string& name){
+    if(FILE *file = fopen(name.c_str(), "r")){
         fclose(file);
         return true;
-    } else {
+    }
+    else{
         return false;
     }
 }

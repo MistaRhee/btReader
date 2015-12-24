@@ -40,7 +40,10 @@ inline bool dirExists(const std::string& dirName){
     DIR* myDir = NULL;
     myDir = opendir(dirName.c_str());
     if(myDir == NULL) return false;
-    else return true;
+    else{
+        closedir(myDir);
+        return true;
+    }
 }
 
 /* Same as functions above, just for unix */

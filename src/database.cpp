@@ -1,10 +1,11 @@
 #include "btReader.hpp"
 
-inline bool fileExists (const std::string& name) {
-    if (FILE *file = fopen(name.c_str(), "r")) {
+inline bool fileExists (const std::string& name){
+    if(FILE *file = fopen(name.c_str(), "r")){
         fclose(file);
         return true;
-    } else {
+    }
+    else{
         return false;
     }   
 }
@@ -228,7 +229,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
 
         logString = std::string("[database.cpp] Info: Page saved to ") + tempFile;
         this->mLog->log(logString);
-        this->mLog->log("[database.cpp] - Extracting wiki text...");
+        this->mLog->log("[database.cpp] Info: Extracting wiki text...");
 
         pugi::xml_document doc;
         pugi::xml_parse_result res = doc.load_file(tempFile.c_str());
@@ -252,29 +253,29 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
             }
             fclose(fexist);
 
-            this->mLog->log("[database.cpp] - Extraction complete!"); 
+            this->mLog->log("[database.cpp] Info: Extraction complete!");
             novelStore = "data/novels/"+generateRandomName(50);
             while(fileExists(novelStore)){
                 novelStore = "data/novels/"+generateRandomName(50);
             }
-            this->mLog->log("[database.cpp] - Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n");
+            this->mLog->log("[database.cpp] Info: Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n");
             mParser.cleanNovel(tempFile, tempFile2, novelStore);
-            this->mLog->log(std::string("[database.cpp] - Cleaned page stored in ")+ novelStore);
-            this->mLog->log("[database.cpp] - Deleting temp files");
+            this->mLog->log(std::string("[database.cpp] Info: Cleaned page stored in ")+ novelStore);
+            this->mLog->log("[database.cpp] Info: Deleting temp files");
             remove (tempFile.c_str());
             remove (tempFile2.c_str());
             return std::make_pair(novelStore, revID);
         }
         else{
             /* XML Failed to load! */
-            std::string e = currentDateTime() + " [database.cpp] Load config error! ";
+            std::string e = currentDateTime() + "Load config error! ";
             e += "manifest.db could not be parsed. Error: ";
             e += res.description();
             throw(mException(e));
         }
     }
     catch(mException& e){
-        std::string mError = "[database.cpp] - ";
+        std::string mError = "[database.cpp] Error: ";
         mError += e.what();
         setError();
         this->mLog->log(mError);

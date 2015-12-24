@@ -14,10 +14,11 @@ enum splitter_t{
 };
 
 inline bool fileExists (const std::string& name) {
-    if (FILE *file = fopen(name.c_str(), "r")) {
+    if(FILE *file = fopen(name.c_str(), "r")){
         fclose(file);
         return true;
-    } else {
+    }
+    else{
         return false;
     }   
 }
@@ -293,7 +294,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                          */
                                         fileName.clear();
                                         bool shouldGrab = 0;
-//                                        if(!newVol.attribute("image")){
+                                        if(!newVol.attribute("image")){
                                             for(int i = 1, j = strlen(buffer); i < j; i++){
                                                 if(buffer[i] == '['){
                                                     /* Iss 13 fix */
@@ -317,7 +318,8 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                              * of my image file is "File"
                                              */
                                             std::string tempString(fileName.begin(), fileName.begin()+4);
-                                            if(tempString == "File" or tempString == "Image"){
+                                            std::string tempString2(fileName.begin(), fileName.begin()+5);
+                                            if(tempString == "File" or tempString2 == "Image"){
                                                 this->mLog->log(std::string("[wikiParser.cpp] Info: Calling cGetImage with ") + fileName);
                                                 cGetImage newImageGrab(this->mLog);
                                                 std::string savedTo = newImageGrab.getImage(fileName);
@@ -329,7 +331,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                                 err += tempString + " -> Ignoring";
                                                 this->mLog->log(err);
                                             }
-//                                        }
+                                        }
                                     }
                                     else if(strlen(buffer) == 1 or buffer[0] == '<' or buffer[0] == '\'' or buffer[0] == '&'){
                                         /* Ignore this, because it's just a

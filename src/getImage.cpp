@@ -19,7 +19,10 @@ inline bool dirExists(const std::string& dirName){
     DIR* myDir = NULL;
     myDir = opendir(dirName.c_str());
     if(myDir == NULL) return false;
-    else return true;
+    else{
+        closedir(myDir);
+        return true;
+    }
 }
 
 inline void createFolder(const std::string& dirName){
@@ -30,10 +33,11 @@ inline void createFolder(const std::string& dirName){
 #endif
 
 inline bool fileExists (const std::string& name) {
-    if (FILE *file = fopen(name.c_str(), "r")) {
+    if(FILE *file = fopen(name.c_str(), "r")){
         fclose(file);
         return true;
-    } else {
+    }
+    else{
         return false;
     }   
 }
@@ -104,6 +108,8 @@ std::string cGetImage::getImage(const std::string fileName){
                     return "system/images/notHere.jpg";
                 }
                 else{
+                    remove(tempFile.c_str());
+
                     std::string imageSauce = mainNode.child("query").child("pages").child("page").child("imageinfo").child("ii").attribute("url").value();
                     /* Pull their naming system and create the folders needed to use this
                      * Guaranteed to be unique because they use this system
@@ -141,7 +147,7 @@ std::string cGetImage::getImage(const std::string fileName){
                             temp += tempFile[i];
                         }
                     }
-                    if(!fileExists(tempFile)) mDownload.download(imageSauce, tempFile); //Don't download if already exists
+                    if(!fileExists(tempFile)) mDownload.download(imageSauce, tempFile); //TODO: Check if there is updated file first
                     return tempFile;
                 }
             }
