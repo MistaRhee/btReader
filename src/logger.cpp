@@ -149,7 +149,7 @@ namespace __logger{
                 fprintf(this->flog, "%s \n", out.c_str());
                 fflush(this->flog); //Force the update
             }
-            this->lock.unlock();
+            if(this->q.size() < QUEUE_MAX) this->lock.unlock();
         }
         while(!this->q.empty()){
             std::string out = this->q.front();

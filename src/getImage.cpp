@@ -141,7 +141,7 @@ std::string cGetImage::getImage(const std::string fileName){
                             temp += tempFile[i];
                         }
                     }
-                    mDownload.download(imageSauce, tempFile);
+                    if(!fileExists(tempFile)) mDownload.download(imageSauce, tempFile); //Don't download if already exists
                     return tempFile;
                 }
             }

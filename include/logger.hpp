@@ -35,6 +35,10 @@
 #ifndef __NOTHREAD__
 #include <mutex>
 #include <thread>
+
+
+#define QUEUE_MAX 1000 //Specify the largest size the queue can be before the logger blocks and forces output (to prevent this from eating up large chunks of memory)
+
 #endif
 
 #include <cstdio> //Yes, I'm an old boy. Deal with it
