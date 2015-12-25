@@ -239,9 +239,11 @@ void cMain::getUserProfile(){
                 for(auto it: rootNode.children()){
                     std::string name = it.name();
                     for(auto ot: it.children()){
+                        std::map<std::string, std::string> tempAtt;
                         for(auto attribute: ot.attributes()){
-                            this->config[name].find(ot.name())->second.find(attribute.name())->second = attribute.value();
+                            tempAtt[attribute.name()] = attribute.value();
                         }
+                        this->config[name].insert(std::make_pair(ot.name(), std::move(tempAtt)));
                     }
                 }
 

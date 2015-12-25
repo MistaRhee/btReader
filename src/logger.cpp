@@ -71,7 +71,7 @@ namespace __logger{
         char buff[100];
         tstruct = *localtime(&now);
         strftime(buff, sizeof(buff), "%Y-%m-%d.%X", &tstruct);
-        
+
         return std::string(buff);
     }
 
@@ -115,7 +115,7 @@ namespace __logger{
         this->dead = 0;
 #endif
     }
-        
+
     cLogger::~cLogger(){
         fflush(flog);
         fclose(flog);
@@ -141,15 +141,17 @@ namespace __logger{
     void cLogger::run(){
         this->done.lock();
         while(!this->dead){
-            std::this_thread::sleep_for(std::chrono::seconds(1)); //So I don't rape the CPU
             this->lock.lock();
             if(!this->q.empty()){ //Doing slow output so input can be fast
-                std::string out = this->q.front();
-                this->q.pop();
-                fprintf(this->flog, "%s \n", out.c_str());
-                fflush(this->flog); //Force the update
+                do{
+                    std::string out = this->q.front();
+                    this->q.pop();
+                    fprintf(this->flog, "%s \n", out.c_str());
+                    fflush(this->flog); //Force the update
+                }
+                while (this->q.size() > QUEUE_MAX);
             }
-            if(this->q.size() < QUEUE_MAX) this->lock.unlock();
+            this->lock.unlock();
         }
         while(!this->q.empty()){
             std::string out = this->q.front();

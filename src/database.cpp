@@ -152,6 +152,7 @@ void cMain::updateDatabase(){
         if(res){
             pugi::xml_node category = doc.child("api").child("query").child("categorymembers");
             for(auto cm: category.children("cm")){
+                printf("."); //Debugging
                 novelName = cm.attribute("title").value();
                 if(novelDB.count(novelName) > 0){
                     auto found = novelDB.find(novelName);
@@ -163,6 +164,7 @@ void cMain::updateDatabase(){
                     }
                 }
                 else tempNovelDB[novelName] = getNovelDetails(novelName);//New novel, just get the details
+                printf("\b \b"); //Debugging
             }
         }
         else{

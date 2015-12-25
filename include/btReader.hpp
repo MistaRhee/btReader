@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <exception>
 #include <map>
+#include <memory>
 #include <queue>
 #include <SDL2/SDL.h>
 #include <stdio.h>
@@ -158,7 +159,7 @@ class cMain{
         beatOff::cKeyMap mKeys;
 
         /* Settings */
-        std::map<std::string, std::multimap<std::string, std::multimap<std::string, std::string> > > config; //Group, tagName, attributeKey -> Attribute Value (wew)
+        std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > > config; //Group, tagName, attributeKey -> Attribute Value (wew)
         /* Config formatted as
          *  -> Subsection:  Key->value
          */

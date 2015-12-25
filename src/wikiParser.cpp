@@ -330,6 +330,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                                 std::string err = "[wikiParser.cpp] Warning: Invalid image name ";
                                                 err += tempString + " -> Ignoring";
                                                 this->mLog->log(err);
+                                                break;
                                             }
                                         }
                                     }
