@@ -75,7 +75,6 @@ cMain::cMain(){
                 );
         this->mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
         this->currThreads = 1;
-        getUserProfile();
         this->startRunTime = SDL_GetTicks();
         this->whereAt = list;
         this->running = 1;
@@ -131,11 +130,14 @@ void cMain::preComp(){
     this->mContents[list] = new beatOff::cNovelList();
     this->mContents[details] = new beatOff::cNovelDetails();
 
+    /* Grab user profile */
+    getUserProfile();
+
     SDL_Rect mRect;
-    mRect.x = std::stoi(this->config["interface"].find("content")->second.find("x")->second);
-    mRect.y = std::stoi(this->config["interface"].find("content")->second.find("y")->second);
-    mRect.h = std::stoi(this->config["interface"].find("content")->second.find("h")->second);
-    mRect.w = std::stoi(this->config["interface"].find("content")->second.find("w")->second);
+    mRect.x = std::stoi(this->config["interface"].find("content")->second["x"]);
+    mRect.y = std::stoi(this->config["interface"].find("content")->second["y"]);
+    mRect.h = std::stoi(this->config["interface"].find("content")->second["h"]);
+    mRect.w = std::stoi(this->config["interface"].find("content")->second["w"]);
 
     ((beatOff::cNovelList*)this->mContents[list])->setRect(mRect);
     ((beatOff::cNovelDetails*)this->mContents[details])->setRect(mRect);
@@ -164,7 +166,7 @@ void cMain::preComp(){
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
         mList->addNovel(
                 i->first, 
-                std::stoi(config["novelList"].find("font")->second.find("value")->second)
+                std::stoi(config["novelList"].find("size")->second.find("value")->second)
             );
     }
 }
@@ -294,7 +296,7 @@ void cMain::getUserProfile(){
                         else if (it->first == "button"){
                             mMenu->addButton(
                                     it->second.find("name")->second,
-                                    it->second.find("sauce")->second,
+                                    it->second.find("text")->second,
                                     it->second.find("font")->second,
                                     std::stoi(it->second.find("size")->second),
                                     std::stoi(it->second.find("x")->second),
