@@ -173,6 +173,7 @@ void cMain::updateDatabase(){
         }
         novelDB.clear(); //To prevent removed novels from staying (i.e. abiding by BT rules)
         novelDB = tempNovelDB;
+        remove(tempFile.c_str());
     }
     catch(mException& e){
         this->mLog->log(e.what());

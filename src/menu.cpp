@@ -105,4 +105,8 @@ namespace beatOff{
         /* Only changes something if it exists */
         if(this->images.count(name)) this->images[name].setPicLoc(sauce);
     }
+
+    void cMenu::selectButton(std::string name){
+        this->buttons[name].select();
+    }
 }

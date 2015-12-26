@@ -320,6 +320,8 @@ void cMain::getUserProfile(){
                             this->mLog->log(std::string("[btReader.cpp] Warning: Menu config has invalid handle ") + it->first + ". Ignoring");
                         }
                     }
+                    /* Select the novelList button -> HACKY, but deal with it*/
+                    mMenu->selectButton("novelList");
                 }
             }
             else{

@@ -189,14 +189,30 @@ namespace beatOff{
         }
         else{
             TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
+            int tempW, multiplier = 1, lineSkip = TTF_FontLineSkip(mFont);
+            int space = -1;
+            std::string temp;
+            std::vector<std::string> lines;
+            SDL_Rect dRect;
+            /* Set original dimensions of dRect */
+            dRect.x = x;
+            dRect.y = y;
+            dRect.h = h;
+            dRect.w = w;
+            SDL_Texture* mTexture = NULL;
+            SDL_Surface* mSurface = NULL;
+            SDL_Colour mColour = {static_cast<Uint8>(textR), static_cast<Uint8>(textG), static_cast<Uint8>(textB), static_cast<Uint8>(textA)};
+
             if(h > 0){ //If we have a set height
                 int expected = wrappedHeight(), tempW;
-                if(h > expected){
+                if(h < expected){
                     std::string mWarning = currentDateTime() + ": ";
                     mWarning = "[textbox.cpp] Inputted height is too small by ";
                     mWarning += std::to_string(h - wrappedHeight());
                     mWarning += " pixels! Prentending if the guideline height didn't exist";
                     setWarning(mWarning);
+                    h = expected;
+                    dRect.h = h;
                 }
                 else{
                     y += (expected - h)/2;
@@ -206,14 +222,11 @@ namespace beatOff{
                     }
                 }
             }
-            int tempW, multiplier = 1, lineSkip = TTF_FontLineSkip(mFont);
-            int space = -1;
-            std::string temp;
-            std::vector<std::string> lines;
-            SDL_Rect dRect;
-            SDL_Texture* mTexture = NULL;
-            SDL_Surface* mSurface = NULL;
-            SDL_Colour mColour = {static_cast<Uint8>(textR), static_cast<Uint8>(textG), static_cast<Uint8>(textB), static_cast<Uint8>(textA)};
+            else{
+                h = wrappedHeight();
+                dRect.h = h;
+            }
+
             for(int i = 0, j = text.size(); i < j; i++){
                 temp += text[i];
                 if(text[i] == ' '){
@@ -243,10 +256,6 @@ namespace beatOff{
             }
             if(drawBox){
                 h *= multiplier;
-                dRect.x = x;
-                dRect.y = y;
-                dRect.w = w;
-                dRect.h = h;
                 SDL_SetRenderDrawColor(mRenderer, boxR, boxG, boxB, boxA);
                 SDL_RenderFillRect(mRenderer, &dRect);
             }

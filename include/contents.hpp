@@ -55,6 +55,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void addImage(std::string name, std::string sauce, int x, int y, int h, int w);
             void changeImage(std::string name, std::string sauce); //Switches the contents of an image
             void addButton(std::string name, std::string text, std::string font, int size, int x, int y, int h, int w);
+            void selectButton(std::string name);
         private:
             /* TODO: Use polymorphism to make this nicer (ceebs ATM because I just want to get
              * something out)
