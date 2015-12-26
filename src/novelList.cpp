@@ -37,6 +37,9 @@ namespace beatOff{
     }
 
     void cNovelList::addNovel(std::string in, int novelHeight, std::string fontLoc){
+        /* Flag that the novelList texture must be regenerated */
+        this->textureGen = 0;
+
         /* Variable height makes my OCD go insane */
         cTextBox newText;
         this->novelHeight = novelHeight;
@@ -102,6 +105,7 @@ namespace beatOff{
     }
 
     void cNovelList::genTexture(SDL_Renderer* mRenderer){
+        printf("Generating Texture\n");
         SDL_DestroyTexture(mTexture);
         /* Calculate the required height of the texture */
         int mHeight = this->novelHeight*this->mNovels.size();

@@ -70,7 +70,7 @@ To leave the image at its original size (and only set the size), set height and 
         <font name="default" />
         <image name="settings" sauce="system/images/settings.png" x="0" y="0" h="50" w="50"/>
         <image name="settings-selected" sauce="system/images/settings_invert.png" x="0" y="0" h="50" w="50" />
-        <button name="novelList" text="Novel List" font="default" x="55" y="0" h="50" w="906" size="25"/>
+        <button name="novelList" text="Novel List" font="default" x="55" y="0" h="50" w="912" size="25"/>
         <!--button name="reader" text="Reader" font="default" x="513" y="0" h="50" w="453" size="25"/ -->
         <image name="downloads" sauce="system/images/download.png" x="974" y="0" h="50" w="50" />
         <image name="downloads-selected" sauce="system/images/download_invert.png" x="974" y="0" h="50" w="50" />

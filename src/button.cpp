@@ -35,7 +35,7 @@ namespace beatOff{
         showBox();
     }
 
-    cButton::cButton(std::string inText, std::string fontLoc, int inX, int inY, int inH, int inW, int inSize){
+    cButton::cButton(std::string inText, std::string fontLoc, int inSize, int inX, int inY, int inW, int inH){
         if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
             std::string mError = currentDateTime() + ": ";
             mError += "[button.cpp] - SDL couldn't initialise (SDL Error: ";

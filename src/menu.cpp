@@ -100,4 +100,9 @@ namespace beatOff{
         beatOff::cImage newIma(sauce, x, y, h, w);
         this->images[name] = newIma;
     }
+
+    void cMenu::changeImage(std::string name, std::string sauce){
+        /* Only changes something if it exists */
+        if(this->images.count(name)) this->images[name].setPicLoc(sauce);
+    }
 }

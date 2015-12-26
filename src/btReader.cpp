@@ -170,7 +170,7 @@ void cMain::preComp(){
                 i->first, 
                 std::stoi(config["novelList"].find("size")->second.find("value")->second),
                 FONT_LOOKUP(this->config["novelList"].find("font")->second["value"])
-            );
+                );
     }
 }
 
@@ -287,28 +287,32 @@ void cMain::getUserProfile(){
                     beatOff::cMenu* mMenu = (beatOff::cMenu*)this->mContents[menu];
                     for(auto it = this->config["menu"].begin(); it != this->config["menu"].end(); ++it){
                         if(it->first == "image"){
-                            mMenu->addImage(
-                                    it->second.find("name")->second,
-                                    it->second.find("sauce")->second,
-                                    std::stoi(it->second.find("x")->second),
-                                    std::stoi(it->second.find("y")->second),
-                                    std::stoi(it->second.find("h")->second),
-                                    std::stoi(it->second.find("w")->second)
-                                    );
+                            /* Selectively add images */
+                            if(it->second["name"] == "settings" or it->second["name"] == "downloads"){
+                                mMenu->addImage(
+                                        it->second["name"],
+                                        it->second["sauce"],
+                                        std::stoi(it->second["x"]),
+                                        std::stoi(it->second["y"]),
+                                        std::stoi(it->second["h"]),
+                                        std::stoi(it->second["w"])
+                                        );
+                            }
                         }
                         else if (it->first == "button"){
                             mMenu->addButton(
-                                    it->second.find("name")->second,
-                                    it->second.find("text")->second,
-                                    FONT_LOOKUP(it->second.find("font")->second),
-                                    std::stoi(it->second.find("size")->second),
-                                    std::stoi(it->second.find("x")->second),
-                                    std::stoi(it->second.find("y")->second),
-                                    std::stoi(it->second.find("h")->second),
-                                    std::stoi(it->second.find("w")->second)
+                                    it->second["name"],
+                                    it->second["text"],
+                                    FONT_LOOKUP(it->second["font"]),
+                                    std::stoi(it->second["size"]),
+                                    std::stoi(it->second["x"]),
+                                    std::stoi(it->second["y"]),
+                                    std::stoi(it->second["h"]),
+                                    std::stoi(it->second["w"])
                                     );
                         }
                         else if (it->first == "font"){
+                            /* FONT SHOuLD APPEAR BEFORE EVERYTHING */
                             mMenu->setFont(FONT_LOOKUP(it->second["name"]));
                         }
                         else{
