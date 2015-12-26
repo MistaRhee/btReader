@@ -52,9 +52,12 @@ inline bool fileExists (const std::string& name){
     }
 }
 
+inline int fastMax(int x, int y) { return (((y-x)>>(31))&(x^y))^y; }
+
 cMain::cMain(){
     std::string logLoc = "logs/";
     logLoc += "btReader.log";
+
     mLog = new __logger::cLogger(logLoc);
     logLoc.clear();
     mLog->start().detach();
@@ -354,9 +357,9 @@ bool cMain::run(){
         }
         else{
             startTick = SDL_GetTicks();
-            while(SDL_GetTicks() < startTick+FPS_CAP){
-                processEvents();
-            }
+            processEvents();
+            update();
+            if(SDL_GetTicks()-startTick < FPS_CAP) SDL_Delay(fastMax(0, FPS_CAP - int(SDL_GetTicks() - startTick)));
             render();
         }
     }
