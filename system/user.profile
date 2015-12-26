@@ -25,7 +25,8 @@
     Should list the fonts (name and the location) where name corresponds to
     the name that will be referred to throughout this file
  -->
-        <font name="default" sauce="system/fonts/droidsansfallback.ttf" />
+        <default sauce="system/fonts/default.ttf" />
+        <droidSans sauce="system/fonts/droidsansfallback.ttf" />
     </fontList>
 
     <options>

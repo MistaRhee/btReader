@@ -149,7 +149,6 @@ class cMain{
         std::map<places_t, beatOff::cContent*> mContents;
 
         /* Global storage */
-        std::map<std::string, std::string> fonts;
         std::map<std::string, SDL_Color> colours; //Unsure if this is needed yet
 
         /* Background storage */

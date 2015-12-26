@@ -1,5 +1,8 @@
 #include "btReader.hpp"
 
+//Font list lookup macro
+#define FONT_LOOKUP(...) this->config["fontList"].find(__VA_ARGS__)->second["sauce"]
+
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -120,7 +123,6 @@ void cMain::preComp(){
      * exists
      */
     /* Clearing the maps, just in case data is leaked (shouldn't though) */
-    this->fonts.clear();
     this->colours.clear();
     this->mContents.clear();
     replaceDatabase();
@@ -166,7 +168,8 @@ void cMain::preComp(){
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
         mList->addNovel(
                 i->first, 
-                std::stoi(config["novelList"].find("size")->second.find("value")->second)
+                std::stoi(config["novelList"].find("size")->second.find("value")->second),
+                FONT_LOOKUP(this->config["novelList"].find("font")->second["value"])
             );
     }
 }
@@ -297,7 +300,7 @@ void cMain::getUserProfile(){
                             mMenu->addButton(
                                     it->second.find("name")->second,
                                     it->second.find("text")->second,
-                                    it->second.find("font")->second,
+                                    FONT_LOOKUP(it->second.find("font")->second),
                                     std::stoi(it->second.find("size")->second),
                                     std::stoi(it->second.find("x")->second),
                                     std::stoi(it->second.find("y")->second),
@@ -306,7 +309,7 @@ void cMain::getUserProfile(){
                                     );
                         }
                         else if (it->first == "font"){
-                            mMenu->setFont(this->fonts[it->second.find("name")->second]);
+                            mMenu->setFont(FONT_LOOKUP(it->second["name"]));
                         }
                         else{
                             /* Invalid config name, logging it */

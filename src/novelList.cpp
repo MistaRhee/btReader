@@ -14,7 +14,7 @@ namespace beatOff{
         this->backColour.g = 255;
         this->backColour.b = 255;
         this->backColour.a = 255;
-        setFont(std::string("system/fonts/droidsansfallback.ttf")); //Should be default
+        setFont(std::string("system/fonts/default.ttf")); //Should be defaut
         setFontSize(20);
 
         /* Handles the texturing of the novel list */
@@ -36,11 +36,12 @@ namespace beatOff{
         setSize(inRect.h, inRect.w);
     }
 
-    void cNovelList::addNovel(std::string in, int novelHeight){
+    void cNovelList::addNovel(std::string in, int novelHeight, std::string fontLoc){
         /* Variable height makes my OCD go insane */
         cTextBox newText;
         this->novelHeight = novelHeight;
         newText.setText(in);
+        newText.setFont(fontLoc);
         newText.setTextSize(fontSize);
         newText.setPos(x, h);
         if(newText.canFit(novelHeight)){
@@ -75,7 +76,6 @@ namespace beatOff{
         newText.setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
         newText.setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);
         newText.setFont(fontLoc);
-        fprintf(stderr, "%s \n", fontLoc.c_str());
         newText.centre(); //Because text centering is nice
         this->mNovels.push_back(newText);
         h += novelHeight;

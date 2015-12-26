@@ -27,7 +27,6 @@ namespace beatOff{
             mError += SDL_GetError();
             mError += ")";
             setError(mError);
-            printf("%s \n", mError.c_str());
         } 
         else if(!TTF_WasInit() && TTF_Init() == -1){
             std::string mError = currentDateTime() + ": ";
@@ -35,7 +34,6 @@ namespace beatOff{
             mError += TTF_GetError();
             mError += ")";
             setError(mError);
-            printf("%s \n", mError.c_str());
         } 
         else{
             textSize = 12; //Defaulted to this ATM
@@ -186,12 +184,8 @@ namespace beatOff{
 
     void cTextBox::render(SDL_Renderer* mRenderer){
         if(!fileExists(font)){
-            std::string mError = currentDateTime() + ": ";
-            mError += "cTextBox Error - Font doesn't exist (Font location = ";
-            mError += font;
-            mError += ")";
-            setError(mError); //Now its an error if you try to render without a font
-            printf("%s\n", mError.c_str());
+            printf("No Font Declared: %s \n", font.c_str()); //Killing error
+            exit(9001);
         }
         else{
             TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
@@ -203,7 +197,6 @@ namespace beatOff{
                     mWarning += std::to_string(h - wrappedHeight());
                     mWarning += " pixels! Prentending if the guideline height didn't exist";
                     setWarning(mWarning);
-                    printf("%s \n", mWarning.c_str());
                 }
                 else{
                     y += (expected - h)/2;
