@@ -127,9 +127,9 @@ namespace __logger{
 #ifdef __NOTHREAD__
         fprintf(this->flog, "%s \n", output.c_str());
 #else
-        this->lock.lock();
+        std::unique_lock<std::mutex> ul(this->lock);
+        cv.notify_one();
         q.push(output);
-        this->lock.unlock();
 #endif
     }
 
@@ -141,7 +141,8 @@ namespace __logger{
     void cLogger::run(){
         this->done.lock();
         while(!this->dead){
-            this->lock.lock();
+            std::unique_lock<std::mutex> ul(this->lock);
+            while(this->q.empty()) cv.wait(ul);
             if(!this->q.empty()){ //Doing slow output so input can be fast
                 do{
                     std::string out = this->q.front();
@@ -151,7 +152,6 @@ namespace __logger{
                 }
                 while (this->q.size() > QUEUE_MAX);
             }
-            this->lock.unlock();
         }
         while(!this->q.empty()){
             std::string out = this->q.front();

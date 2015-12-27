@@ -33,9 +33,9 @@
 //Uncomment the following line for no threading (why?)
 //#define __NOTHREAD__
 #ifndef __NOTHREAD__
+#include <condition_variable>
 #include <mutex>
 #include <thread>
-
 
 #define QUEUE_MAX 1000 //Specify the largest size the queue can be before the logger blocks and forces output (to prevent this from eating up large chunks of memory)
 
@@ -61,6 +61,7 @@ namespace __logger{
             void kill();
 
             std::mutex done; //A blocking mutex to ensure that all things have been logged before deleting the object (usually used if the main function has a deconstructor or something(
+            std::condition_variable cv;
 #endif
 
         private:
