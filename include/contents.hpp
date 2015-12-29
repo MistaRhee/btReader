@@ -12,6 +12,7 @@
 #include <vector>
 
 /* Including the base class I'm deriving this from */
+#include "logger.hpp"
 #include "objects.hpp" 
 #include "types.hpp"
 
@@ -33,6 +34,8 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             virtual void handleUserScroll(int, int) {}
             virtual void handleUserKeyboard(std::string, bool, unsigned int) {} //Name of the key, is pressed and the bitmask for modifiers
 
+            virtual void reset() {this->state = working;} //Resets the state
+
             state_t state; //GLOBALLY ACCESSABLE STATE. YES PLEASE!
             std::string err; //Set if the state is stuck/broken. Indicates what needs to be logged with mLog->log()
         protected:
@@ -41,11 +44,13 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             int fontSize;
             SDL_Color textColour;
             SDL_Color backColour;
+            __logger::cLogger* mLog;
     };
     
     class cMenu : public cContent{ //For the main menu (headers etc.)
         public:
             cMenu();
+            cMenu(__logger::cLogger*);
             ~cMenu() {}
             void render(SDL_Renderer*);
             void handleUserMouse(int, int, int, bool);
@@ -56,6 +61,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void changeImage(std::string name, std::string sauce); //Switches the contents of an image
             void addButton(std::string name, std::string text, std::string font, int size, int x, int y, int h, int w);
             void selectButton(std::string name);
+            std::mutex accessible; //TODO: Remove this hacky PoS after DLList is properly impelemnted
         private:
             /* TODO: Use polymorphism to make this nicer (ceebs ATM because I just want to get
              * something out)
@@ -72,6 +78,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             /* Init and starting defines */
 
             cNovelList();
+            cNovelList(__logger::cLogger*);
             ~cNovelList();
             void setRect(SDL_Rect);
 
@@ -103,7 +110,8 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             SDL_Rect sRect;
 
             /* Storage */
-            std::vector<cTextBox> mNovels;
+            std::map<std::string, cTextBox> mNovels;
+            std::vector<std::string> novelNames;
 
             /* Flags flags fags... */
             bool textureGen;
@@ -115,6 +123,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
     class cNovelDetails : public cContent{
         public:
             cNovelDetails();
+            cNovelDetails(__logger::cLogger*);
             ~cNovelDetails() {}
             void setRect(SDL_Rect); //Only care about the rectangle's xPos and yPos and width
             void openNovel(std::string, SDL_Renderer*, std::string); //Opens up a novel from XML and then renders it to a texture

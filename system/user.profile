@@ -64,6 +64,9 @@ There is the optional tag name COLOUR. This tag allows the modder to change the 
 There is only support for one content ATM
 
 To leave the image at its original size (and only set the size), set height and width at -1
+
+
+TODO: Make menu config non-shitty (It should be trivial but I ceebs impelementing it
  -->
  
     <menu>
@@ -73,8 +76,9 @@ To leave the image at its original size (and only set the size), set height and 
         <button name="novelList" text="Novel List" font="default" x="55" y="0" h="50" w="912" size="50"/>
         <!--button name="reader" text="Reader" font="default" x="513" y="0" h="50" w="453" size="25"/ -->
         <image name="downloads" sauce="system/images/download.png" x="974" y="0" h="50" w="50" />
+        <!-- Images sharing the same prefix of either settings or downloads have the same dimensions (inherited from their parent) -->
         <image name="downloads-selected" sauce="system/images/download_invert.png" x="974" y="0" h="50" w="50" />
-        <image name="downloads-inactive" sauce="system/images/update.png" x="974" y="0" h="50" w="50" />
+        <image name="downloads-active" sauce="system/images/update.png" x="974" y="0" h="50" w="50" />
     </menu>
 
     <novelList>

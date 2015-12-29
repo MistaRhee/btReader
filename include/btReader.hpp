@@ -152,7 +152,9 @@ class cMain{
         std::map<std::string, SDL_Color> colours; //Unsure if this is needed yet
 
         /* Background storage */
+        std::mutex novelDBLock;
         std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title: <location, revID>
+        bool updatedDB;
 
         /* User stuff */
         beatOff::cKeyMap mKeys;

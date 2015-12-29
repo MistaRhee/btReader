@@ -88,6 +88,7 @@ cMain::cMain(){
         this->currThreads = 1;
         this->startRunTime = SDL_GetTicks();
         this->whereAt = list;
+        this->updatedDB = 0;
         this->running = 1;
     }
     else this->running = 0;
@@ -131,17 +132,15 @@ void cMain::preComp(){
         mLog->log("[btReader.cpp] Error: The database is corrupt and cannot be read. Overwriting the database!");
         createDatabase();
     }
-    /* Setting default colours! (will be overwritten by the XML file if it
-     * exists
-     */
+    replaceDatabase();
+
     /* Clearing the maps, just in case data is leaked (shouldn't though) */
     this->colours.clear();
     this->mContents.clear();
-    replaceDatabase();
 
     /* Add the content objects */
     this->mContents[menu] = new beatOff::cMenu();
-    this->mContents[list] = new beatOff::cNovelList();
+    this->mContents[list] = new beatOff::cNovelList(this->mLog);
     this->mContents[details] = new beatOff::cNovelDetails();
 
     /* Grab user profile */
@@ -176,6 +175,11 @@ void cMain::preComp(){
     temp.b = 0;
     colours.insert(std::make_pair("clear", temp));
     colours.insert(std::make_pair("text", temp));
+
+    /* Start the update process in the background */
+    std::thread(&cMain::updateDatabase, this).detach();
+
+    /* Build a novelList based off what we currently have */
     beatOff::cNovelList* mList = (beatOff::cNovelList*)mContents[list];
     for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
         mList->addNovel(
@@ -359,7 +363,7 @@ void cMain::setError(){
 bool cMain::run(){
     bool rVal = 0;
     int startTick = SDL_GetTicks();
-
+    this->mLog->log("[btReader.cpp] Info: Running");
     while(running){
         rVal = 1;
         if(error){
@@ -416,33 +420,49 @@ void cMain::render(){
 }
 
 void cMain::update(){
-    for(auto it = mContents.begin(); it != mContents.end(); ++it){
-        if(it->second->state == go){ //The current object being polled has had an event and reqires attention
+    /* Check menu location */
+    if(this->mContents[menu]->state == go){
+        beatOff::cMenu* mMenu = (beatOff::cMenu*)(this->mContents[menu]);
+        places_t goingTo = mMenu->getSelected();
+        switch(goingTo){
+            case list:
+                break;
 
-            switch(it->first){
-                case menu: 
-                    /* Grab the current selection and then return something */
-                    break;
+            case dlList: //Currently no UI, it'll just update the database in the background
+                std::thread(&cMain::updateDatabase, this).detach();
+                break;
 
-                case list:
-                    break;
+            case settings: //TODO after the competion of settings
+                break;
 
-                case details: //TODO on completion of novelDetails
-                    break;
-
-                case settings: //TODO on completion of settings
-                    break;
-
-                case dlList: //TODO on completion of DL List
-                    break;
-
-                default:
-                    this->mLog->log("[btReader.cpp] Error: Entered invalid whereAt state during Update checking! Aborting!");
-                    setError();
-                    break;
-
-            }
+            default:
+                this->mLog->log("[btReader.cpp] Error: Recieved invalid go to location from mMenu->getSelected!");
+                break;
         }
+    }
+
+    /* Check each individual location */
+    switch(whereAt){
+        case list:
+            /* Check if the DB has been updated, if it has, update the novelList accordingly */
+            if(this->updatedDB){
+                this->updatedDB = 0;
+            }
+            break;
+
+        case details://TODO on completion of novelDetails
+            break;
+
+        case settings: //TODO on completion of settigns
+            break;
+
+        case dlList: //TODO on completion of DL List
+            break;
+
+        default:
+            this->mLog->log("[btReader.cpp] Error! Invalid whereAt location");
+            setError();
+            break;
     }
 }
 

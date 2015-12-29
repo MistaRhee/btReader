@@ -7,6 +7,12 @@ namespace beatOff{
         this->mouseMoved = 0;
     }
 
+    cMenu::cMenu(__logger::cLogger* mLog){
+        this->next = list;
+        this->mouseMoved = 0;
+        this->mLog = mLog;
+    }
+
     void cMenu::render(SDL_Renderer* mRenderer){ 
         for(auto it = images.begin(); it != images.end(); ++it){
             it->second.render(mRenderer);
@@ -17,66 +23,69 @@ namespace beatOff{
         return;
     }
 
-    void cMenu::handleUserMouse(int x, int y, int button, bool isPressed){ //TODO
-        switch(button){
-            case SDL_BUTTON_LEFT:
-                {
-                    std::string name;
-                    /* Iterate through all the buttons and images, see what was selected */
-                    for(auto it = images.begin(); it != images.end(); ++it){
-                        if(it->second.isOver(x, y)){
-                            name = it->first;
-                            break;
-                        }
-                    }
-                    if(name.empty()){
-                        for(auto it = buttons.begin(); it != buttons.end(); ++it){
+    void cMenu::handleUserMouse(int x, int y, int button, bool isPressed){
+        if(isPressed){ //Currently not handling hold, move off and release kind of things
+            switch(button){
+                case SDL_BUTTON_LEFT:
+                    {
+                        std::string name;
+                        /* Iterate through all the buttons and images, see what was selected */
+                        for(auto it = images.begin(); it != images.end(); ++it){
                             if(it->second.isOver(x, y)){
                                 name = it->first;
                                 break;
                             }
                         }
-                    }
-                    if(!name.empty()){
-                        /* Check what the name is, and then set what we're going to next */
-                        if(name == "settings"){
-
+                        if(name.empty()){
+                            for(auto it = buttons.begin(); it != buttons.end(); ++it){
+                                if(it->second.isOver(x, y)){
+                                    name = it->first;
+                                    break;
+                                }
+                            }
                         }
-                        else if(name == "novelList"){
-
-                        }
-                        else if(name == "downloads"){
-
+                        if(!name.empty()){
+                            /* Check what the name is, and then set what we're going to next */
+                            if(name == "settings"){
+                                this->state = go;
+                                this->next = settings;
+                            }
+                            else if(name == "novelList"){
+                                this->state = go;
+                                this->next = list;
+                            }
+                            else if(name == "downloads"){
+                                this->state = go;
+                                this->next = dlList;
+                            }
+                            else{
+                                this->mLog->log(std::string("[menu.cpp] Error: Registered a button click, but there is an unrecognised object ") + name);
+                            }
                         }
                         else{
-                            this->state = stuck;
-                            this->err += std::string("[menu.cpp] Error: Registered a button click, but there is an unrecognised object ") + name + "\n";
+                            /* We have an issue right now */
+                            this->mLog->log(std::string("[menu.cpp] Error: Handle usermouse was called but the mouse was not over any object! Skipping that event (not critical)! "));
                         }
+                        break;
                     }
-                    else{
-                        /* We have an issue right now */
-                        this->state = stuck;
-                        this->err += std::string("[menu.cpp] Error: Handle usermouse was called but the mouse was not over any object! Skipping that event (not critical)! \n");
-                    }
+
+                case SDL_BUTTON_RIGHT:
+                    /* We don't handle right click at this stage (no need to) */
                     break;
-                }
 
-            case SDL_BUTTON_RIGHT:
-                /* We don't handle right click at this stage (no need to) */
-                break;
+                case SDL_BUTTON_MIDDLE:
+                    /* Don't handle middle-mouse at all */
+                    break;
 
-            case SDL_BUTTON_MIDDLE:
-                /* Don't handle middle-mouse at all */
-                break;
+                case -1:
+                    //Mouse motion
+                    /* Do nothing, since we don't highlight what the user is hovering over in the menu */
+                    break;
 
-            case -1:
-                //Mouse motion
-                /* Do nothing, since we don't highlight what the user is hovering over in the menu */
-                break;
-
-            default:
-                //Not handling this
-                break;
+                default:
+                    //Not handling this
+                    break;
+            }
         }
     }
 
@@ -103,10 +112,25 @@ namespace beatOff{
 
     void cMenu::changeImage(std::string name, std::string sauce){
         /* Only changes something if it exists */
-        if(this->images.count(name)) this->images[name].setPicLoc(sauce);
+        if(name == "downloads"){
+            if(this->images.count(name)){
+                std::unique_lock<std::mutex> ul(this->accessible, std::try_to_lock);
+                if(!ul.owns_lock()){
+                    this->mLog->log("[menu.cpp] Info: Attempted to change updates are in progress, ignoring"); //TODO fix when DLList page is actually implemented
+                }
+                else{
+                    this->images[name].setPicLoc(sauce);
+                }
+            }
+        }
+        else if(this->images.count(name)) this->images[name].setPicLoc(sauce);
     }
 
     void cMenu::selectButton(std::string name){
         this->buttons[name].select();
+    }
+
+    places_t cMenu::getSelected(){
+        return this->next;
     }
 }

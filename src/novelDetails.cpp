@@ -8,6 +8,13 @@ namespace beatOff{
         mTexture = NULL;
     }
 
+    cNovelDetails::cNovelDetails(__logger::cLogger* mLog){
+        loaded = 0;
+        selection = 0;
+        mTexture = NULL;
+        this->mLog = mLog;
+    }
+
     void cNovelDetails::setRect(SDL_Rect inRect){
         sauceRect = inRect; //The "viewport" of the texture
         setPos(inRect.x, inRect.y); //The position to render to on screen

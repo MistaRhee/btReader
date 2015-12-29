@@ -25,7 +25,32 @@ namespace beatOff{
         this->fsX = -1;
         this->fsY = -1;
     }
-    
+
+    cNovelList::cNovelList(__logger::cLogger* mLog){
+        this->mLog = mLog;
+        this->selected = 0;
+        /* Setting "defaults" just in case I forget to set them beforehand */
+        this->fontSize = 25;
+        this->textColour.r = 0;
+        this->textColour.g = 0;
+        this->textColour.b = 0;
+        this->textColour.a = 0;
+        this->backColour.r = 255;
+        this->backColour.g = 255;
+        this->backColour.b = 255;
+        this->backColour.a = 255;
+        setFont(std::string("system/fonts/default.ttf")); //Should be defaut
+        setFontSize(20);
+
+        /* Handles the texturing of the novel list */
+        this->mTexture = NULL;
+        this->textureGen = 0;
+        this->novelHeight = 20; //Defaulted to this
+        this->freeScroll = 0;
+        this->fsX = -1;
+        this->fsY = -1;
+    }
+
     cNovelList::~cNovelList(){}
 
     void cNovelList::setRect(SDL_Rect inRect){
@@ -37,51 +62,59 @@ namespace beatOff{
     }
 
     void cNovelList::addNovel(std::string in, int novelHeight, std::string fontLoc){
+        this->mLog->log(std::string("[novelList.cpp] Info: Adding novel ") + in);
+
         /* Flag that the novelList texture must be regenerated */
         this->textureGen = 0;
 
         /* Variable height makes my OCD go insane */
-        cTextBox newText;
-        this->novelHeight = novelHeight;
-        newText.setText(in);
-        newText.setFont(fontLoc);
-        newText.setTextSize(fontSize);
-        newText.setPos(x, h);
-        if(newText.canFit(novelHeight)){
-            newText.setSize(w, novelHeight);
-        }
-        else{
-            /* Scale font down so it can actually fit inside the requested
-             * height */
-            bool canSqueeze = 0;
-            for(int i = 1; i < (fontSize*3)/4; i++){ //Only will scale down to 75%
-                newText.setTextSize(fontSize-i);
-                if(newText.canFit(novelHeight)){
-                    newText.setSize(w, novelHeight);
-                    canSqueeze = 1;
-                    break;
+        if(!this->mNovels.count(in)){
+            cTextBox newText;
+            this->novelHeight = novelHeight;
+            newText.setText(in);
+            newText.setFont(fontLoc);
+            newText.setTextSize(fontSize);
+            newText.setPos(x, h);
+            if(newText.canFit(novelHeight)){
+                newText.setSize(w, novelHeight);
+            }
+            else{
+                /* Scale font down so it can actually fit inside the requested
+                 * height */
+                bool canSqueeze = 0;
+                for(int i = 1; i < (fontSize)/4; i+=5){ //Only will scale down to 75%
+                    newText.setTextSize(fontSize-i);
+                    if(newText.canFit(novelHeight)){
+                        newText.setSize(w, novelHeight);
+                        canSqueeze = 1;
+                        break;
+                    }
+                }
+                if(!canSqueeze){
+                    /* If I can't squeeze it in by making the font smaller, cut the
+                     * title off to make it fit */
+                    newText.setTextSize(fontSize);
+                    in.erase(in.end()-3, in.end());
+                    in += "...";
+                    while(true){
+                        in.erase(in.end()-4); //Erase the back character (that isn't elipsis
+                        if(newText.canFit(novelHeight)) break;
+                    }
+                    newText.setText(in);
                 }
             }
-            if(!canSqueeze){
-                /* If I can't squeeze it in by making the font smaller, cut the
-                 * title off to make it fit */
-                newText.setTextSize(fontSize);
-                in.erase(in.end()-3, in.end());
-                in += "...";
-                while(true){
-                    in.erase(in.end()-4); //Erase the back character (that isn't elipsis
-                    if(newText.canFit(novelHeight)) break;
-                }
-                newText.setText(in);
-            }
+            newText.showBox();
+            newText.setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
+            newText.setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);
+            newText.setFont(fontLoc);
+            newText.centre(); //Because text centering is nice
+            this->mNovels[in] = newText;
+            h += novelHeight;
+
+            /* Insert the novel name in the appropriate location */
+            this->novelNames.insert(this->novelNames.begin()+std::distance(this->mNovels.begin(), this->mNovels.find(in)), in);
         }
-        newText.showBox();
-        newText.setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
-        newText.setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);
-        newText.setFont(fontLoc);
-        newText.centre(); //Because text centering is nice
-        this->mNovels.push_back(newText);
-        h += novelHeight;
+        else this->mLog->log(std::string("[novelList.cpp] Info: Novel already exists! Ignoring \n"));
     }
 
     void cNovelList::move(int dx, int dy){ //Overwriting move function to move the source rect anyway
@@ -92,9 +125,9 @@ namespace beatOff{
     void cNovelList::moveSelection(int ds){
         /* Move it according to ds -> DOES NOT DO SANITY CHECK */
         this->textureGen = 0;
-        this->mNovels[this->selected].invert();
+        this->mNovels[this->novelNames[this->selected]].invert();
         this->selected += ds;
-        this->mNovels[this->selected].invert();
+        this->mNovels[this->novelNames[this->selected]].invert();
 
         /* Check to see if selection is on screen, if it isn't, move screen
          * such that it is */
@@ -121,7 +154,7 @@ namespace beatOff{
                 );
         for(auto it = this->mNovels.begin(); it != this->mNovels.end(); ++it){
             /* This is so bad/lazy */
-            it->render(mRenderer);
+            it->second.render(mRenderer);
         }
 
         /* Return renderer to render to the window again */
@@ -130,7 +163,7 @@ namespace beatOff{
     }
 
     std::string cNovelList::getSelected(){
-        return this->mNovels[this->selected].getText();
+        return this->mNovels[this->novelNames[this->selected]].getText();
     }
 
     void cNovelList::render(SDL_Renderer* mRenderer){
@@ -143,7 +176,7 @@ namespace beatOff{
         /* Sauce rect h and w should be equal to dRect */
         SDL_RenderCopy(mRenderer, mTexture, &sRect, &dRect);
     }
-    
+
     void cNovelList::handleUserKeyboard(std::string id, bool isPressed, unsigned int bitmask){
         /* Add in ID cases as we go along. On second thoughts, this wasn't such
          * a good idea.......
@@ -187,9 +220,9 @@ namespace beatOff{
                     if(!currHeight%this->novelHeight){
                         novelsDown++;
                     }
-                    this->mNovels[this->selected].invert();
+                    this->mNovels[this->novelNames[this->selected]].invert();
                     this->selected = novelsDown;
-                    this->mNovels[this->selected].invert();
+                    this->mNovels[this->novelNames[this->selected]].invert();
 
                     /* Flag that it has done something */
                     this->state = go;
@@ -225,9 +258,9 @@ namespace beatOff{
                         if(!currHeight%this->novelHeight){
                             novelsDown++;
                         }
-                        this->mNovels[this->selected].invert();
+                        this->mNovels[this->novelNames[this->selected]].invert();
                         this->selected = novelsDown;
-                        this->mNovels[this->selected].invert();
+                        this->mNovels[this->novelNames[this->selected]].invert();
                     }
                     break;
                 }
