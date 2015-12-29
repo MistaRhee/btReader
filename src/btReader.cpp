@@ -57,9 +57,9 @@ inline int fastMax(int x, int y) { return (((y-x)>>(31))&(x^y))^y; }
 cMain::cMain(){
     std::string logLoc = "logs/";
     logLoc += "btReader.log";
+    mLog = new __logger::cLogger(logLoc);
 
 #ifndef __LOGGER_NOTHREAD__
-    mLog = new __logger::cLogger(logLoc);
     mLog->start().detach();
 #endif
 
