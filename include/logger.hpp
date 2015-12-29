@@ -31,8 +31,8 @@
 #define LOGGER_HPP
 
 //Uncomment the following line for no threading (why?)
-//#define __NOTHREAD__
-#ifndef __NOTHREAD__
+//#define __LOGGER_NOTHREAD__
+#ifndef __LOGGER_NOTHREAD__
 #include <condition_variable>
 #include <mutex>
 #include <thread>
@@ -55,7 +55,7 @@ namespace __logger{
             ~cLogger();
             void log(std::string);
 
-#ifndef __NOTHREAD__
+#ifndef __LOGGER_NOTHREAD__
             std::thread start();
             void run();
             void kill();
@@ -65,7 +65,7 @@ namespace __logger{
 #endif
 
         private:
-#ifndef __NOTHREAD__
+#ifndef __LOGGER_NOTHREAD__
             std::queue<std::string> q;
             bool dead;
             std::mutex lock;

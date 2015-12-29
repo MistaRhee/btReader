@@ -58,7 +58,7 @@ cMain::cMain(){
     std::string logLoc = "logs/";
     logLoc += "btReader.log";
 
-#ifndef __NOTHREAD__
+#ifndef __LOGGER_NOTHREAD__
     mLog = new __logger::cLogger(logLoc);
     mLog->start().detach();
 #endif
@@ -72,7 +72,9 @@ cMain::cMain(){
             std::string e = "[btReader.cpp] Error: SDL could not initialize! SDL_Error:";
             e += SDL_GetError();
             mLog->log(e);
+#ifndef __LOGGER_NOTHREAD__
             mLog->kill();
+#endif
             exit(123);
         }
         this->mWindow = SDL_CreateWindow(
@@ -98,7 +100,7 @@ cMain::~cMain(){
 void cMain::close(){
     this->mLog->log("[btReader.cpp] Info: Shutting down logging system! Goodbye, cruel world");
 
-#ifndef __NOTHREAD__
+#ifndef __LOGGER_NOTHREAD__
     this->mLog->kill();
     /* Block until the logger has finished */
     this->mLog->done.lock();
@@ -241,7 +243,9 @@ void cMain::getUserProfile(){
     if(!fileExists("system/user.profile")){
         /* No existing profile exists create new one using default settings */
         mLog->log("[btReader.cpp] Critical: User Profile does not exist!");
+#ifndef __LOGGER_NOTHREAD
         mLog->kill();
+#endif
         exit(-1);
     }
     else{

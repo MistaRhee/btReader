@@ -84,7 +84,7 @@ namespace __logger{
             exit(322);
         }
 
-#ifndef __NOTHREAD__
+#ifndef __LOGGER_NOTHREAD__
         this->dead = 0;
 #endif
     }
@@ -111,7 +111,7 @@ namespace __logger{
             fprintf(stderr, "Critical Hit! flog failed to open the file! \n");
             exit(322);
         }
-#ifndef __NOTHREAD__
+#ifndef __LOGGER_NOTHREAD__
         this->dead = 0;
 #endif
     }
@@ -124,7 +124,7 @@ namespace __logger{
     void cLogger::log(std::string out){
         std::string output = currentDateTime() + out;
         while(output[output.size()-1] == '\n') output.erase(output.end()-1); //Remove trailing new-lines
-#ifdef __NOTHREAD__
+#ifdef __LOGGER_NOTHREAD__
         fprintf(this->flog, "%s \n", output.c_str());
 #else
         std::unique_lock<std::mutex> ul(this->lock);
@@ -133,7 +133,7 @@ namespace __logger{
 #endif
     }
 
-#ifndef __NOTHREAD__
+#ifndef __LOGGER_NOTHREAD__
     std::thread cLogger::start(){
         return std::thread(&cLogger::run, this);
     }
