@@ -58,10 +58,13 @@ cMain::cMain(){
     std::string logLoc = "logs/";
     logLoc += "btReader.log";
 
+#ifndef __NOTHREAD__
     mLog = new __logger::cLogger(logLoc);
-    logLoc.clear();
     mLog->start().detach();
+#endif
+
     mLog->log("[btReader.cpp] - Started logging.");
+    logLoc.clear();
     this->error = 0; //Program can break during preComp and Check dependencies
     if(checkDependencies()){
         preComp();
@@ -94,10 +97,14 @@ cMain::~cMain(){
 
 void cMain::close(){
     this->mLog->log("[btReader.cpp] Info: Shutting down logging system! Goodbye, cruel world");
+
+#ifndef __NOTHREAD__
     this->mLog->kill();
     /* Block until the logger has finished */
     this->mLog->done.lock();
     this->mLog->done.unlock();
+#endif
+
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
     SDL_Quit();

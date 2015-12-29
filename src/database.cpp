@@ -156,10 +156,14 @@ void cMain::updateDatabase(){
                 novelName = cm.attribute("title").value();
                 if(novelDB.count(novelName) > 0){
                     auto found = novelDB.find(novelName);
-                    if(found->second.second.size() > 0){ //If the details for this novel has been DLed already, check if there is update and update the page
+                    if(found->second.first.size() > 0){ //If the details for this novel has been DLed already, check if there is update and update the page
                         if(hasNew(novelName)){ //More recent version of what was already DLed
+                            this->mLog->log(std::string("[database.cpp] Info: Found new version of ") + novelName + "! Updating");
                             tempNovelDB[novelName] = getNovelDetails(novelName);
                             remove(found->second.first.c_str()); //Remove the old file
+                        }
+                        else{
+                            tempNovelDB[novelName] = found->second;
                         }
                     }
                 }
