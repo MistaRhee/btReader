@@ -282,14 +282,14 @@ void cMain::getUserProfile(){
                 else{
                     /* Extract keys */
                     std::string id;
-                    for(auto it = this->config["keybindings"].begin(); it != this->config["keybindings"].end(); ++it){
+                    for(auto it = this->config["keyBindings"].begin(); it != this->config["keyBindings"].end(); ++it){
                         /* Do a sanity check -> First should be key */
                         if(it->first != "key"){
                             /* Log it! Don't set exit */
                             this->mLog->log(std::string("[btReader.cpp] Error: Keybindings has an non-\"key\" entry! Entry type: ")+it->first);
                         }
                         else{
-                            this->mKeys.addMapping(std::stoi(it->second.find("code")->second), it->second.find("id")->second);
+                            this->mKeys.addMapping(std::stoi(it->second["code"]), it->second["id"]);
                         }
                     }
 

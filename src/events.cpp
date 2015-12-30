@@ -68,15 +68,15 @@ void cMain::processEvents(){
 void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers){
     /* Sends the correct token to the appropriate content object */
 
+    if(this->mKeys.exists(mKey)){
     /* Only the content recieves keyboard signals */
-
-    switch(whereAt){
+    switch(this->whereAt){
         case list:
-            ((beatOff::cNovelDetails*)mContents[list])->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
+            this->mContents[list]->handleUserKeyboard(this->mKeys.getKey(mKey), isDown, modifiers);
             break;
 
         case details:
-            ((beatOff::cNovelDetails*)mContents[details])->handleUserKeyboard(mKeys.getKey(mKey), isDown, modifiers);
+            this->mContents[details]->handleUserKeyboard(this->mKeys.getKey(mKey), isDown, modifiers);
             break;
 
         case settings:
@@ -94,22 +94,23 @@ void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers)
             setError();
             break;
     }
+    }
 }
 
 void cMain::handleUserMouse(int x, int y, int button, bool isDown){
     /* Check which "content" the user's mouse is over */
     /* It is either the menu or the actual content */
-    if(mContents[menu]->isOver(x, y)){ //Check menu first because it's always rendered "on top" of the content (although they should be in separate regions)
-        ((beatOff::cMenu*)mContents[menu])->handleUserMouse(x, y, button, isDown);
+    if(this->mContents[menu]->isOver(x, y)){ //Check menu first because it's always rendered "on top" of the content (although they should be in separate regions)
+        this->mContents[menu]->handleUserMouse(x, y, button, isDown);
     }
     else{
-        switch(whereAt){
+        switch(this->whereAt){
             case list:
-                ((beatOff::cNovelList*)mContents[list])->handleUserMouse(x, y, button, isDown);
+                this->mContents[list]->handleUserMouse(x, y, button, isDown);
                 break;
 
             case details:
-                ((beatOff::cNovelDetails*)mContents[details])->handleUserMouse(x, y, button, isDown);
+                this->mContents[details]->handleUserMouse(x, y, button, isDown);
                 break;
 
             case settings:
@@ -138,17 +139,16 @@ void cMain::handleUserScroll(int dx, int dy){
     int mx = -1, my = -1;
     SDL_GetMouseState(&mx, &my);
     /* Might want to include a sanity-check on mx and my (then again already accounted for below */
-    if(!mContents[menu]->isOver(mx, my)){ //Check menu first because it's always rendered "on top" of the content (although they should be in separate regions)
-        ((beatOff::cMenu*)mContents[menu])->handleUserScroll(dx, dy);
+    if(!this->mContents[menu]->isOver(mx, my)){ //Check menu first because it's always rendered "on top" of the content (although they should be in separate regions)
+        this->mContents[menu]->handleUserScroll(dx, dy);
     }
-    switch(whereAt){
+    switch(this->whereAt){
         case list:
-            printf("scroll: %d %d \n", dx, dy);
-            ((beatOff::cNovelList*)mContents[list])->handleUserScroll(dx, dy);
+            this->mContents[list]->handleUserScroll(dx, dy);
             break;
 
         case details:
-            ((beatOff::cNovelDetails*)mContents[details])->handleUserScroll(dx, dy);
+            this->mContents[details]->handleUserScroll(dx, dy);
             break;
 
         case settings:
