@@ -402,7 +402,7 @@ void cMain::render(){
         /* Draw the content first */
         switch(whereAt){
             case list:
-                ((beatOff::cNovelList*)mContents[whereAt])->render(mRenderer);
+                this->mContents[whereAt]->render(mRenderer);
                 break;
 
             case details:

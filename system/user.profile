@@ -12,7 +12,7 @@
 
     <keyBindings>
 
-<!-- Tags are only key. ID is the identification name, code is the relevant SDL KeyCode -->
+<!-- Tags are only key. ID is the identification name, code is the relevant SDL KeyCode 119=w, 115=s, 97=a, 100=d -->
         <key id="up" code="119" />
         <key id="down" code="115" />
         <key id="left" code="97" />

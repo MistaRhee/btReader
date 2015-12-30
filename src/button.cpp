@@ -73,16 +73,14 @@ namespace beatOff{
     }
     void cButton::select(){
         if(!selected){
-            setTextCol(255-textR, 255-textG, 255-textB, 255-textA);
-            setBoxCol(255-boxR, 255-boxG, 255-boxB, 255-boxA);
+            invert();
             selected = 1;
         }
     }
 
     void cButton::deselect(){
         if(selected){
-            setTextCol(255-textR, 255-textG, 255-textB, 255-textA);
-            setBoxCol(255-boxR, 255-boxG, 255-boxB, 255-boxA);
+            invert();
             selected = 0;
         }
     }

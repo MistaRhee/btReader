@@ -155,7 +155,7 @@ namespace beatOff{
                 if(text[i] == ' '){
                     space = i;
                 }
-                TTF_SizeText(mFont, temp.c_str(), &tempWidth, &renderedHeight);
+                TTF_SizeText(mFont, temp.c_str(), &tempWidth, NULL);
                 if(tempWidth > w){
                     if(space < 0){
                         i--;
@@ -197,7 +197,7 @@ namespace beatOff{
         }
         else{
             TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
-            int tempW, multiplier = 1, lineSkip = TTF_FontLineSkip(mFont);
+            int tempY = -1, tempW, lineSkip = TTF_FontLineSkip(mFont);
             int space = -1;
             std::string temp;
             std::vector<std::string> lines;
@@ -211,19 +211,17 @@ namespace beatOff{
             SDL_Surface* mSurface = NULL;
             SDL_Colour mColour = {static_cast<Uint8>(textR), static_cast<Uint8>(textG), static_cast<Uint8>(textB), static_cast<Uint8>(textA)};
 
-            if(h > 0){ //If we have a set height
+            if(this->h > 0){ //If we have a set height
                 int expected = wrappedHeight(), tempW;
-                if(h < expected){
+                if(this->h < expected){
                     std::string mWarning = currentDateTime() + ": ";
                     mWarning = "[textbox.cpp] Inputted height is too small by ";
                     mWarning += std::to_string(h - expected);
-                    mWarning += " pixels! Prentending if the guideline height didn't exist";
+                    mWarning += " pixels!";
                     setWarning(mWarning);
-                    h = expected;
-                    dRect.h = h;
                 }
                 else{
-                    dRect.y += (h-expected)/2;
+                    tempY = dRect.y + (dRect.h-expected)/2;
                     TTF_SizeText(mFont, text.c_str(), &tempW, &expected);
                     if(dRect.w < tempW){
                         dRect.x += (tempW-w)/2;
@@ -231,8 +229,8 @@ namespace beatOff{
                 }
             }
             else{
-                h = wrappedHeight();
-                dRect.h = h;
+                this->h = wrappedHeight();
+                dRect.h = this->h;
             }
 
             for(int i = 0, j = text.size(); i < j; i++){
@@ -240,7 +238,7 @@ namespace beatOff{
                 if(text[i] == ' '){
                     space = i;
                 }
-                TTF_SizeText(mFont, temp.c_str(), &tempW, &h);
+                TTF_SizeText(mFont, temp.c_str(), &tempW, NULL);
                 if(tempW > w){
                     if(space < 0){
                         temp.pop_back();
@@ -263,13 +261,13 @@ namespace beatOff{
                 lines.push_back(temp);
             }
             if(drawBox){
-                h *= multiplier;
                 SDL_SetRenderDrawColor(mRenderer, boxR, boxG, boxB, boxA);
                 SDL_RenderFillRect(mRenderer, &dRect);
             }
-            h = TTF_FontHeight(mFont);
+            dRect.h = TTF_FontHeight(mFont);
+            if(tempY > 0) dRect.y = tempY;
             for(int i = 0, j = lines.size(); i < j; i++){
-                TTF_SizeText(mFont, lines[i].c_str(), &tempW, &h);
+                TTF_SizeText(mFont, lines[i].c_str(), &tempW, &dRect.h);
 
                 if(centered){
                     dRect.x = x + (w-tempW)/2; //It'll favour shifting towards the left by one pixel. w/e
@@ -278,7 +276,6 @@ namespace beatOff{
                     dRect.x = x;
                 }
                 dRect.y = y+(i*lineSkip);
-                dRect.h = h;
                 dRect.w = tempW;
 
                 mSurface = TTF_RenderText_Blended(mFont, lines[i].c_str(), mColour);

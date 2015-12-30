@@ -110,7 +110,9 @@ namespace beatOff{
 
     void cNovelList::move(int dx, int dy){ //Overwriting move function to move the source rect anyway
         /* Ignoring dx simply because it shouldn't exist anyway */
+        printf("Moving %d to ", this->sRect.y);
         this->sRect.y += dy;
+        printf("%d \n", this->sRect.y);
         int maxHeight = this->mNovels.size()*this->novelHeight;
         if(this->sRect.y > maxHeight-this->sRect.h) this->sRect.y = maxHeight-this->sRect.h;
         else if(this->sRect.y < 0) this->sRect.y = 0;
@@ -200,6 +202,7 @@ namespace beatOff{
     }
 
     void cNovelList::handleUserScroll(int dx, int dy){
+        printf("Got Scroll! \n");
         move(0, dy*this->novelHeight*-1); //No horizontal scrolling
         /* Recalculate what the mouse is hovering over */
         int mx, my;

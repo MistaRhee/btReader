@@ -99,7 +99,6 @@ void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers)
 void cMain::handleUserMouse(int x, int y, int button, bool isDown){
     /* Check which "content" the user's mouse is over */
     /* It is either the menu or the actual content */
-        printf("%d %d \n", x, y);
     if(mContents[menu]->isOver(x, y)){ //Check menu first because it's always rendered "on top" of the content (although they should be in separate regions)
         ((beatOff::cMenu*)mContents[menu])->handleUserMouse(x, y, button, isDown);
     }
@@ -142,37 +141,28 @@ void cMain::handleUserScroll(int dx, int dy){
     if(!mContents[menu]->isOver(mx, my)){ //Check menu first because it's always rendered "on top" of the content (although they should be in separate regions)
         ((beatOff::cMenu*)mContents[menu])->handleUserScroll(dx, dy);
     }
-    else if(mContents[whereAt]->isOver(mx, my)){
-        switch(whereAt){
-            case list:
-                printf("scroll: %d %d \n", dx, dy);
-                ((beatOff::cNovelList*)mContents[list])->handleUserScroll(dx, dy);
-                break;
+    switch(whereAt){
+        case list:
+            printf("scroll: %d %d \n", dx, dy);
+            ((beatOff::cNovelList*)mContents[list])->handleUserScroll(dx, dy);
+            break;
 
-            case details:
-                ((beatOff::cNovelDetails*)mContents[details])->handleUserScroll(dx, dy);
-                break;
+        case details:
+            ((beatOff::cNovelDetails*)mContents[details])->handleUserScroll(dx, dy);
+            break;
 
-            case settings:
-                //TODO on completion of settings menu
-                break;
+        case settings:
+            //TODO on completion of settings menu
+            break;
 
-            case dlList:
-                //TODO on completion of DLList
-                break;
+        case dlList:
+            //TODO on completion of DLList
+            break;
 
-            default:
-                this->mLog->log("[events.cpp] Error: Entered invalid whereAt state during handling user Scroll! Aborting!");
-                setError();
-                break;
+        default:
+            this->mLog->log("[events.cpp] Error: Entered invalid whereAt state during handling user Scroll! Aborting!");
+            setError();
+            break;
 
-        }
-    }
-    else{
-        /* Mouse action off the screen, log it and then do nothing */
-        this->mLog->log(std::string("[events.cpp] Info: Recieved mouse event off the screen with coordinates: x->")+
-                std::to_string(mx) +
-                std::string(" y->") + std::to_string(my)
-                ); //Wew
     }
 }
