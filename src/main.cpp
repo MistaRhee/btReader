@@ -5,7 +5,7 @@
 
 int main(int argc, char* argv[]){
     cMain mProg;
-    if(argc > 1){
+    if(argc > 2){
         /* They actually provided some arguments? Waht? Wai? No plz senpai stop*/
         if(!strcmp(argv[1], "-log")){
             freopen(argv[2], "w+", stdout);

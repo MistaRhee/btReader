@@ -83,7 +83,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void setRect(SDL_Rect);
 
             /* "User" interactions */
-            void addNovel(std::string in, int size, std::string fontLoc = "system/fonts/default.ttf"); //Default fontloc is pretty fake
+            void addNovel(std::string in, int fontSize, std::string fontLoc = "system/fonts/default.ttf"); //Default fontloc is pretty fake
             void moveSelection(int); //ds
             std::string getSelected();
 

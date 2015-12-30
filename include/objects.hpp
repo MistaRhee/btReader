@@ -49,6 +49,7 @@ namespace beatOff{
             void setTextCol(int, int, int, int); //RGBA
             void setBoxCol(int, int, int, int); //RGBA
             int wrappedHeight(); //Returns the expected height of the rendering
+            int getFontHeight(); //Returns the height of the glyph
             bool canFit(int); //Given the height (the rest of the stuff is kept the same), checks if the text can actually fit within the height
             std::string getText();
             void render(SDL_Renderer*);

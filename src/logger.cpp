@@ -128,8 +128,8 @@ namespace __logger{
         fprintf(this->flog, "%s \n", output.c_str());
 #else
         std::unique_lock<std::mutex> ul(this->lock);
-        cv.notify_one();
         q.push(output);
+        cv.notify_one();
 #endif
     }
 

@@ -61,7 +61,7 @@ namespace beatOff{
         setSize(inRect.h, inRect.w);
     }
 
-    void cNovelList::addNovel(std::string in, int novelHeight, std::string fontLoc){
+    void cNovelList::addNovel(std::string in, int fontSize, std::string fontLoc){
         this->mLog->log(std::string("[novelList.cpp] Info: Adding novel ") + in);
 
         /* Flag that the novelList texture must be regenerated */
@@ -70,11 +70,13 @@ namespace beatOff{
         /* Variable height makes my OCD go insane */
         if(!this->mNovels.count(in)){
             cTextBox newText;
-            this->novelHeight = novelHeight;
             newText.setText(in);
             newText.setFont(fontLoc);
             newText.setTextSize(fontSize);
-            newText.setPos(x, h);
+            newText.setPos(x, y);
+            newText.setSize(-1, w);
+
+            this->novelHeight = newText.getFontHeight(); //Should never change, but just in case I guess..?
             if(newText.canFit(novelHeight)){
                 newText.setSize(w, novelHeight);
             }
@@ -84,7 +86,8 @@ namespace beatOff{
                 in.erase(in.end()-3, in.end());
                 in += "...";
                 while(true){
-                    in.erase(in.end()-4); //Erase the back character (that isn't elipsis
+                    in.erase(in.end()-4); //Erase the back character (that isn't elipsis)
+                    newText.setText(in);
                     if(newText.canFit(novelHeight)) break;
                 }
                 newText.setText(in);
@@ -94,8 +97,10 @@ namespace beatOff{
             newText.setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);
             newText.setFont(fontLoc);
             newText.centre(); //Because text centering is nice
+
+            /* Update local variables */
             this->mNovels[in] = newText;
-            h += novelHeight;
+            h += this->novelHeight;
 
             /* Insert the novel name in the appropriate location */
             this->novelNames.insert(this->novelNames.begin()+std::distance(this->mNovels.begin(), this->mNovels.find(in)), in);

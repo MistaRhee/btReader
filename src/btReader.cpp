@@ -170,10 +170,10 @@ void cMain::preComp(){
     temp.b = 255;
     temp.a = 255;
     colours.insert(std::make_pair("back", temp));
+    colours.insert(std::make_pair("clear", temp));
     temp.r = 0;
     temp.g = 0;
     temp.b = 0;
-    colours.insert(std::make_pair("clear", temp));
     colours.insert(std::make_pair("text", temp));
 
     /* Start the update process in the background */

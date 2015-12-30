@@ -150,21 +150,8 @@ namespace beatOff{
             std::string temp;
             TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
 
-            TTF_SizeText(mFont, text.c_str(), &tempWidth, &renderedHeight);
-            if(tempWidth > w){
-                numLines = 1;
-            }
-            else{
-                if(TTF_FontFaceIsFixedWidth(mFont)){
-                    /* Work out how many characters fit inside the requested width */
-
-                }
-                else{
-
-                }
-            }
             for(int i = 0; i < text.size(); i++){
-                temp += temp[i];
+                temp += text[i];
                 if(text[i] == ' '){
                     space = i;
                 }
@@ -182,7 +169,7 @@ namespace beatOff{
                     numLines ++;
                 }
             }
-            renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* numLines);
+            renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* numLines-1);
             TTF_CloseFont(mFont);
         }
         return(renderedHeight);
@@ -194,6 +181,13 @@ namespace beatOff{
 
     std::string cTextBox::getText(){
         return text;
+    }
+
+    int cTextBox::getFontHeight(){
+        TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
+        int rVal = TTF_FontHeight(mFont);
+        TTF_CloseFont(mFont);
+        return rVal;
     }
 
     void cTextBox::render(SDL_Renderer* mRenderer){
