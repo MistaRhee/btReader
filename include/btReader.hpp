@@ -155,6 +155,7 @@ class cMain{
         std::mutex novelDBLock;
         std::map<std::string, std::pair<std::string, std::string> > novelDB; //Title: <location, revID>
         bool updatedDB;
+        bool updating;
 
         /* User stuff */
         beatOff::cKeyMap mKeys;

@@ -149,6 +149,20 @@ namespace beatOff{
             int tempWidth, numLines = 0, space = -1;
             std::string temp;
             TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
+
+            TTF_SizeText(mFont, text.c_str(), &tempWidth, &renderedHeight);
+            if(tempWidth > w){
+                numLines = 1;
+            }
+            else{
+                if(TTF_FontFaceIsFixedWidth(mFont)){
+                    /* Work out how many characters fit inside the requested width */
+
+                }
+                else{
+
+                }
+            }
             for(int i = 0; i < text.size(); i++){
                 temp += temp[i];
                 if(text[i] == ' '){
@@ -208,7 +222,7 @@ namespace beatOff{
                 if(h < expected){
                     std::string mWarning = currentDateTime() + ": ";
                     mWarning = "[textbox.cpp] Inputted height is too small by ";
-                    mWarning += std::to_string(h - wrappedHeight());
+                    mWarning += std::to_string(h - expected);
                     mWarning += " pixels! Prentending if the guideline height didn't exist";
                     setWarning(mWarning);
                     h = expected;

@@ -137,66 +137,56 @@ bool cMain::hasNew(const std::string title){
 }
 
 void cMain::updateDatabase(){
-    std::unique_lock<std::mutex> ul(this->novelDBLock, std::try_to_lock);
-    if(ul.owns_lock()){
-        std::unique_lock<std::mutex> ul2(((beatOff::cMenu*)this->mContents[menu])->accessible);
-        auto range = this->config["menu"].equal_range("image");
-        for(auto it = range.first; it != range.second; ++it){
-            if(it->second["name"] == "downloads-active") ((beatOff::cMenu*)this->mContents[menu])->changeImage("downloads", it->second["sauce"]);
-        }
-        std::map<std::string, std::pair<std::string, std::string> > tempNovelDB;
-        this->mLog->log("[database.cpp] Info: Updating the database!");
-        cHttpd stream1;
-        std::string tempFile = tempLoc+generateRandomName(50);
-        while(fileExists(tempFile)){
-            tempFile = tempLoc+generateRandomName(50);
-        }
-        std::string novelName;
-        stream1.download(domain+novelList, tempFile);
-        try{
-            pugi::xml_document doc;
-            pugi::xml_parse_result res = doc.load_file(tempFile.c_str());
-            if(res){
-                pugi::xml_node category = doc.child("api").child("query").child("categorymembers");
-                for(auto cm: category.children("cm")){
-                    novelName = cm.attribute("title").value();
-                    this->mLog->log(std::string("[databse.cpp] Info: Checking details of ")+novelName);
-                    if(novelDB.count(novelName) > 0){
-                        auto found = novelDB.find(novelName);
-                        if(found->second.first.size() > 0){ //If the details for this novel has been DLed already, check if there is update and update the page
-                            if(hasNew(novelName)){ //More recent version of what was already DLed
-                                this->mLog->log(std::string("[database.cpp] Info: Found new version of ") + novelName + "! Updating");
-                                tempNovelDB[novelName] = getNovelDetails(novelName);
-                                remove(found->second.first.c_str()); //Remove the old file
-                            }
-                            else{
-                                tempNovelDB[novelName] = found->second;
-                            }
+    __logger::cLogger updateLog("logs/update.log"); //Currently a shitty hack to fix the segfault problem. TODO: Actually log to the same file with locks
+    std::map<std::string, std::pair<std::string, std::string> > tempNovelDB;
+    updateLog.log("[database.cpp] Info: Updating the database!");
+    cHttpd stream1;
+    std::string tempFile = tempLoc+generateRandomName(50);
+    while(fileExists(tempFile)){
+        tempFile = tempLoc+generateRandomName(50);
+    }
+    std::string novelName;
+    stream1.download(domain+novelList, tempFile);
+    try{
+        pugi::xml_document doc;
+        pugi::xml_parse_result res = doc.load_file(tempFile.c_str());
+        if(res){
+            pugi::xml_node category = doc.child("api").child("query").child("categorymembers");
+            for(auto cm: category.children("cm")){
+                novelName = cm.attribute("title").value();
+                updateLog.log(std::string("[databse.cpp] Info: Checking details of ")+novelName);
+                if(novelDB.count(novelName) > 0){
+                    auto found = novelDB.find(novelName);
+                    if(found->second.first.size() > 0){ //If the details for this novel has been DLed already, check if there is update and update the page
+                        if(hasNew(novelName)){ //More recent version of what was already DLed
+                            updateLog.log(std::string("[database.cpp] Info: Found new version of ") + novelName + "! Updating");
+                            tempNovelDB[novelName] = getNovelDetails(novelName);
+                            remove(found->second.first.c_str()); //Remove the old file
+                        }
+                        else{
+                            tempNovelDB[novelName] = found->second;
                         }
                     }
-                    else tempNovelDB[novelName] = getNovelDetails(novelName);//New novel, just get the details
                 }
+                else tempNovelDB[novelName] = getNovelDetails(novelName);//New novel, just get the details
             }
-            else{
-                /* XML Failed to load -> Either invalid XML recieved or just offline */
-                throw(mException(std::string("[database.cpp] Warning: Recieved invalid XML during UpdateDatabase or client is currently offline! Skipping database creation")));
-            }
-            novelDB.clear(); //To prevent removed novels from staying (i.e. abiding by BT rules)
-            novelDB = tempNovelDB;
-            this->updatedDB = 1;
-            remove(tempFile.c_str());
         }
-        catch(mException& e){
-            this->mLog->log(e.what());
+        else{
+            /* XML Failed to load -> Either invalid XML recieved or just offline */
+            throw(mException(std::string("[database.cpp] Warning: Recieved invalid XML during UpdateDatabase or client is currently offline! Skipping database creation")));
         }
-        this->mLog->log("[database.cpp] Info: Finished updating the database");
-        for(auto it = range.first; it != range.second; ++it){
-            if(it->second["name"] == "downloads") ((beatOff::cMenu*)this->mContents[menu])->changeImage("downloads", it->second["sauce"]);
-        }
+        novelDB.clear(); //To prevent removed novels from staying (i.e. abiding by BT rules)
+        novelDB = tempNovelDB;
+        this->updatedDB = 1;
+        remove(tempFile.c_str());
     }
-    else{
-        this->mLog->log("[database.cpp] Warning: Already updating database! Ignoring new user request!");
+    catch(mException& e){
+        updateLog.log(e.what());
     }
+    updateLog.log("[database.cpp] Info: Finished updating the database");
+    /* Wait for the upateLog to finish executing, and then leave */
+    updateLog.done.lock();
+    updateLog.done.unlock();
 }
 
 void cMain::replaceDatabase(){

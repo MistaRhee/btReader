@@ -178,6 +178,7 @@ void cMain::preComp(){
 
     /* Start the update process in the background */
     std::thread(&cMain::updateDatabase, this).detach();
+    this->updating = 1;
 
     /* Build a novelList based off what we currently have */
     beatOff::cNovelList* mList = (beatOff::cNovelList*)mContents[list];
@@ -429,7 +430,13 @@ void cMain::update(){
                 break;
 
             case dlList: //Currently no UI, it'll just update the database in the background
+                if(!updating){
+                this->updating = 1;
                 std::thread(&cMain::updateDatabase, this).detach();
+                }
+                else{
+                    this->mLog->log("[btReader.cpp] Warning: Already updating database! Ignoring new user request!");
+                }
                 break;
 
             case settings: //TODO after the competion of settings
@@ -438,6 +445,25 @@ void cMain::update(){
             default:
                 this->mLog->log("[btReader.cpp] Error: Recieved invalid go to location from mMenu->getSelected!");
                 break;
+        }
+    }
+    /* Check updates/updating status and change the image accordingly */
+    if(this->updating){
+        /* Check if it's finished updating */
+        if(this->novelDBLock.try_lock()){
+            this->novelDBLock.unlock();
+            this->updating = 0;
+
+            auto range = this->config["menu"].equal_range("image");
+            for(auto it = range.first; it != range.second; ++it){
+                if(it->second["name"] == "downloads") ((beatOff::cMenu*)this->mContents[menu])->changeImage("downloads", it->second["sauce"]);
+            }
+        }
+        else{
+            auto range = this->config["menu"].equal_range("image");
+            for(auto it = range.first; it != range.second; ++it){
+                if(it->second["name"] == "downloads-active") ((beatOff::cMenu*)this->mContents[menu])->changeImage("downloads", it->second["sauce"]);
+            }
         }
     }
 

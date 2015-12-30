@@ -79,29 +79,15 @@ namespace beatOff{
                 newText.setSize(w, novelHeight);
             }
             else{
-                /* Scale font down so it can actually fit inside the requested
-                 * height */
-                bool canSqueeze = 0;
-                for(int i = 1; i < (fontSize)/4; i+=5){ //Only will scale down to 75%
-                    newText.setTextSize(fontSize-i);
-                    if(newText.canFit(novelHeight)){
-                        newText.setSize(w, novelHeight);
-                        canSqueeze = 1;
-                        break;
-                    }
+                /* If I can't squeeze it in by making the font smaller, cut the
+                 * title off to make it fit */
+                in.erase(in.end()-3, in.end());
+                in += "...";
+                while(true){
+                    in.erase(in.end()-4); //Erase the back character (that isn't elipsis
+                    if(newText.canFit(novelHeight)) break;
                 }
-                if(!canSqueeze){
-                    /* If I can't squeeze it in by making the font smaller, cut the
-                     * title off to make it fit */
-                    newText.setTextSize(fontSize);
-                    in.erase(in.end()-3, in.end());
-                    in += "...";
-                    while(true){
-                        in.erase(in.end()-4); //Erase the back character (that isn't elipsis
-                        if(newText.canFit(novelHeight)) break;
-                    }
-                    newText.setText(in);
-                }
+                newText.setText(in);
             }
             newText.showBox();
             newText.setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
