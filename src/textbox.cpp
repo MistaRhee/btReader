@@ -223,10 +223,10 @@ namespace beatOff{
                     dRect.h = h;
                 }
                 else{
-                    y += (expected - h)/2;
+                    dRect.y += (h-expected)/2;
                     TTF_SizeText(mFont, text.c_str(), &tempW, &expected);
-                    if(w < tempW){
-                        x += (tempW-w)/2;
+                    if(dRect.w < tempW){
+                        dRect.x += (tempW-w)/2;
                     }
                 }
             }

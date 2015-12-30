@@ -24,6 +24,7 @@ namespace beatOff{
         this->freeScroll = 0;
         this->fsX = -1;
         this->fsY = -1;
+        this->inverted = 0;
     }
 
     cNovelList::cNovelList(__logger::cLogger* mLog){
@@ -49,6 +50,7 @@ namespace beatOff{
         this->freeScroll = 0;
         this->fsX = -1;
         this->fsY = -1;
+        this->inverted = 0;
     }
 
     cNovelList::~cNovelList(){}
@@ -64,11 +66,11 @@ namespace beatOff{
     void cNovelList::addNovel(std::string in, int fontSize, std::string fontLoc){
         this->mLog->log(std::string("[novelList.cpp] Info: Adding novel ") + in);
 
-        /* Flag that the novelList texture must be regenerated */
-        this->textureGen = 0;
 
         /* Variable height makes my OCD go insane */
         if(!this->mNovels.count(in)){
+            /* Flag that the novelList texture must be regenerated */
+            this->textureGen = 0;
             cTextBox newText;
             newText.setText(in);
             newText.setFont(fontLoc);
@@ -109,14 +111,18 @@ namespace beatOff{
     void cNovelList::move(int dx, int dy){ //Overwriting move function to move the source rect anyway
         /* Ignoring dx simply because it shouldn't exist anyway */
         this->sRect.y += dy;
+        int maxHeight = this->mNovels.size()*this->novelHeight;
+        if(this->sRect.y > maxHeight-this->sRect.h) this->sRect.y = maxHeight-this->sRect.h;
+        else if(this->sRect.y < 0) this->sRect.y = 0;
     }
 
     void cNovelList::moveSelection(int ds){
         /* Move it according to ds -> DOES NOT DO SANITY CHECK */
         this->textureGen = 0;
-        this->mNovels[this->novelNames[this->selected]].invert();
+        if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
         this->selected += ds;
         this->mNovels[this->novelNames[this->selected]].invert();
+        this->inverted = 1;
 
         /* Check to see if selection is on screen, if it isn't, move screen
          * such that it is */
@@ -127,7 +133,6 @@ namespace beatOff{
     }
 
     void cNovelList::genTexture(SDL_Renderer* mRenderer){
-        printf("Generating Texture\n");
         SDL_DestroyTexture(mTexture);
         /* Calculate the required height of the texture */
         int mHeight = this->novelHeight*this->mNovels.size();
@@ -141,7 +146,7 @@ namespace beatOff{
                 mHeight
                 );
         SDL_SetRenderTarget(mRenderer, this->mTexture);
-        SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
+        SDL_SetRenderDrawColor(mRenderer, this->backColour.r, this->backColour.g, this->backColour.b, this->backColour.a);
         SDL_RenderClear(mRenderer);
         for(auto it = this->mNovels.begin(); it != this->mNovels.end(); ++it){
             /* This is so bad/lazy */
@@ -172,49 +177,73 @@ namespace beatOff{
         /* Add in ID cases as we go along. On second thoughts, this wasn't such
          * a good idea.......
          */
-        if(id == "up"){
-            /* Move selection up */
-            if(this->selected < this->mNovels.size()-1){ //I can still scroll down (increase the selection number)
-                moveSelection(1);
+        printf("Keyboard: %s \n", id.c_str());
+        if(isPressed){//Not handling hold downs -> That's for mouse anyway
+            if(id == "up"){
+                /* Move selection up */
+                if(this->selected < this->mNovels.size()-1){ //I can still scroll down (increase the selection number)
+                    moveSelection(1);
+                }
+                /* Otherwise ignore it since I'm at the bottom anyway -> NO WRAPPING AROUND THE LIST */
             }
-            /* Otherwise ignore it since I'm at the bottom anyway -> NO WRAPPING AROUND THE LIST */
-        }
-        else if (id == "down"){
-            /* Move selection down */
-            if(this->selected > 0){ //I can still move up (decrase the selection number)
-                moveSelection(-1);
+            else if (id == "down"){
+                /* Move selection down */
+                if(this->selected > 0){ //I can still move up (decrase the selection number)
+                    moveSelection(-1);
+                }
             }
-        }
-        else if (id == "go"){
-            /* Selected that object */
-            this->state = go;
+            else if (id == "go"){
+                /* Selected that object */
+                this->state = go;
+            }
         }
     }
 
     void cNovelList::handleUserScroll(int dx, int dy){
-        move(0, dy); //No horizontal scrolling
+        move(0, dy*this->novelHeight*-1); //No horizontal scrolling
+        /* Recalculate what the mouse is hovering over */
+        int mx, my;
+        SDL_GetMouseState(&mx, &my);
+        this->textureGen = 0;
+        int currHeight = this->sRect.y + my;
+        int novelsDown = currHeight/this->novelHeight;
+        /* Check if the top is cutting off a novel block */
+        if(!currHeight%this->novelHeight){
+            novelsDown++;
+        }
+        if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
+        this->selected = novelsDown;
+        this->mNovels[this->novelNames[this->selected]].invert();
+        this->inverted = 1;
     }
 
-    void cNovelList::handleUserMouse(int x, int y, int mouseType, bool isPressed){
+    void cNovelList::handleUserMouse(int mx, int my, int mouseType, bool isPressed){
         /* Time to do funky math to work out what they clicked/hovering over
          * right now */
         /* Note to self: if mouseType = -1, then this is a mouse MOTION event
          * */
+        /* Adjust mx and my due to the actual rect being offset */
+        my -= this->y;
+        mx -= this->x;
         if(!isPressed){ //Does something on mouse release
             switch(mouseType){
                 case SDL_BUTTON_LEFT: 
                     {
                         /* Left click */
+                        /* Flag that I need to regenerate the texture */
+                        this->textureGen = 0;
+
                         /* Work out what I'm hovering over */
-                        int currHeight = this->sRect.y + y;
+                        int currHeight = this->sRect.y + my;
                         int novelsDown = currHeight/this->novelHeight;
                         /* Check if the top is cutting off a novel block */
                         if(!currHeight%this->novelHeight){
                             novelsDown++;
                         }
-                        this->mNovels[this->novelNames[this->selected]].invert();
+                        if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
                         this->selected = novelsDown;
                         this->mNovels[this->novelNames[this->selected]].invert();
+                        this->inverted = 1;
 
                         /* Flag that it has done something */
                         this->state = go;
@@ -231,8 +260,8 @@ namespace beatOff{
                     //Start free scrolling
                     this->freeScroll = !this->freeScroll; //Flip the bit
                     if(this->freeScroll){ //Only set these variables if freeScroll is active
-                        this->fsX = x;
-                        this->fsY = y;
+                        this->fsX = mx;
+                        this->fsY = my;
                     }
                     break;
 
@@ -240,19 +269,21 @@ namespace beatOff{
                     {
                         if(this->freeScroll){
                             /* Since we dont' move X around */
-                            move(0, y-fsY);
+                            move(0, my-fsY);
                         }
                         else{
                             /* Work out what I'm hovering over */
-                            int currHeight = this->sRect.y + y;
+                            this->textureGen = 0;
+                            int currHeight = this->sRect.y + my;
                             int novelsDown = currHeight/this->novelHeight;
                             /* Check if the top is cutting off a novel block */
                             if(!currHeight%this->novelHeight){
                                 novelsDown++;
                             }
-                            this->mNovels[this->novelNames[this->selected]].invert();
+                            if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
                             this->selected = novelsDown;
                             this->mNovels[this->novelNames[this->selected]].invert();
+                            this->inverted = 1;
                         }
                         break;
                     }

@@ -139,7 +139,7 @@ void cMain::preComp(){
     this->mContents.clear();
 
     /* Add the content objects */
-    this->mContents[menu] = new beatOff::cMenu();
+    this->mContents[menu] = new beatOff::cMenu(this->mLog);
     this->mContents[list] = new beatOff::cNovelList(this->mLog);
     this->mContents[details] = new beatOff::cNovelDetails();
 

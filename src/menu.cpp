@@ -20,7 +20,6 @@ namespace beatOff{
         for(auto it = buttons.begin(); it != buttons.end(); ++it){
             it->second.render(mRenderer);
         }
-        return;
     }
 
     void cMenu::handleUserMouse(int x, int y, int button, bool isPressed){

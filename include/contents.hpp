@@ -116,6 +116,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             /* Flags flags fags... */
             bool textureGen;
             bool freeScroll;
+            bool inverted;
             int fsX; //The starting point of the free scroll
             int fsY; //The ending point of the free scroll
     };
