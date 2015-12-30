@@ -69,31 +69,31 @@ void cMain::handleUserKey(SDL_Keycode mKey, bool isDown, unsigned int modifiers)
     /* Sends the correct token to the appropriate content object */
 
     if(this->mKeys.exists(mKey)){
-    /* Only the content recieves keyboard signals */
-    switch(this->whereAt){
-        case list:
-            this->mContents[list]->handleUserKeyboard(this->mKeys.getKey(mKey), isDown, modifiers);
-            break;
+        /* Only the content recieves keyboard signals */
+        switch(this->whereAt){
+            case list:
+                this->mContents[list]->handleUserKeyboard(this->mKeys.getKey(mKey), isDown, modifiers);
+                break;
 
-        case details:
-            this->mContents[details]->handleUserKeyboard(this->mKeys.getKey(mKey), isDown, modifiers);
-            break;
+            case details:
+                this->mContents[details]->handleUserKeyboard(this->mKeys.getKey(mKey), isDown, modifiers);
+                break;
 
-        case settings:
-            /* Not ready yet */
-            //TODO on completion of settings menu
-            break;
+            case settings:
+                /* Not ready yet */
+                //TODO on completion of settings menu
+                break;
 
-        case dlList:
-            /* Not ready yet */
-            //TODO on completion of dlList menu
-            break;
+            case dlList:
+                /* Not ready yet */
+                //TODO on completion of dlList menu
+                break;
 
-        default:
-            this->mLog->log("[events.cpp] Error: Entered invalid whereAt state during handling user keyboard! Aborting!");
-            setError();
-            break;
-    }
+            default:
+                this->mLog->log("[events.cpp] Error: Entered invalid whereAt state during handling user keyboard! Aborting!");
+                setError();
+                break;
+        }
     }
 }
 

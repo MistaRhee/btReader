@@ -1,5 +1,7 @@
 #include "contents.hpp"
 
+inline int fastMax(int x, int y) { return (((y-x)>>(31))&(x^y))^y; }
+
 namespace beatOff{
 
     cNovelList::cNovelList(){
@@ -123,6 +125,7 @@ namespace beatOff{
         this->textureGen = 0;
         if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
         this->selected += ds;
+
         this->mNovels[this->novelNames[this->selected]].invert();
         this->inverted = 1;
 
@@ -131,7 +134,7 @@ namespace beatOff{
         int reqY = 0; //Required value of Y to make the novel be see-able (is this a word?)
         reqY += this->novelHeight*(this->selected+1);
         reqY -= this->h-this->novelHeight; //I'm displaying a bunch of other stuff anyway
-        this->sRect.y = reqY;
+        this->sRect.y = fastMax(0, reqY);
     }
 
     void cNovelList::genTexture(SDL_Renderer* mRenderer){
@@ -183,15 +186,15 @@ namespace beatOff{
         if(isPressed){//Not handling hold downs -> That's for mouse anyway
             if(id == "up"){
                 /* Move selection up */
-                if(this->selected < this->mNovels.size()-1){ //I can still scroll down (increase the selection number)
-                    moveSelection(1);
+                if(this->selected > 0){ //I can still move up (decrase the selection number)
+                    moveSelection(-1);
                 }
                 /* Otherwise ignore it since I'm at the bottom anyway -> NO WRAPPING AROUND THE LIST */
             }
             else if (id == "down"){
                 /* Move selection down */
-                if(this->selected > 0){ //I can still move up (decrase the selection number)
-                    moveSelection(-1);
+                if(this->selected < this->mNovels.size()-1){ //I can still scroll down (increase the selection number)
+                    moveSelection(1);
                 }
             }
             else if (id == "go"){

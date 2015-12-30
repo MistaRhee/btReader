@@ -26,7 +26,7 @@ namespace beatOff{
 
     /* Check if there is a mapping to a certain key */
     bool cKeyMap::exists(SDL_Keycode key){
-        return (mKeys.count(key) > 9);
+        return (mKeys.count(key) > 0);
     }
 
     /* Checks if a certain mapping has been made -> Ensures that people don't miss
