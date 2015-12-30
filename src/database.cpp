@@ -138,6 +138,7 @@ bool cMain::hasNew(const std::string title){
 
 void cMain::updateDatabase(){
     __logger::cLogger updateLog("logs/update.log"); //Currently a shitty hack to fix the segfault problem. TODO: Actually log to the same file with locks
+    updateLog.start().detach();
     std::map<std::string, std::pair<std::string, std::string> > tempNovelDB;
     updateLog.log("[database.cpp] Info: Updating the database!");
     cHttpd stream1;

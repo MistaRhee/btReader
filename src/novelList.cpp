@@ -73,12 +73,12 @@ namespace beatOff{
             newText.setText(in);
             newText.setFont(fontLoc);
             newText.setTextSize(fontSize);
-            newText.setPos(x, y);
+            newText.setPos(x, this->mNovels.size()*this->novelHeight);
             newText.setSize(-1, w);
 
             this->novelHeight = newText.getFontHeight(); //Should never change, but just in case I guess..?
             if(newText.canFit(novelHeight)){
-                newText.setSize(w, novelHeight);
+                newText.setSize(novelHeight, w);
             }
             else{
                 /* If I can't squeeze it in by making the font smaller, cut the
@@ -96,11 +96,9 @@ namespace beatOff{
             newText.setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
             newText.setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);
             newText.setFont(fontLoc);
-            newText.centre(); //Because text centering is nice
 
             /* Update local variables */
             this->mNovels[in] = newText;
-            h += this->novelHeight;
 
             /* Insert the novel name in the appropriate location */
             this->novelNames.insert(this->novelNames.begin()+std::distance(this->mNovels.begin(), this->mNovels.find(in)), in);
@@ -135,7 +133,6 @@ namespace beatOff{
         int mHeight = this->novelHeight*this->mNovels.size();
 
         /* Render shit to a texture */
-        SDL_SetRenderTarget(mRenderer, this->mTexture);
         this->mTexture = SDL_CreateTexture(
                 mRenderer,
                 SDL_PIXELFORMAT_UNKNOWN,
@@ -143,6 +140,9 @@ namespace beatOff{
                 w,
                 mHeight
                 );
+        SDL_SetRenderTarget(mRenderer, this->mTexture);
+        SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
+        SDL_RenderClear(mRenderer);
         for(auto it = this->mNovels.begin(); it != this->mNovels.end(); ++it){
             /* This is so bad/lazy */
             it->second.render(mRenderer);
@@ -200,48 +200,11 @@ namespace beatOff{
          * right now */
         /* Note to self: if mouseType = -1, then this is a mouse MOTION event
          * */
-        switch(mouseType){
-            case SDL_BUTTON_LEFT: 
-                {
-                    /* Left click */
-                    /* Work out what I'm hovering over */
-                    int currHeight = this->sRect.y + y;
-                    int novelsDown = currHeight/this->novelHeight;
-                    /* Check if the top is cutting off a novel block */
-                    if(!currHeight%this->novelHeight){
-                        novelsDown++;
-                    }
-                    this->mNovels[this->novelNames[this->selected]].invert();
-                    this->selected = novelsDown;
-                    this->mNovels[this->novelNames[this->selected]].invert();
-
-                    /* Flag that it has done something */
-                    this->state = go;
-                    break;
-                }
-
-            case SDL_BUTTON_RIGHT:
-                /* Right click */
-                //Doing nothing with right click ATM (maybe later)
-                break;
-
-            case SDL_BUTTON_MIDDLE:
-                /* Middle mouse */
-                //Start free scrolling
-                this->freeScroll = !this->freeScroll; //Flip the bit
-                if(this->freeScroll){ //Only set these variables if freeScroll is active
-                    this->fsX = x;
-                    this->fsY = y;
-                }
-                break;
-
-            case -1: //My non-button case i.e. Mouse Motion
-                {
-                    if(this->freeScroll){
-                        /* Since we dont' move X around */
-                        move(0, y-fsY);
-                    }
-                    else{
+        if(!isPressed){ //Does something on mouse release
+            switch(mouseType){
+                case SDL_BUTTON_LEFT: 
+                    {
+                        /* Left click */
                         /* Work out what I'm hovering over */
                         int currHeight = this->sRect.y + y;
                         int novelsDown = currHeight/this->novelHeight;
@@ -252,15 +215,54 @@ namespace beatOff{
                         this->mNovels[this->novelNames[this->selected]].invert();
                         this->selected = novelsDown;
                         this->mNovels[this->novelNames[this->selected]].invert();
+
+                        /* Flag that it has done something */
+                        this->state = go;
+                        break;
+                    }
+
+                case SDL_BUTTON_RIGHT:
+                    /* Right click */
+                    //Doing nothing with right click ATM (maybe later)
+                    break;
+
+                case SDL_BUTTON_MIDDLE:
+                    /* Middle mouse */
+                    //Start free scrolling
+                    this->freeScroll = !this->freeScroll; //Flip the bit
+                    if(this->freeScroll){ //Only set these variables if freeScroll is active
+                        this->fsX = x;
+                        this->fsY = y;
                     }
                     break;
-                }
 
-            default:
-                /* Should only reach here on non-conventional mouse keys which I don't handle ROFL */
-                break;
+                case -1: //My non-button case i.e. Mouse Motion
+                    {
+                        if(this->freeScroll){
+                            /* Since we dont' move X around */
+                            move(0, y-fsY);
+                        }
+                        else{
+                            /* Work out what I'm hovering over */
+                            int currHeight = this->sRect.y + y;
+                            int novelsDown = currHeight/this->novelHeight;
+                            /* Check if the top is cutting off a novel block */
+                            if(!currHeight%this->novelHeight){
+                                novelsDown++;
+                            }
+                            this->mNovels[this->novelNames[this->selected]].invert();
+                            this->selected = novelsDown;
+                            this->mNovels[this->novelNames[this->selected]].invert();
+                        }
+                        break;
+                    }
+
+                default:
+                    /* Should only reach here on non-conventional mouse keys which I don't handle ROFL */
+                    break;
+            }
+
         }
-
     }
 
 }

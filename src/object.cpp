@@ -1,7 +1,7 @@
 #include "objects.hpp"
 
 namespace beatOff{
-    
+
     cObject::cObject(){
         /* Uninitialise all variables in an object */
         this->x = -1;
@@ -19,7 +19,7 @@ namespace beatOff{
         h = inH;
         w = inW;
     }
-    
+
     void cObject::move(int dx, int dy){
         x += dx;
         y += dy;
@@ -32,7 +32,7 @@ namespace beatOff{
     std::string cObject::getError(){
         return error;
     } 
-    
+
     bool cObject::hasError(){
         return(error.size() > 0);
     }
@@ -46,16 +46,29 @@ namespace beatOff{
         warning.clear();
         return rVal;
     }
-    
+
     bool cObject::hasWarning(){
         return (warning.size() > 0);
     }
 
     bool cObject::isOver(int x, int y){
-        /* Resolving conflicts by dropping the bottom line and the very far
-         * right edge -> If it becomes an issue, we can just switch to the next
-         * a less hacky way of doing this, but ATM, it's fine
-         */
-        return(((x >= this->x)&(x < this->x + this->w)&(y >= this->y)&(y < this->y + this->h)));
+        bool rVal = 1;
+        //Mouse is left of the button
+        if(x < this->x){
+            rVal = false;
+        }
+        //Mouse is right of the button
+        else if(x > this->x + this->w){
+            rVal = false;
+        }
+        //Mouse above the button
+        else if(y < this->y){
+            rVal = false;
+        }
+        //Mouse below the button
+        else if(y > this->y + this->h){
+            rVal = false;
+        }
+        return rVal;
     }
 }

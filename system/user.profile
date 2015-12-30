@@ -46,9 +46,12 @@
     </interface>
 
 <!-- Note: Menu works in the following manner:
-        - There is either image, button or content
+        - There is either image, button or region 
         - They require a NAME (What the program will recognise it as), SAUCE(Location of the image), text (Contents of a button), X(x-pos of the object), Y (y-pos of the object), H (height of the object), W (Width of the object)
         - They are listed in the drawn order as well (so the first image will be drawn before the second image etc.)
+        - Region specifies the location and size of the overall menu (Sanity checks not implemented
+          though)
+        
     THESE IMAGES/BUTTON/CONTENT/FONT MUST EXIST OR THE CODE WILL BE CHANGED:
         - FONT: default
         - IMAGE: settings
@@ -70,10 +73,11 @@ TODO: Make menu config non-shitty (It should be trivial but I ceebs impelementin
  -->
  
     <menu>
+        <region x="0" y="0" h="50" w="1024"/>
         <font name="default" />
         <image name="settings" sauce="system/images/settings.png" x="0" y="0" h="50" w="50"/>
         <image name="settings-selected" sauce="system/images/settings_invert.png" x="0" y="0" h="50" w="50" />
-        <button name="novelList" text="Novel List" font="default" x="55" y="0" h="50" w="912" size="50"/>
+        <button name="novelList" text="Novel List" font="default" x="55" y="0" h="50" w="912" size="25"/>
         <!--button name="reader" text="Reader" font="default" x="513" y="0" h="50" w="453" size="25"/ -->
         <image name="downloads" sauce="system/images/download.png" x="974" y="0" h="50" w="50" />
         <!-- Images sharing the same prefix of either settings or downloads have the same dimensions (inherited from their parent) -->
@@ -83,7 +87,7 @@ TODO: Make menu config non-shitty (It should be trivial but I ceebs impelementin
 
     <novelList>
         <font value="default" />
-        <size value="50" />
+        <size value="25" />
     </novelList>
 
 </config>

@@ -81,7 +81,7 @@ cMain::cMain(){
                 "btReader - By MistaRhee and NoOne2246", 
                 SDL_WINDOWPOS_CENTERED, 
                 SDL_WINDOWPOS_CENTERED, 
-                1024, 600, 
+                1024, 600, //TODO: Have the window size configed, and then have relative sizes rather than absolute in the config for everything else
                 SDL_WINDOW_SHOWN
                 );
         this->mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
@@ -330,6 +330,11 @@ void cMain::getUserProfile(){
                                     std::stoi(it->second["w"])
                                     );
                         }
+                        else if(it->first == "region"){
+                            /* Where the menu is located */
+                            mMenu->setPos(std::stoi(it->second["x"]), std::stoi(it->second["y"]));
+                            mMenu->setSize(std::stoi(it->second["h"]), std::stoi(it->second["w"]));
+                        }
                         else if (it->first == "font"){
                             /* FONT SHOuLD APPEAR BEFORE EVERYTHING */
                             mMenu->setFont(FONT_LOOKUP(it->second["name"]));
@@ -427,12 +432,14 @@ void cMain::update(){
         places_t goingTo = mMenu->getSelected();
         switch(goingTo){
             case list:
+                this->mLog->log("[btReader.cpp] Info: Menu returning list");
                 break;
 
             case dlList: //Currently no UI, it'll just update the database in the background
+                this->mLog->log("[btReader.cpp] Info: Menu returning dlList");
                 if(!updating){
-                this->updating = 1;
-                std::thread(&cMain::updateDatabase, this).detach();
+                    this->updating = 1;
+                    std::thread(&cMain::updateDatabase, this).detach();
                 }
                 else{
                     this->mLog->log("[btReader.cpp] Warning: Already updating database! Ignoring new user request!");
@@ -440,6 +447,7 @@ void cMain::update(){
                 break;
 
             case settings: //TODO after the competion of settings
+                this->mLog->log("[btReader.cpp] Info: Menu returning settings");
                 break;
 
             default:
