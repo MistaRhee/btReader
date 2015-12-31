@@ -53,7 +53,6 @@
           though)
         
     THESE IMAGES/BUTTON/CONTENT/FONT MUST EXIST OR THE CODE WILL BE CHANGED:
-        - FONT: default
         - IMAGE: settings
         - IMAGE: settings-selected
         - button: novelList
@@ -70,11 +69,11 @@ To leave the image at its original size (and only set the size), set height and 
 
 
 TODO: Make menu config non-shitty (It should be trivial but I ceebs impelementing it
+TODO: To make menu less shitty, just have an exra tag or something like target="" which tells the program to point this to somewhere... (I guess -_-)
  -->
  
     <menu>
         <region x="0" y="0" h="50" w="1024"/>
-        <font name="default" />
         <image name="settings" sauce="system/images/settings.png" x="0" y="0" h="50" w="50"/>
         <image name="settings-selected" sauce="system/images/settings_invert.png" x="0" y="0" h="50" w="50" />
         <button name="novelList" text="Novel List" font="default" x="55" y="0" h="50" w="912" size="25"/>
