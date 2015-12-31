@@ -188,6 +188,7 @@ void cMain::updateDatabase(){
     /* Wait for the upateLog to finish executing, and then leave */
     updateLog.done.lock();
     updateLog.done.unlock();
+    this->updatedDB = 1;
 }
 
 void cMain::replaceDatabase(){

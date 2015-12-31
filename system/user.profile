@@ -17,7 +17,7 @@
         <key id="down" code="115" />
         <key id="left" code="97" />
         <key id="right" code="100" />
-
+		<key id="go" code="13" />
     </keyBindings>
 
     <fontList>

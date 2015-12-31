@@ -49,6 +49,8 @@ is able to have access to all of the functions, and since everything is on ONE
 SCREEN (i.e. there will be no changes in windows) these things must be readily
 available. 
 
+For more details, refer to the (wiki page)[https://bitbucket.org/mistarhee/btreader/wiki/System%20settings] here.
+
 
 License and stuff
 -----------------

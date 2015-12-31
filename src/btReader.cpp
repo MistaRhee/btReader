@@ -88,7 +88,6 @@ cMain::cMain(){
         this->currThreads = 1;
         this->startRunTime = SDL_GetTicks();
         this->whereAt = list;
-        this->updatedDB = 0;
         this->running = 1;
     }
     else this->running = 0;
@@ -179,16 +178,7 @@ void cMain::preComp(){
     /* Start the update process in the background */
     std::thread(&cMain::updateDatabase, this).detach();
     this->updating = 1;
-
-    /* Build a novelList based off what we currently have */
-    beatOff::cNovelList* mList = (beatOff::cNovelList*)mContents[list];
-    for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
-        mList->addNovel(
-                i->first, 
-                std::stoi(config["novelList"].find("size")->second.find("value")->second),
-                FONT_LOOKUP(this->config["novelList"].find("font")->second["value"])
-                );
-    }
+    this->updatedDB = 1;
 }
 
 bool cMain::checkDependencies(){ //Checking if directories exist and important files are there.
@@ -278,6 +268,7 @@ void cMain::getUserProfile(){
                     this->mKeys.addMapping(SDLK_DOWN, "down");
                     this->mKeys.addMapping(SDLK_LEFT, "left");
                     this->mKeys.addMapping(SDLK_RIGHT, "right");
+                    this->mKeys.addMapping(SDLK_RETURN, "go");
                 }
                 else{
                     /* Extract keys */
@@ -433,6 +424,7 @@ void cMain::update(){
         switch(goingTo){
             case list:
                 this->mLog->log("[btReader.cpp] Info: Menu returning list");
+                this->whereAt = list;
                 break;
 
             case dlList: //Currently no UI, it'll just update the database in the background
@@ -481,6 +473,26 @@ void cMain::update(){
             /* Check if the DB has been updated, if it has, update the novelList accordingly */
             if(this->updatedDB){
                 this->updatedDB = 0;
+                beatOff::cNovelList* mList = (beatOff::cNovelList*)this->mContents[list];
+                mList->clear();
+                for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
+                    mList->addNovel(
+                            i->first,
+                            std::stoi(config["novelList"].find("size")->second.find("value")->second),
+                            FONT_LOOKUP(this->config["novelList"].find("font")->second["value"])
+                            );
+                }
+            }
+            if(this->mContents[list]->state == go){
+                /* Get what novel I'm supposed to get details from */
+                std::string detailsOf = ((beatOff::cNovelList*)this->mContents[list])->getSelected();
+                printf("Should grab novel details of %s \n", detailsOf.c_str());
+                this->mContents[list]->state = working;
+            }
+            else if(this->mContents[list]->state == broken){
+                /* Log that I'm detecting something's broken */
+                this->mLog->log("[btReader.cpp] Error: NovelList reporting that it is broken! Aborting!");
+                setError();
             }
             break;
 

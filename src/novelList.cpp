@@ -65,6 +65,11 @@ namespace beatOff{
         setSize(inRect.h, inRect.w);
     }
 
+    void cNovelList::clear(){
+        this->mNovels.clear();
+        this->novelNames.clear();
+    }
+
     void cNovelList::addNovel(std::string in, int fontSize, std::string fontLoc){
         this->mLog->log(std::string("[novelList.cpp] Info: Adding novel ") + in);
 
@@ -112,9 +117,7 @@ namespace beatOff{
 
     void cNovelList::move(int dx, int dy){ //Overwriting move function to move the source rect anyway
         /* Ignoring dx simply because it shouldn't exist anyway */
-        printf("Moving %d to ", this->sRect.y);
         this->sRect.y += dy;
-        printf("%d \n", this->sRect.y);
         int maxHeight = this->mNovels.size()*this->novelHeight;
         if(this->sRect.y > maxHeight-this->sRect.h) this->sRect.y = maxHeight-this->sRect.h;
         else if(this->sRect.y < 0) this->sRect.y = 0;
@@ -182,7 +185,6 @@ namespace beatOff{
         /* Add in ID cases as we go along. On second thoughts, this wasn't such
          * a good idea.......
          */
-        printf("Keyboard: %s \n", id.c_str());
         if(isPressed){//Not handling hold downs -> That's for mouse anyway
             if(id == "up"){
                 /* Move selection up */
@@ -205,7 +207,6 @@ namespace beatOff{
     }
 
     void cNovelList::handleUserScroll(int dx, int dy){
-        printf("Got Scroll! \n");
         move(0, dy*this->novelHeight*-1); //No horizontal scrolling
         /* Recalculate what the mouse is hovering over */
         int mx, my;

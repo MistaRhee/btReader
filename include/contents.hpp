@@ -93,6 +93,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void handleUserKeyboard(std::string, bool, unsigned int);
 
             /* Rendering to stuffs */
+            void clear();
             void render(SDL_Renderer*);
 
         private:
