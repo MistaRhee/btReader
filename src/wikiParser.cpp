@@ -6,11 +6,11 @@ static const int VOLUMES = 1;
 
 enum splitter_t{
     locate,
-	description,
+    description,
     spacer,
-	novTitle,
-    leave	
-    //
+    novTitle,
+    leave   
+        //
 };
 
 inline bool fileExists (const std::string& name) {
@@ -58,7 +58,7 @@ std::string cWikiParser::generateRandomName(int length){
 
 void cWikiParser::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile){
     FILE*fin = fopen(inFile.c_str(), "r");
-	FILE*fexist = fopen(existFile.c_str(), "r");
+    FILE*fexist = fopen(existFile.c_str(), "r");
     char buffer[4096];
 
     pugi::xml_document doc;
@@ -69,17 +69,17 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
     int status = SYNOPSIS;
     bool found = 0;
     bool processed = 1;
-	bool getting = 1;
+    bool getting = 1;
 
     //get data out of fexist
     int numLinks = 0;
-	fscanf(fexist, "%i", &numLinks);	//get the max number of links to pull out
-	int availInt;
-	std::map<std::string, int> availMap;//map with the string and availability
-	
-	for(int i = 0; i<numLinks;i++){				//pull string and info out
+    fscanf(fexist, "%i", &numLinks);    //get the max number of links to pull out
+    int availInt;
+    std::map<std::string, int> availMap;//map with the string and availability
+
+    for(int i = 0; i<numLinks;i++){             //pull string and info out
         fgets(buffer, 4096, fexist);
-	    std::string volStr;					//temporary storage of string
+        std::string volStr;                 //temporary storage of string
         getting = true;
         for(int i = 0, j = strlen(buffer); i < j; i++){
             if(getting==true){
@@ -94,10 +94,10 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
             }
         }
         volStr = titleClean(volStr);
-		availMap[volStr] = availInt;			//move data into map
+        availMap[volStr] = availInt;            //move data into map
         volStr.clear();
-	}
-    
+    }
+
     while(true){
         if(feof(fin)){
             break;
@@ -208,24 +208,24 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         splitter_t grabbing = locate;
                                         for(int i = 1, j = strlen(buffer); i < j; i++){
                                             switch(grabbing){
-												case locate:
-													if(buffer[i] == '['&&buffer[i+1] != '['){
-														grabbing = description;
-													}
-													break;
+                                                case locate:
+                                                    if(buffer[i] == '['&&buffer[i+1] != '['){
+                                                        grabbing = description;
+                                                    }
+                                                    break;
 
-												case description:
-													if(buffer[i] == '|'){
-														grabbing = spacer;
-													}
+                                                case description:
+                                                    if(buffer[i] == '|'){
+                                                        grabbing = spacer;
+                                                    }
                                                     else if (buffer[i]==']'){
                                                         title = chapName;
                                                         grabbing = leave;
                                                     }
-													else{
-														chapName += buffer[i];
-													}
-													break;
+                                                    else{
+                                                        chapName += buffer[i];
+                                                    }
+                                                    break;
 
                                                 case spacer:
                                                     if(buffer[i]==' '){
@@ -237,21 +237,21 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                                     grabbing = novTitle;
                                                     break;
 
-												case novTitle:
-													if(buffer[i] == ']'){
-														grabbing = leave;
-													}
-													else{
-														title += buffer[i];
-													}
-													break;
+                                                case novTitle:
+                                                    if(buffer[i] == ']'){
+                                                        grabbing = leave;
+                                                    }
+                                                    else{
+                                                        title += buffer[i];
+                                                    }
+                                                    break;
 
-												default:
-												    this->mLog->log("[wikiParser.cpp] Error: Enum somehow got into default");
+                                                default:
+                                                    this->mLog->log("[wikiParser.cpp] Error: Enum somehow got into default");
                                             }
-											if(grabbing == leave){
-												break;
-											}
+                                            if(grabbing == leave){
+                                                break;
+                                            }
                                         }
                                         pugi::xml_node chapterNode = newVol.append_child("chapter"); //Moved here so it will only create a new chapter node if there is atually something worth grabbing
                                         pugi::xml_attribute tempAtt = chapterNode.append_attribute("title");
@@ -268,24 +268,24 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         tempAtt.set_value("no");
                                         tempAtt = chapterNode.append_attribute("revid");
                                         tempAtt.set_value(""); //Not really needed because default to be nothing
-										//check whether the link is available.
-										chapName = titleClean(chapName);
+                                        //check whether the link is available.
+                                        chapName = titleClean(chapName);
                                         auto it = availMap.find(chapName);
-										if(it != availMap.end()){
-											if(it->second==1){
+                                        if(it != availMap.end()){
+                                            if(it->second==1){
                                                 tempAtt = chapterNode.append_attribute("available");
                                                 tempAtt.set_value("1");
-											}else{
+                                            }else{
                                                 tempAtt = chapterNode.append_attribute("available");
                                                 tempAtt.set_value("0");
-											}
-										}else{
-											std::string err = "[wikiParser.cpp] Warning: Unable to locate ";
-											err += chapName + " within the map. Set as not available for now \n";
-											this->mLog->log(err);
+                                            }
+                                        }else{
+                                            std::string err = "[wikiParser.cpp] Warning: Unable to locate ";
+                                            err += chapName + " within the map. Set as not available for now \n";
+                                            this->mLog->log(err);
                                             tempAtt = chapterNode.append_attribute("available");
                                             tempAtt.set_value("0");
-										}
+                                        }
                                     }
                                     else if(buffer[0] == '['){
                                         /* There is a link without indentataion
@@ -364,7 +364,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
             break;
         }
     }
-	doc.save_file(outFile.c_str());
+    doc.save_file(outFile.c_str());
     fclose(fexist);
 }
 

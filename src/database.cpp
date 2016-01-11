@@ -257,7 +257,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
             fprintf(fout, "%s", parseNode.child("wikitext").text().as_string());
             fclose(fout);
 
-            int links = std::distance(linksNode.begin(), linksNode.end());	//get the number of links and send it through.
+            int links = std::distance(linksNode.begin(), linksNode.end());  //get the number of links and send it through.
             fprintf(fexist, "%d \n", links);
             for(auto childLink: linksNode.children()){
                 if(childLink.attribute("exists")) exist = 1;
