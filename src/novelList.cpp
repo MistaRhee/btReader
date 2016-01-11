@@ -287,10 +287,13 @@ namespace beatOff{
                             if(!currHeight%this->novelHeight){
                                 novelsDown++;
                             }
-                            if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
-                            this->selected = novelsDown;
-                            this->mNovels[this->novelNames[this->selected]].invert();
-                            this->inverted = 1;
+                            /* Do sanity check to see if we have novels or not */
+                            if(novelsDown <= this->mNovels.size()){
+                                if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
+                                this->selected = novelsDown;
+                                this->mNovels[this->novelNames[this->selected]].invert();
+                                this->inverted = 1;
+                            }
                         }
                         break;
                     }

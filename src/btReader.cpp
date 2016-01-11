@@ -492,6 +492,7 @@ void cMain::update(){
             else if(this->mContents[list]->state == broken){
                 /* Log that I'm detecting something's broken */
                 this->mLog->log("[btReader.cpp] Error: NovelList reporting that it is broken! Aborting!");
+                this->mLog->log(this->mContents[list]->err);
                 setError();
             }
             break;

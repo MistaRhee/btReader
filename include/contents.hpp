@@ -24,6 +24,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
     class cContent : public cObject{
         public:
             /* Setting functions */
+            cContent(); //To set the state to working so it doesn't immediately break -_-
             virtual ~cContent(){}
 
             void setFont(std::string);

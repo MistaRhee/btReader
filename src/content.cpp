@@ -7,6 +7,11 @@
 
 namespace beatOff{
 
+    cContent::cContent(){
+        this->state = working;
+        this->err.clear();
+    }
+
     void cContent::setFont(std::string in){
         fontLoc = in;
     }

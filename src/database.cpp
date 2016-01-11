@@ -49,7 +49,7 @@ void cMain::createDatabase(){
             pugi::xml_node category = doc.child("api").child("query").child("categorymembers");
             for(auto cmNode: category.children("cm")){
                 tempStr = cmNode.attribute("title").value();
-                novelDB[convTitle(tempStr)] = std::make_pair("","");
+                novelDB[tempStr] = std::make_pair("","");
             }
         }
         else{
