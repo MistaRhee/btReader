@@ -38,8 +38,9 @@ namespace beatOff{
 
     class cTextBox : public cObject{
         public:
+            /* Set H to be -1 for it to set h to be equal to wrappedHeight() */
             cTextBox(); //Initialise
-            cTextBox(std::string contents, std::string fontLoc, int fontSize, int inX, int inY, int inW, int inH = -1);
+            cTextBox(std::string contents, std::string fontLoc, int fontSize, int inX, int inY, int inW, int inH = -1); 
             virtual ~cTextBox();
             void setText(std::string);
             void setTextSize(int);
@@ -82,6 +83,7 @@ namespace beatOff{
 
     class cButton : public cTextBox {
         public:
+            /* Shares the same height properties of textBox */
             cButton(); //Initialise
             cButton(std::string inText, std::string fontLoc, int inSize, int inX, int inY, int inW, int inH = -1);
             void select();
