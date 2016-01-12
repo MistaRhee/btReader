@@ -89,9 +89,17 @@ namespace beatOff{
     bool cTextBox::isCentered(){
         return centered;
     }
+    
+    bool cTextBox::isCompacted(){
+        return compacted;
+    }
 
     void cTextBox::centre(){
         centered = !(centered);
+    }
+
+    void cTextBox::compact(){
+        compacted = !(compacted);
     }
 
     cTextBox::~cTextBox() {}
@@ -146,7 +154,7 @@ namespace beatOff{
             setWarning(mError); //Only warning the user (maybe they forgot to set the font before the test... IDK LOL!
         }
         else{
-            int tempWidth, numLines = 0, space = -1;
+            int tempWidth, numLines = 1, space = -1;
             std::string temp;
             TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
 
@@ -162,21 +170,21 @@ namespace beatOff{
                         temp.clear();
                     }
                     else{
-                        i = space;
+                        i = space+1;
                         space = -1;
                         temp.clear();
                     }
                     numLines ++;
                 }
             }
-            renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* numLines-1);
+            renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* (numLines-1));
             TTF_CloseFont(mFont);
         }
         return(renderedHeight);
     }
 
     bool cTextBox::canFit(int incomingHeight){
-        return(wrappedHeight() < incomingHeight);
+        return(wrappedHeight() <= incomingHeight);
     }
 
     std::string cTextBox::getText(){
@@ -200,6 +208,7 @@ namespace beatOff{
             int tempY = -1, tempW, lineSkip = TTF_FontLineSkip(mFont);
             int space = -1;
             std::string temp;
+            std::string text = this->text;
             std::vector<std::string> lines;
             SDL_Rect dRect;
             /* Set original dimensions of dRect */
@@ -214,11 +223,33 @@ namespace beatOff{
             if(this->h > 0){ //If we have a set height
                 int expected = wrappedHeight(), tempW;
                 if(this->h < expected){
-                    std::string mWarning = currentDateTime() + ": ";
-                    mWarning = "[textbox.cpp] Inputted height is too small by ";
-                    mWarning += std::to_string(h - expected);
-                    mWarning += " pixels!";
-                    setWarning(mWarning);
+                    if(compacted){
+                        /* This is really bad because I'm changing the internal text then resetting
+                         * it to it's original value -_-
+                         */
+                        if(this->compactedText.size()){
+                            text = this->compactedText;
+                        }
+                        else{
+                            temp = this->text;
+                            this->text.erase(this->text.end()-3, this->text.end());
+                            this->text += "...";
+                            while(!this->canFit(this->h)){
+                                this->text.erase(this->text.end()-4);
+                            }
+                            text = this->text;
+                            this->compactedText = this->text;
+                            this->text = temp;
+                            temp.clear();
+                        }
+                    }
+                    else{
+                        std::string mWarning = currentDateTime() + ": ";
+                        mWarning = "[textbox.cpp] Inputted height is too small by ";
+                        mWarning += std::to_string(h - expected);
+                        mWarning += " pixels!";
+                        setWarning(mWarning);
+                    }
                 }
                 else{
                     tempY = dRect.y + (dRect.h-expected)/2;

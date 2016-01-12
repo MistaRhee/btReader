@@ -78,33 +78,15 @@ namespace beatOff{
         if(!this->mNovels.count(in)){
             /* Flag that the novelList texture must be regenerated */
             this->textureGen = 0;
-            cTextBox newText;
-            newText.setText(in);
-            newText.setFont(fontLoc);
-            newText.setTextSize(fontSize);
-            newText.setPos(x, this->mNovels.size()*this->novelHeight);
-            newText.setSize(-1, w);
+            cButton newText(in, fontLoc, fontSize, 0, this->mNovels.size()*this->novelHeight, w); //Should be generated from corner to corner of the texture
 
             this->novelHeight = newText.getFontHeight(); //Should never change, but just in case I guess..?
-            if(newText.canFit(novelHeight)){
-                newText.setSize(novelHeight, w);
-            }
-            else{
-                /* If I can't squeeze it in by making the font smaller, cut the
-                 * title off to make it fit */
-                in.erase(in.end()-3, in.end());
-                in += "...";
-                while(true){
-                    in.erase(in.end()-4); //Erase the back character (that isn't elipsis)
-                    newText.setText(in);
-                    if(newText.canFit(novelHeight)) break;
-                }
-                newText.setText(in);
-            }
-            newText.showBox();
+            newText.setSize(this->novelHeight, w);
+
             newText.setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
             newText.setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);
-            newText.setFont(fontLoc);
+
+            newText.compact();
 
             /* Update local variables */
             this->mNovels[in] = newText;
@@ -126,11 +108,10 @@ namespace beatOff{
     void cNovelList::moveSelection(int ds){
         /* Move it according to ds -> DOES NOT DO SANITY CHECK */
         this->textureGen = 0;
-        if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
+        this->mNovels[this->novelNames[this->selected]].deselect();
         this->selected += ds;
 
-        this->mNovels[this->novelNames[this->selected]].invert();
-        this->inverted = 1;
+        this->mNovels[this->novelNames[this->selected]].select();
 
         /* Check to see if selection is on screen, if it isn't, move screen
          * such that it is */
@@ -195,6 +176,7 @@ namespace beatOff{
         dRect.y = y;
         dRect.h = h;
         dRect.w = w;
+        if(dRect.h > this->mNovels.size()*this->novelHeight) dRect.h = this->mNovels.size()*this->novelHeight; //To stop stretching when there isn't enough data
         /* Sauce rect h and w should be equal to dRect */
         SDL_RenderCopy(mRenderer, mTexture, &sRect, &dRect);
     }
@@ -236,10 +218,9 @@ namespace beatOff{
         if(!currHeight%this->novelHeight){
             novelsDown++;
         }
-        if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
+        this->mNovels[this->novelNames[this->selected]].deselect();
         this->selected = novelsDown;
-        this->mNovels[this->novelNames[this->selected]].invert();
-        this->inverted = 1;
+        this->mNovels[this->novelNames[this->selected]].select();
     }
 
     void cNovelList::handleUserMouse(int mx, int my, int mouseType, bool isPressed){
@@ -309,10 +290,9 @@ namespace beatOff{
                             }
                             /* Do sanity check to see if we have novels or not */
                             if(novelsDown < this->mNovels.size()){
-                                if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
+                                this->mNovels[this->novelNames[this->selected]].deselect();
                                 this->selected = novelsDown;
-                                this->mNovels[this->novelNames[this->selected]].invert();
-                                this->inverted = 1;
+                                this->mNovels[this->novelNames[this->selected]].select();
                             }
                         }
                         break;

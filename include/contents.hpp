@@ -112,7 +112,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             SDL_Rect sRect;
 
             /* Storage */
-            std::map<std::string, cTextBox> mNovels;
+            std::map<std::string, cButton> mNovels;
             std::vector<std::string> novelNames;
 
             /* Flags flags fags... */

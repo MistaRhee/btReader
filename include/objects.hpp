@@ -57,6 +57,8 @@ namespace beatOff{
             void centre();
             void invert(); //Inverts text and box colour
             bool isCentered();
+            void compact(); //Sets compacted
+            bool isCompacted();
         protected:
             std::string text;
             std::string font;
@@ -65,7 +67,8 @@ namespace beatOff{
             int boxR, boxG, boxB, boxA;
             bool drawBox;
             bool centered; //If set, this will make any non-width filling line (wrapped or unwrapped) centered.
-
+            bool compacted; //If set, if the text can't fit, it will remove the end of the text and add ellipsis
+            std::string compactedText; //To prevent recalculations. It will memorise what was done before
     };
 
     class cImage : public cObject{
