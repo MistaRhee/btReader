@@ -122,14 +122,14 @@ namespace __logger{
     }
 
     void cLogger::log(std::string out){
-        std::string output = currentDateTime() + out;
+        std::string output = currentDateTime() + std::string(" ") + out;
         while(output[output.size()-1] == '\n') output.erase(output.end()-1); //Remove trailing new-lines
 #ifdef __LOGGER_NOTHREAD__
         fprintf(this->flog, "%s \n", output.c_str());
 #else
         std::unique_lock<std::mutex> ul(this->lock);
-        q.push(output);
         cv.notify_one();
+        q.push(output);
 #endif
     }
 
