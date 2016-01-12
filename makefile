@@ -31,3 +31,8 @@ $(EXECUTABLE): $(OBJECTS)
 clean: 
 	rm -f src/*.o
 	rm -f $(OBJECTS)
+
+hardClean:
+	rm -f src/*.o
+	rm -f $(OBJECTS)
+	rm -f $(EXECUTABLE)

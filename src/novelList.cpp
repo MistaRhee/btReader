@@ -142,28 +142,46 @@ namespace beatOff{
 
     void cNovelList::genTexture(SDL_Renderer* mRenderer){
         SDL_DestroyTexture(mTexture);
-        /* Calculate the required height of the texture */
-        int mHeight = this->novelHeight*this->mNovels.size();
+        if(this->mNovels.size()){
+            /* Calculate the required height of the texture */
+            int mHeight = this->novelHeight*this->mNovels.size();
 
-        /* Render shit to a texture */
-        this->mTexture = SDL_CreateTexture(
-                mRenderer,
-                SDL_PIXELFORMAT_UNKNOWN,
-                SDL_TEXTUREACCESS_TARGET,
-                w,
-                mHeight
-                );
-        SDL_SetRenderTarget(mRenderer, this->mTexture);
-        SDL_SetRenderDrawColor(mRenderer, this->backColour.r, this->backColour.g, this->backColour.b, this->backColour.a);
-        SDL_RenderClear(mRenderer);
-        for(auto it = this->mNovels.begin(); it != this->mNovels.end(); ++it){
-            /* This is so bad/lazy */
-            it->second.render(mRenderer);
+            /* Render shit to a texture */
+            this->mTexture = SDL_CreateTexture(
+                    mRenderer,
+                    SDL_PIXELFORMAT_UNKNOWN,
+                    SDL_TEXTUREACCESS_TARGET,
+                    w,
+                    mHeight
+                    );
+            SDL_SetRenderTarget(mRenderer, this->mTexture);
+            SDL_SetRenderDrawColor(mRenderer, this->backColour.r, this->backColour.g, this->backColour.b, this->backColour.a);
+            SDL_RenderClear(mRenderer);
+            for(auto it = this->mNovels.begin(); it != this->mNovels.end(); ++it){
+                /* This is so bad/lazy */
+                it->second.render(mRenderer);
+            }
+
+            /* Return renderer to render to the window again */
+            SDL_SetRenderTarget(mRenderer, NULL);
+            this->textureGen = 1;
         }
-
-        /* Return renderer to render to the window again */
-        SDL_SetRenderTarget(mRenderer, NULL);
-        this->textureGen = 1;
+        else{
+            this->mTexture = SDL_CreateTexture(
+                    mRenderer, 
+                    SDL_PIXELFORMAT_UNKNOWN,
+                    SDL_TEXTUREACCESS_TARGET,
+                    w,
+                    this->h
+                    );
+            SDL_SetRenderTarget(mRenderer, this->mTexture);
+            SDL_SetRenderDrawColor(mRenderer, this->backColour.r, this->backColour.g, this->backColour.b, this->backColour.a);
+            SDL_RenderClear(mRenderer);
+            beatOff::cTextBox updatingBox("btReader is currently updating (For more details, check the updates.log)", "system/fonts/default.ttf", 25, 0, 0, this->w);
+            updatingBox.render(mRenderer);
+            SDL_SetRenderTarget(mRenderer, NULL);
+            this->textureGen = 1;
+        }
     }
 
     std::string cNovelList::getSelected(){
@@ -247,13 +265,15 @@ namespace beatOff{
                         if(!currHeight%this->novelHeight){
                             novelsDown++;
                         }
-                        if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
-                        this->selected = novelsDown;
-                        this->mNovels[this->novelNames[this->selected]].invert();
-                        this->inverted = 1;
+                        if(novelsDown < this->mNovels.size()){
+                            if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
+                            this->selected = novelsDown;
+                            this->mNovels[this->novelNames[this->selected]].invert();
+                            this->inverted = 1;
 
-                        /* Flag that it has done something */
-                        this->state = go;
+                            /* Flag that it has done something */
+                            this->state = go;
+                        }
                         break;
                     }
 
@@ -288,7 +308,7 @@ namespace beatOff{
                                 novelsDown++;
                             }
                             /* Do sanity check to see if we have novels or not */
-                            if(novelsDown <= this->mNovels.size()){
+                            if(novelsDown < this->mNovels.size()){
                                 if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
                                 this->selected = novelsDown;
                                 this->mNovels[this->novelNames[this->selected]].invert();

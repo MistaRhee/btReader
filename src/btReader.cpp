@@ -472,6 +472,7 @@ void cMain::update(){
         case list:
             /* Check if the DB has been updated, if it has, update the novelList accordingly */
             if(this->updatedDB){
+                printf("Updating Novel List with %d novels \n", this->novelDB.size());
                 this->updatedDB = 0;
                 beatOff::cNovelList* mList = (beatOff::cNovelList*)this->mContents[list];
                 mList->clear();

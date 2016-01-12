@@ -168,6 +168,7 @@ void cMain::updateDatabase(){
                             tempNovelDB[novelName] = found->second;
                         }
                     }
+                    else tempNovelDB[novelName] = getNovelDetails(novelName);//New novel, just get the details
                 }
                 else tempNovelDB[novelName] = getNovelDetails(novelName);//New novel, just get the details
             }
@@ -188,7 +189,6 @@ void cMain::updateDatabase(){
     /* Wait for the upateLog to finish executing, and then leave */
     updateLog.done.lock();
     updateLog.done.unlock();
-    this->updatedDB = 1;
 }
 
 void cMain::replaceDatabase(){

@@ -39,7 +39,7 @@ namespace beatOff{
     class cTextBox : public cObject{
         public:
             cTextBox(); //Initialise
-            cTextBox(std::string contesnts, std::string fontLoc, int fontSize, int inX, int inY, int inW, int inH = -1);
+            cTextBox(std::string contents, std::string fontLoc, int fontSize, int inX, int inY, int inW, int inH = -1);
             virtual ~cTextBox();
             void setText(std::string);
             void setTextSize(int);
