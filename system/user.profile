@@ -38,7 +38,7 @@
 <!-- This is the configuration for the general interface (i.e. where everything fits/goes)
         Contains:
             -> Content (where the novelList, DLList and Settings will go)
-            -> Menu (Where the menu will go) --> THIS IS OPTIONAL, since there is a menu section below which will specify all the parts of the menu, and if it's built right, you won't have spare space
+            -> Menu (Where the menu will go)  THIS IS OPTIONAL, since there is a menu section below which will specify all the parts of the menu, and if it's built right, you won't have spare space
  -->
 
     <interface>
@@ -88,5 +88,13 @@ TODO: To make menu less shitty, just have an exra tag or something like target="
         <font value="default" />
         <size value="25" />
     </novelList>
+
+    <!-- TODO: Document this properly -->
+    <novelDetails>
+        <title font="default" size="35" />
+        <!-- image h="-1" w="-1" //Optional: If it is there, will enforce the requested height/width. Without it, it will dump the full-sized image there -->
+        <volume font="default" size="25" />
+        <chapter font="default" size="25" />
+    </novelDetails>
 
 </config>

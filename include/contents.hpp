@@ -129,18 +129,19 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             cNovelDetails(__logger::cLogger*);
             ~cNovelDetails() {}
             void setRect(SDL_Rect); //Only care about the rectangle's xPos and yPos and width
-            void openNovel(std::string, SDL_Renderer*, std::string); //Opens up a novel from XML and then renders it to a texture
+            void openNovel(std::string, SDL_Renderer*, std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >&); //Opens up a novel from XML and then renders it to a texture
             void render(SDL_Renderer*); //Draws a section of the texture
-            void move(int, int); //Moves the image around (dx, dy). Should only require to move dy (scrolling)
             std::string getSelected();
             void handleUserMouse(int, int, int, bool);
             void handleUserScroll(int, int);
             void handleUserKeyboard(std::string, bool, unsigned int);
         private:
+            void move(int, int); //Moves the image around (dx, dy). Should only require to move dy (scrolling)
+
+            std::vector<std::pair<cObject*, std::pair<std::string, unsigned int> > > contents; //Stores polymorphed objects and the cumulative height that that object contains (Bottom height of the object)
             SDL_Texture* mTexture; //Texture which stores the stuff
             SDL_Rect sauceRect;
             bool loaded;
-            std::string fileLoc;
             int selection;
     };
     

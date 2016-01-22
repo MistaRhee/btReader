@@ -5,6 +5,7 @@ namespace beatOff{
     cMenu::cMenu(){
         this->next = list;
         this->mouseMoved = 0;
+        this->mLog = new __logger::cLogger("logs/menu.log");
     }
 
     cMenu::cMenu(__logger::cLogger* mLog){

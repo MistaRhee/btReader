@@ -140,7 +140,7 @@ void cMain::preComp(){
     /* Add the content objects */
     this->mContents[menu] = new beatOff::cMenu(this->mLog);
     this->mContents[list] = new beatOff::cNovelList(this->mLog);
-    this->mContents[details] = new beatOff::cNovelDetails();
+    this->mContents[details] = new beatOff::cNovelDetails(this->mLog);
 
     /* Grab user profile */
     getUserProfile();

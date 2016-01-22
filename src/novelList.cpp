@@ -27,6 +27,7 @@ namespace beatOff{
         this->fsX = -1;
         this->fsY = -1;
         this->inverted = 0;
+        this->mLog = new __logger::cLogger("logs/list.log");
     }
 
     cNovelList::cNovelList(__logger::cLogger* mLog){
