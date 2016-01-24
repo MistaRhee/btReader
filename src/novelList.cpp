@@ -212,6 +212,8 @@ namespace beatOff{
         /* Recalculate what the mouse is hovering over */
         int mx, my;
         SDL_GetMouseState(&mx, &my);
+        mx -= this->x;
+        my -= this->y;
         this->textureGen = 0;
         int currHeight = this->sRect.y + my;
         int novelsDown = currHeight/this->novelHeight;

@@ -1,6 +1,7 @@
 #ifndef CONTENTS_HPP
 #define CONTENTS_HPP
 
+#include <algorithm>
 #include <cstring>
 #include <exception>
 #include <map>
@@ -132,17 +133,25 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void openNovel(std::string, SDL_Renderer*, std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >&); //Opens up a novel from XML and then renders it to a texture
             void render(SDL_Renderer*); //Draws a section of the texture
             std::string getSelected();
+            std::string getChapName();
             void handleUserMouse(int, int, int, bool);
             void handleUserScroll(int, int);
             void handleUserKeyboard(std::string, bool, unsigned int);
         private:
             void move(int, int); //Moves the image around (dx, dy). Should only require to move dy (scrolling)
+            void moveSelection(int); //Moves selection
+            void genTexture(SDL_Renderer*); //Regenerates texture (REQUIRES openNovel TO BE CALLED FIRST)
 
             std::vector<std::pair<cObject*, std::pair<std::string, unsigned int> > > contents; //Stores polymorphed objects and the cumulative height that that object contains (Bottom height of the object)
             SDL_Texture* mTexture; //Texture which stores the stuff
-            SDL_Rect sauceRect;
+            SDL_Rect sRect;
+            bool freeScroll;
             bool loaded;
+            bool highlighted; //Flag for if mouse has focused on the buttons
+            bool textureGen;
             int selection;
+
+            int fsX, fsY; //Free scroll starting position
     };
     
 }

@@ -6,31 +6,36 @@
 namespace beatOff{
 
     cNovelDetails::cNovelDetails(){
-        loaded = 0;
-        selection = 0;
-        mTexture = NULL;
+        this->loaded = 0;
+        this->selection = -1;
+        this->mTexture = NULL;
         this->mLog = new __logger::cLogger("logs/details.log");
-        this->selected = -1;
+        this->selection = -1;
+        this->highlighted = 0;
+        this->textureGen = 0;
     }
 
     cNovelDetails::cNovelDetails(__logger::cLogger* mLog){
-        loaded = 0;
-        selection = 0;
-        mTexture = NULL;
+        this->loaded = 0;
+        this->selection = 0;
+        this->mTexture = NULL;
         this->mLog = mLog;
-        this->selected = -1;
+        this->selection = -1;
+        this->textureGen = 0;
     }
 
     void cNovelDetails::setRect(SDL_Rect inRect){
-        sauceRect = inRect; //The "viewport" of the texture
+        sRect = inRect; //The "viewport" of the texture
+        sRect.x = 0;
+        sRect.y = 0;
         setPos(inRect.x, inRect.y); //The position to render to on screen
         /* Like all things, height is variable, its just the width that stays the same */
         setSize(inRect.h, inRect.w); 
     }
 
     std::string cNovelDetails::getSelected(){ //Returns the chapter location
-        if(this->selected > 0){
-            return this->objects[selected].second.first;
+        if(this->selection > 0){
+            return this->contents[selection].second.first;
         }
         else{ //Sanity check anyway just to be sure
             this->state = broken;
@@ -39,10 +44,16 @@ namespace beatOff{
         }
     }
 
+    std::string cNovelDetails::getChapName(){
+        if(this->selection > 0){
+            return ((cButton*)this->contents[selection].first)->getText();
+        }
+    }
+
     void cNovelDetails::openNovel(
             std::string sauce, SDL_Renderer* mRenderer, 
             std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >& config //More profitable to just pass the whole config in instead of doing stupid shit
-            ){ //TODO: WIP. Just need to pre-calculate the height then render it to a texture
+            ){ 
         try{
             /* Clearing out old textures */
             if(mTexture){
@@ -51,7 +62,7 @@ namespace beatOff{
             }
 
             /* Grabbing Volume + Chapter list */
-            std::vector<std::vector<std::pair<std::string, std::string> > > volumes;
+            std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::string> > > > volumes;
 
             pugi::xml_document doc;
             doc.load_file(sauce.c_str()); //Ignoring return value (I'm a NAUGHTY BOY elegiggle)
@@ -72,34 +83,27 @@ namespace beatOff{
                 for(auto chapterNode: currNode.children("chapter")){
                     chapterDetails.push_back(std::make_pair(chapterNode.attribute("title").value(), chapterNode.attribute("location").value())); //Wew!
                 }
-                volumes.push_back(chapterDetails);
+                volumes.push_back(std::make_pair(currNode.attribute("title").value(), chapterDetails));
             }
-            loaded = 1;
-            
+
             /* TIME TO RENDER TO A TEXTURE !!! */
 
             /* Calculate the height and create objects beforehand, because texture height must be
              * declared beforehand -_- */
 
             cObject* newObject; //A temporary textbox that will only be used for the "wrapped height" method
+            unsigned int mHeight = 0;
+
             newObject = new cTextBox(
                     title, 
                     ND_FONT_LOOKUP(config["novelDetails"].find("title")->second["font"]),
                     std::stoi(config["novelDetails"].find("title")->second["size"]),
+                    0, mHeight,this->sRect.w
                     );
-            cButton newText(in, fontLoc, fontSize, 0, this->mNovels.size()*this->novelHeight, w); //Should be generated from corner to corner of the texture
-            unsigned int mHeight = 0;
             /* Title */
-            cTextBox* t = (cTextBox*) newObject;
-            t->setText(title);
-            t->setFont(ND_FONT_LOOKUP(config["novelDetails"].find("title")->second["font"]));
-            t->setSize(std::stoi(config["novelDetails"].find("title")->second["size"]));
-            t->setPos(0, mHeight);
-            t->setSize(-1, this->sRect.w);
-            t = NULL;
-            mHeight += t->wrappedHeight();
+            if(!((cTextBox*)newObject)->isCentered()) ((cTextBox*)newObject)->centre();
+            mHeight += ((cTextBox*)newObject)->wrappedHeight();
             this->contents.push_back(std::make_pair(newObject, std::make_pair(std::string("__NONE__"), mHeight))); //__NONE__ to stand for unclickable
-            t = NULL; // Just to be safe
 
             /* Image */
             if(!config["novelDetails"].count("image"))
@@ -120,9 +124,38 @@ namespace beatOff{
                         ); //Trusting the config man to not be stupid and allocate W to be greater than sRect.w (Possibly want to do a min of this)
             mHeight += ((cImage*)newObject)->getSize().first;
             this->contents.push_back(std::make_pair(newObject, std::make_pair(std::string("__NONE__"), mHeight)));
-            
-            /* Synopsis */
 
+            /* Synopsis */
+            newObject = new cTextBox(
+                    synopsis,
+                    ND_FONT_LOOKUP(config["novelDetails"].find("synopsis")->second["font"]),
+                    std::stoi(config["novelDetails"].find("synopsis")->second["size"]),
+                    0, mHeight, this->sRect.w
+                    );
+            mHeight += ((cTextBox*)newObject)->wrappedHeight();
+            this->contents.push_back(std::make_pair(newObject, std::make_pair(std::string("__NONE__"), mHeight)));
+
+            /* Volume/chapter details */
+            for(auto volume : volumes){
+                newObject = new cTextBox(
+                        volume.first,
+                        ND_FONT_LOOKUP(config["novelDetails"].find("volume")->second["font"]),
+                        std::stoi(config["novelDetails"].find("volume")->second["size"]),
+                        0, mHeight, this->sRect.w
+                        );
+                mHeight += ((cTextBox*)newObject)->wrappedHeight();
+                this->contents.push_back(std::make_pair(newObject, std::make_pair(std::string("__NONE__"), mHeight)));
+                for(auto chapter: volume.second){
+                    newObject = new cButton(
+                            chapter.first,
+                            ND_FONT_LOOKUP(config["novelDetails"].find("chapter")->second["font"]),
+                            std::stoi(config["novelDetails"].find("volume")->second["size"]),
+                            0, mHeight, this->sRect.w
+                            );
+                    mHeight += ((cButton*)newObject)->wrappedHeight();
+                    this->contents.push_back(std::make_pair(newObject, std::make_pair(chapter.second, mHeight)));
+                }
+            }
 
             /* Create the texture first */
             mTexture = SDL_CreateTexture(
@@ -133,6 +166,8 @@ namespace beatOff{
                     mHeight //Height is variable though so I had to pre-calc it =.=
                     );
             SDL_SetRenderTarget(mRenderer, mTexture);
+            SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
+            SDL_RenderClear(mRenderer);
             for(int i = 0; i < this->contents.size(); i++){
                 this->contents[i].first->render(mRenderer);
             }
@@ -141,44 +176,180 @@ namespace beatOff{
             SDL_SetRenderTarget(mRenderer, NULL);
 
             /* Set default starting pos to 0, 0. Set here, because things will always be re-loaded */
-            sauceRect.x = 0;
-            sauceRect.y = 0;
+            this->sRect.x = 0;
+            this->sRect.y = 0;
+            this->loaded = 1;
+            this->textureGen = 1;
         }
         catch(mException& e){
-           setError(e.what()); 
-           printf("%s \n", e.what());
+            setError(e.what()); 
+            printf("%s \n", e.what());
         }
     }
 
     void cNovelDetails::move(int dx, int dy){ //DOES NOT SANITY CHECK!!! (Should be done beforehand anyway)
         /*Ignoring dx at the momemnt, until I can get zoom working. */
-        sauceRect.y += dy;
-        //sauceRect.x += dx;
+        sRect.y += dy;
+        //sRect.x += dx;
+    }
+
+    void cNovelDetails::moveSelection(int ds){
+        if(ds){
+            int diff = (ds > 0 ? -1 : 1);
+            ds = ds > 0 ? ds : ds*-1;
+            unsigned int last = this->selection; //In case there isn't anything to go to
+            while(ds){ //Can afford shitty algo since tiny n
+                this->selection += diff;
+                if(this->selection < 0 or this->selection >= this->contents.size()){ //No other valid "selecatble" option
+                    this->selection = last;
+                    break;
+                }
+                else if(this->contents[this->selection].second.first != "__NONE__"){ //Check selectable
+                    ds--;
+                }
+                //else do nothing
+            }
+            if(last != this->selection and this->selection > 0){
+                ((cButton*)this->contents[this->selection].first)->select();
+                ((cButton*)this->contents[last].first)->deselect();
+            }
+            this->textureGen = 0;
+        }
+    }
+
+    void cNovelDetails::genTexture(SDL_Renderer* mRenderer){
+        SDL_SetRenderTarget(mRenderer, mTexture);
+        SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
+        SDL_RenderClear(mRenderer);
+        for(auto object : this->contents){
+            object.first->render(mRenderer);
+        }
+        SDL_SetRenderTarget(mRenderer, NULL);
+        this->textureGen = 1;
     }
 
     void cNovelDetails::render(SDL_Renderer* mRenderer){ //TODO: Verify that this still works
-        if(!loaded){
+        if(!this->loaded){
             std::string mError = currentDateTime() = ": ";
             mError += "[novelDetails.cpp] File wasn't loaded before calling render \n";
             printf("%s \n", mError.c_str());
             throw(mException(mError));
         }
         else{
-            SDL_RenderCopy(mRenderer, mTexture, &sauceRect, NULL);
+            if(!this->textureGen) genTexture(mRenderer);
+            SDL_Rect dRect;
+            dRect.x = x;
+            dRect.y = y;
+            /* sRect(h/w) == dRect(h/w) */
+            dRect.h = h;
+            dRect.w = w;
+            SDL_RenderCopy(mRenderer, mTexture, &sRect, &dRect);
         }
     }
 
     void cNovelDetails::handleUserMouse(int x, int y, int button, bool isDown){
-        return; //TODO
+        int mx = x - this->x, my = y - this->y;
+        if(!isDown){ //Trigger event on rising edge
+            switch(button){
+                case SDL_BUTTON_LEFT:
+                    /* Work out what I'm hovering over, then check if it's a selectable, if it is,
+                     * highlight it and trigger the flag, otherwise don't do anything */
+                    for(int i = 0; i < this->contents.size(); i++){
+                        if(this->contents[i].second.second > y){
+                            if(this->contents[i].second.first == "__NONE__"){
+                                this->highlighted = 0;
+                            }
+                            else{
+                                this->selection = i;
+                                this->state = go;
+                            }
+                            break;
+                        }
+                    }
+                    break;
+
+                case SDL_BUTTON_RIGHT:
+                    /* Don't handle ATM */
+                    break;
+
+                case SDL_BUTTON_MIDDLE:
+                    this->freeScroll = !this->freeScroll; //Flip the bit
+                    if(this->freeScroll){ //Only set these variables if freeScroll is active
+                        this->fsX = mx;
+                        this->fsY = my;
+                    }
+                    break;
+
+                case -1:
+                    if(this->freeScroll){
+                        /* Since we dont' move X around */
+                        move(0, my-fsY);
+                    }
+                    else{
+                        /* Check if I'm hovering over a selectable. If I am, then highlight it,
+                         * otherwise, don't
+                         */
+                        /* Find what object I'm hovering over right now */
+                        for(int loc = 0; loc < this->contents.size(); loc++){
+                            if(this->contents[loc].second.second > y){
+                                if(this->contents[loc].second.first != "__NONE__"){
+                                    /* Over hoverable */
+                                    ((cButton*)this->contents[this->selection].first)->deselect();
+                                    this->selection = loc;
+                                    ((cButton*)this->contents[this->selection].first)->select();
+                                    this->textureGen = 0;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 
-    void cNovelDetails::handleUserKeyboard(std::string key, bool isDown, unsigned int modifiers){
-        return; //TODO
+    void cNovelDetails::handleUserKeyboard(std::string id, bool isPressed, unsigned int bitmask){
+        /* Add in ID cases as we go along. On second thoughts, this wasn't such
+         * a good idea.......
+         */
+        if(isPressed){//Not handling hold downs -> That's for mouse anyway
+            if(this->highlighted){
+                if(id == "up"){
+                    moveSelection(-1); //Sanity checks should be done in function
+                    this->textureGen = 0;
+                }
+                else if(id == "down"){
+                    moveSelection(1);
+                    this->textureGen = 0;
+                }
+                else if(id == "go"){
+                    /* Selected that object */
+                    this->state = go;
+                }
+            }
+        }
+        else{
+            /* Scroll up/down */
+            if(id == "up"){
+                move(0, std::max(-20, 0-this->sRect.y)); //Inherently does a sanity check
+            }
+            else if(id == "down"){
+                move(0, std::min(20, this->sRect.h));
+            }
+            else if(id == "go"){
+                /* Check if something has been selected, then DROP THE BASS */
+                if(this->selection > 0){
+                    this->state = go;
+                }
+            }
+        }
     }
 
     void cNovelDetails::handleUserScroll(int dx, int dy){
-        return; //TODO
+        move(0, dy*25*1);
     }
 
 }
-

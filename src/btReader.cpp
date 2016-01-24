@@ -498,6 +498,9 @@ void cMain::update(){
             break;
 
         case details://TODO on completion of novelDetails
+            if(this->mContents[details]->state == go){
+                std::string chapLoc = ((beatOff::cNovelList*)this->mContents[list])->getSelected();
+            }
             break;
 
         case settings: //TODO on completion of settigns
