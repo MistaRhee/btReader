@@ -26,7 +26,6 @@ namespace beatOff{
         this->freeScroll = 0;
         this->fsX = -1;
         this->fsY = -1;
-        this->inverted = 0;
         this->mLog = new __logger::cLogger("logs/list.log");
     }
 
@@ -53,7 +52,6 @@ namespace beatOff{
         this->freeScroll = 0;
         this->fsX = -1;
         this->fsY = -1;
-        this->inverted = 0;
     }
 
     cNovelList::~cNovelList(){}
@@ -250,10 +248,9 @@ namespace beatOff{
                             novelsDown++;
                         }
                         if(novelsDown < this->mNovels.size()){
-                            if(this->inverted) this->mNovels[this->novelNames[this->selected]].invert();
+                            this->mNovels[this->novelNames[this->selected]].deselect();
                             this->selected = novelsDown;
-                            this->mNovels[this->novelNames[this->selected]].invert();
-                            this->inverted = 1;
+                            this->mNovels[this->novelNames[this->selected]].select();
 
                             /* Flag that it has done something */
                             this->state = go;

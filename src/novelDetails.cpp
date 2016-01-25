@@ -62,7 +62,7 @@ namespace beatOff{
             }
 
             /* Grabbing Volume + Chapter list */
-            std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::string> > > > volumes;
+            std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::pair<std::string, std::string> > > > > volumes;
 
             pugi::xml_document doc;
             doc.load_file(sauce.c_str()); //Ignoring return value (I'm a NAUGHTY BOY elegiggle)
@@ -76,12 +76,12 @@ namespace beatOff{
              * edit it so that it would include the first cover image that
              * exists, but that is for later ~~~~~~~~~~~~~
              * ***************************************************************/
-            std::string frontLoc = mainNode.child("volume").attribute("image").value(); //TODO: VERIFY THIS
+            std::string frontLoc = mainNode.child("volume").attribute("image").value();
 
             for(auto currNode: mainNode.children("volume")){
                 std::vector<std::pair<std::string, std::string> > chapterDetails;
                 for(auto chapterNode: currNode.children("chapter")){
-                    chapterDetails.push_back(std::make_pair(chapterNode.attribute("title").value(), chapterNode.attribute("location").value())); //Wew!
+                    chapterDetails.push_back(std::make_pair(chapterNode.attribute("title").value(), std::make_pair(chapterNode.attribute("id"), chapterNode.attribute("location").value()))); //Wew!
                 }
                 volumes.push_back(std::make_pair(currNode.attribute("title").value(), chapterDetails));
             }

@@ -248,6 +248,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 
                                                 default:
                                                     this->mLog->log("[wikiParser.cpp] Error: Enum somehow got into default");
+                                                    break;
                                             }
                                             if(grabbing == leave){
                                                 break;
@@ -256,16 +257,12 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         pugi::xml_node chapterNode = newVol.append_child("chapter"); //Moved here so it will only create a new chapter node if there is atually something worth grabbing
                                         pugi::xml_attribute tempAtt = chapterNode.append_attribute("title");
                                         tempAtt.set_value(title.c_str());
+                                        tempAtt = chapterNode.append_attribute("id");
+                                        tempAtt.set_value(chapName.c_str());
                                         title.clear();
-                                        title = "data/novels/"+generateRandomName(50);
-                                        while(fileExists(title)){
-                                            title = "data/novels/"+generateRandomName(50);
-                                        }
 
                                         tempAtt = chapterNode.append_attribute("location");
-                                        tempAtt.set_value(title.c_str()); //The chapter will be saved here, it doesn't mean that it will actually have content stored there... That will come later.
-                                        tempAtt = chapterNode.append_attribute("dl");
-                                        tempAtt.set_value("no");
+                                        tempAtt.set_value(title.c_str()); //Will be empty to remove the fact that there will be a lot of random files
                                         tempAtt = chapterNode.append_attribute("revid");
                                         tempAtt.set_value(""); //Not really needed because default to be nothing
                                         //check whether the link is available.

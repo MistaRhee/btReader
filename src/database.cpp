@@ -38,9 +38,7 @@ void cMain::createDatabase(){
         this->mLog->log("[database.cpp] Info: Creating database!");
         cHttpd stream1;
         std::string mainPageFileName = tempLoc+generateRandomName(50);
-        while(fileExists(mainPageFileName)){
-            mainPageFileName = tempLoc+generateRandomName(50);
-        }
+        while(fileExists(mainPageFileName)) mainPageFileName = tempLoc+generateRandomName(50);
         stream1.download(domain+novelList, mainPageFileName);
         std::string tempStr;
         pugi::xml_document doc;
@@ -107,16 +105,14 @@ bool cMain::hasNew(const std::string title){
         cHttpd newDl;
         const std::string original = novelDB.find(title)->second.second;
         std::string fileName = tempLoc+generateRandomName(50);
-        while(fileExists(fileName)){
-            fileName = tempLoc+generateRandomName(50);
-        }
+        while(fileExists(fileName)) fileName = tempLoc+generateRandomName(50);
         newDl.download(domain+revID+title, fileName);
         pugi::xml_document doc;
         pugi::xml_parse_result res = doc.load_file(fileName.c_str());
 
         if(res){
             pugi::xml_node rootNode = doc.child("api");
-            if(original.compare(rootNode.child("query").child("novels").child("novel").child("revisions").child("rev").attribute("revid").value()) != 0) rVal = 0;
+            if(original.compare(rootNode.child("query").child("pages").child("page").child("revisions").child("rev").attribute("revid").value()) != 0) rVal = 0;
         }
         else{
             /* XML Failed to load! Since we got here, it should be that the XML is invalid (but user
@@ -233,11 +229,8 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         cHttpd mDownload;
         cWikiParser mParser(this->mLog);
         tempFile = "data/temp/"+generateRandomName(50);
+        while(fileExists(tempFile)||fileExists(tempFile2)) tempFile = "data/temp/"+generateRandomName(50);
         tempFile2 = tempFile + "2";
-        while(fileExists(tempFile)||fileExists(tempFile2)){
-            tempFile = "data/temp/"+generateRandomName(50);
-            tempFile2 = tempFile + "2";
-        }
         mDownload.download(domain+pageDetail+title, tempFile);
 
         logString = std::string("[database.cpp] Info: Page saved to ") + tempFile;
@@ -268,9 +261,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
 
             this->mLog->log("[database.cpp] Info: Extraction complete!");
             novelStore = "data/novels/"+generateRandomName(50);
-            while(fileExists(novelStore)){
-                novelStore = "data/novels/"+generateRandomName(50);
-            }
+            while(fileExists(novelStore)) novelStore = "data/novels/"+generateRandomName(50);
             this->mLog->log("[database.cpp] Info: Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n");
             mParser.cleanNovel(tempFile, tempFile2, novelStore);
             this->mLog->log(std::string("[database.cpp] Info: Cleaned page stored in ")+ novelStore);

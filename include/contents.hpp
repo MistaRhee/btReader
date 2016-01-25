@@ -119,7 +119,6 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             /* Flags flags fags... */
             bool textureGen;
             bool freeScroll;
-            bool inverted;
             int fsX; //The starting point of the free scroll
             int fsY; //The ending point of the free scroll
     };
@@ -143,6 +142,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void genTexture(SDL_Renderer*); //Regenerates texture (REQUIRES openNovel TO BE CALLED FIRST)
 
             std::vector<std::pair<cObject*, std::pair<std::string, unsigned int> > > contents; //Stores polymorphed objects and the cumulative height that that object contains (Bottom height of the object)
+            std::map<std::string, std::string> novelID;
             SDL_Texture* mTexture; //Texture which stores the stuff
             SDL_Rect sRect;
             bool freeScroll;

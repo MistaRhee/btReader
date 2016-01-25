@@ -499,7 +499,35 @@ void cMain::update(){
 
         case details://TODO on completion of novelDetails
             if(this->mContents[details]->state == go){
-                std::string chapLoc = ((beatOff::cNovelList*)this->mContents[list])->getSelected();
+                std::string chapLoc = ((beatOff::cNovelDetails*)this->mContents[details])->getSelected();
+                std::string chapName = ((beatOff::cNovelDetails*)this->mContents[details])->getChapName();
+                if(chapLoc.size()){ //We can go somewhere!
+                    printf("We can go somewhere! YAY! (Opening %s from %s) \n", chapName.c_str(), chapLoc.c_str());
+                    /* Check if there is new version */
+                    if(hasNew(chapName)){
+                        printf("There is new version of %s \n", chapName.c_str());
+                    }
+                    else{
+                        printf("Currently a-okay with said novel \n");
+                    }
+                }
+                else{
+                    printf("Don't have %s downloaded yet! Downloading! \n", chapName.c_str());
+                    cWikiParser mParser(mLog);
+                    std::string out = novelStore+generateRandomName(50);
+                    std::string tempFile = tempLoc+generateRandomName(50);
+                    while(fileExists(out)) out = novelStore+generateRandomName(50);
+                    while(fileExists(tempFile)) tempFile = novelStore+generateRandomName(50);
+
+                    cHttpd mDownload;
+                    mDownload.download(domain+pageDetail+chapName, tempFile);
+                    pugi::xml_document doc;
+                    doc.load_file(tempFile);
+                    FILE* fout = fopen(tempFile.c_str(), "w+");
+                    fprintf(fout, "%s", doc.child("api").child("parse").child("wikitext").text().get());
+                    fclose(fout);
+                    mParser.cleanChapter(tempFile, out);
+                }
             }
             break;
 
