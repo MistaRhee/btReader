@@ -471,47 +471,65 @@ void cMain::update(){
     /* Check each individual location */
     switch(whereAt){
         case list:
-            /* Check if the DB has been updated, if it has, update the novelList accordingly */
-            if(this->updatedDB){
-                this->updatedDB = 0;
-                beatOff::cNovelList* mList = (beatOff::cNovelList*)this->mContents[list];
-                mList->clear();
-                for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
-                    mList->addNovel(
-                            i->first,
-                            std::stoi(config["novelList"].find("size")->second.find("value")->second),
-                            FONT_LOOKUP(this->config["novelList"].find("font")->second["value"])
-                            );
+            {
+                /* Check if the DB has been updated, if it has, update the novelList accordingly */
+                if(this->updatedDB){
+                    this->updatedDB = 0;
+                    beatOff::cNovelList* mList = (beatOff::cNovelList*)this->mContents[list];
+                    mList->clear();
+                    for(auto i = novelDB.begin(); i != novelDB.end(); ++i){
+                        mList->addNovel(
+                                i->first,
+                                std::stoi(config["novelList"].find("size")->second.find("value")->second),
+                                FONT_LOOKUP(this->config["novelList"].find("font")->second["value"])
+                                );
+                    }
                 }
+                if(this->mContents[list]->state == go){
+                    /* Get what novel I'm supposed to get details from */
+                    std::string detailsOf = ((beatOff::cNovelList*)this->mContents[list])->getSelected();
+                    printf("Should grab novel details of %s \n", detailsOf.c_str());
+                    this->mContents[list]->state = working;
+                }
+                else if(this->mContents[list]->state == broken){
+                    /* Log that I'm detecting something's broken */
+                    this->mLog->log("[btReader.cpp] Error: NovelList reporting that it is broken! Aborting!");
+                    this->mLog->log(this->mContents[list]->err);
+                    setError();
+                }
+                break;
             }
-            if(this->mContents[list]->state == go){
-                /* Get what novel I'm supposed to get details from */
-                std::string detailsOf = ((beatOff::cNovelList*)this->mContents[list])->getSelected();
-                printf("Should grab novel details of %s \n", detailsOf.c_str());
-                this->mContents[list]->state = working;
-            }
-            else if(this->mContents[list]->state == broken){
-                /* Log that I'm detecting something's broken */
-                this->mLog->log("[btReader.cpp] Error: NovelList reporting that it is broken! Aborting!");
-                this->mLog->log(this->mContents[list]->err);
-                setError();
-            }
-            break;
 
         case details://TODO on completion of novelDetails
-            if(this->mContents[details]->state == go){
-                std::string chapLoc = ((beatOff::cNovelDetails*)this->mContents[details])->getSelected();
-                std::string chapName = ((beatOff::cNovelDetails*)this->mContents[details])->getChapName();
-                std::string chapID = ((beatOff::cNovelDetails*)this->mContents[details])->getChapID();
-                if(chapLoc.size()){ //We can go somewhere!
-                    printf("We can go somewhere! YAY! (Opening %s from %s) \n", chapName.c_str(), chapLoc.c_str());
-                    /* Check if there is new version */
-                    if(hasNew(chapName)){
-                        this->mLog->log("[btReader.cpp] Info: A new version of " + chapName + " has been found! Updating! \n");
+            {
+                if(this->mContents[details]->state == go){
+                    std::string chapLoc = ((beatOff::cNovelDetails*)this->mContents[details])->getSelected();
+                    std::string chapName = ((beatOff::cNovelDetails*)this->mContents[details])->getChapName();
+                    std::string chapID = ((beatOff::cNovelDetails*)this->mContents[details])->getChapID();
+                    if(fileExists(chapLoc)){ //We can go somewhere!
+                        printf("We can go somewhere! YAY! (Opening %s from %s) \n", chapName.c_str(), chapLoc.c_str());
+                        /* Check if there is new version */
+                        if(hasNew(chapName)){
+                            this->mLog->log("[btReader.cpp] Info: A new version of " + chapName + " has been found! Updating! \n");
+                            cWikiParser mParser(mLog);
+                            std::string tempFile = tempLoc+generateRandomName(50);
+                            while(fileExists(tempFile)) tempFile = novelStore+generateRandomName(50);
+
+                            cHttpd mDownload;
+                            mDownload.download(domain+pageDetail+chapID, tempFile);
+                            pugi::xml_document doc;
+                            doc.load_file(tempFile);
+                            FILE* fout = fopen(tempFile.c_str(), "w+");
+                            fprintf(fout, "%s", doc.child("api").child("parse").child("wikitext").text().get());
+                            fclose(fout);
+                            mParser.cleanChapter(tempFile, chapLoc);
+                        }
+                        /* Otherwise the novel is perfectly fine :D */
+                    }
+                    else{
+                        printf("Don't have %s downloaded yet! Downloading! \n", chapName.c_str());
                         cWikiParser mParser(mLog);
-                        std::string out = novelStore+generateRandomName(50);
                         std::string tempFile = tempLoc+generateRandomName(50);
-                        while(fileExists(out)) out = novelStore+generateRandomName(50);
                         while(fileExists(tempFile)) tempFile = novelStore+generateRandomName(50);
 
                         cHttpd mDownload;
@@ -521,35 +539,16 @@ void cMain::update(){
                         FILE* fout = fopen(tempFile.c_str(), "w+");
                         fprintf(fout, "%s", doc.child("api").child("parse").child("wikitext").text().get());
                         fclose(fout);
-                        mParser.cleanChapter(tempFile, out);
-                        location = out;
+                        mParser.cleanChapter(tempFile, chapLoc);
                     }
-                    /* Otherwise the novel is perfectly fine :D */
+                    cWebOut wo(this->mLog);
+                    wo.createPage(chapLoc);
+                    wo.displayPage();
+                    wo.cleanUp();
+                    this->mContents[details]->state = working; //Stay on details page (since the actual file has been displayed)
                 }
-                else{
-                    printf("Don't have %s downloaded yet! Downloading! \n", chapName.c_str());
-                    cWikiParser mParser(mLog);
-                    std::string out = novelStore+generateRandomName(50);
-                    std::string tempFile = tempLoc+generateRandomName(50);
-                    while(fileExists(out)) out = novelStore+generateRandomName(50);
-                    while(fileExists(tempFile)) tempFile = novelStore+generateRandomName(50);
-
-                    cHttpd mDownload;
-                    mDownload.download(domain+pageDetail+chapID, tempFile);
-                    pugi::xml_document doc;
-                    doc.load_file(tempFile);
-                    FILE* fout = fopen(tempFile.c_str(), "w+");
-                    fprintf(fout, "%s", doc.child("api").child("parse").child("wikitext").text().get());
-                    fclose(fout);
-                    mParser.cleanChapter(tempFile, out);
-                    location = out;
-                }
-                cWebOut wo(this->mLog);
-                wo.createPage(location);
-
-                this->mContents[details]->state = working; //Stay on details page (since the actual file has been displayed)
+                break;
             }
-            break;
 
         case settings: //TODO on completion of settigns
             break;

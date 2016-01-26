@@ -7,7 +7,6 @@
 #include <exception>
 #include <map>
 #include <memory>
-#include <openssl/sha.h>
 #include <queue>
 #include <SDL2/SDL.h>
 #include <stdio.h>
@@ -22,6 +21,7 @@
 #include "httpd.hpp" //For website retreival
 #include "keyMap.hpp" //For keymap class
 #include "logger.hpp" //For logging ease
+#include "mCrypto.hpp" //For the hashing algorithm
 #include "mException.h" //For exception handling
 #include "objects.hpp" //For SDL Objects
 #include "pugixml.hpp" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.

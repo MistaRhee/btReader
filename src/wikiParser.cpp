@@ -60,6 +60,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
     FILE*fin = fopen(inFile.c_str(), "r");
     FILE*fexist = fopen(existFile.c_str(), "r");
     char buffer[4096];
+    cCrypt crippy;
 
     pugi::xml_document doc;
     pugi::xml_node mainNode = doc.append_child("novel");
@@ -259,10 +260,13 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         tempAtt.set_value(title.c_str());
                                         tempAtt = chapterNode.append_attribute("id");
                                         tempAtt.set_value(chapName.c_str());
+                                        
+                                        std::string loc = title+chapName;
+                                        loc = crippy.crypts(loc.c_str());
                                         title.clear();
 
                                         tempAtt = chapterNode.append_attribute("location");
-                                        tempAtt.set_value(title.c_str()); //Will be empty to remove the fact that there will be a lot of random files
+                                        tempAtt.set_value(loc.c_str()); //Will be empty to remove the fact that there will be a lot of random files
                                         tempAtt = chapterNode.append_attribute("revid");
                                         tempAtt.set_value(""); //Not really needed because default to be nothing
                                         //check whether the link is available.
@@ -272,11 +276,13 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                             if(it->second==1){
                                                 tempAtt = chapterNode.append_attribute("available");
                                                 tempAtt.set_value("1");
-                                            }else{
+                                            }
+                                            else{
                                                 tempAtt = chapterNode.append_attribute("available");
                                                 tempAtt.set_value("0");
                                             }
-                                        }else{
+                                        }
+                                        else{
                                             std::string err = "[wikiParser.cpp] Warning: Unable to locate ";
                                             err += chapName + " within the map. Set as not available for now \n";
                                             this->mLog->log(err);
