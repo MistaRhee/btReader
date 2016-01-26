@@ -50,6 +50,12 @@ namespace beatOff{
         }
     }
 
+    std::string cNovelDetails::getChapID(){
+        if(this->selection > 0){
+            return this->novelID[((cButton*)this->contents[selection].first->getText()];
+        }
+    }
+
     void cNovelDetails::openNovel(
             std::string sauce, SDL_Renderer* mRenderer, 
             std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >& config //More profitable to just pass the whole config in instead of doing stupid shit
@@ -62,7 +68,7 @@ namespace beatOff{
             }
 
             /* Grabbing Volume + Chapter list */
-            std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::pair<std::string, std::string> > > > > volumes;
+            std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::string> > > > volumes;
 
             pugi::xml_document doc;
             doc.load_file(sauce.c_str()); //Ignoring return value (I'm a NAUGHTY BOY elegiggle)
@@ -81,7 +87,8 @@ namespace beatOff{
             for(auto currNode: mainNode.children("volume")){
                 std::vector<std::pair<std::string, std::string> > chapterDetails;
                 for(auto chapterNode: currNode.children("chapter")){
-                    chapterDetails.push_back(std::make_pair(chapterNode.attribute("title").value(), std::make_pair(chapterNode.attribute("id"), chapterNode.attribute("location").value()))); //Wew!
+                    chapterDetails.push_back(std::make_pair(chapterNode.attribute("title").value(), chapterNode.attribute("location").value())); //Wew!
+                    this->novelID[chpaterNode.attribute("title").value()] = chapterNode.attribute("id").value();
                 }
                 volumes.push_back(std::make_pair(currNode.attribute("title").value(), chapterDetails));
             }

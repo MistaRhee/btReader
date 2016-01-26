@@ -1,10 +1,10 @@
 CC=clang++
 CFLAGS=-c --std=c++11 -g -Wall -iquote include/
 ifeq ($(OS),Windows_NT)
-	LDFLAGS=-lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lcurl -lSDL2_ttf -pthread
+	LDFLAGS=-lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lcurl -lSDL2_ttf -pthread -lcrypto
 
 else
-	LDFLAGS=-lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lcurl -pthread
+	LDFLAGS=-lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lcurl -lcrypto -pthread
 
 endif
 SDIR=src

@@ -16,6 +16,10 @@ Hikaru ga Chikyuu ni Itakoro...... as a title should not have the extra periods
 after it.................................. and some URLs have them, others
 don't. Yeah, that stuff)
 
+Also, sorry to dissappoint, but the hash used to "encrypt" the filenames/contents
+of novel details will not be released due to fears that this program *may* be used
+to abuse license restrictions. Yeah, I know, it sucks, but there'll be a "secret"
+crypto library used.
 
 -> NOTE: This version is the "lazy man's" version without a proper reader. If
 you wish to have a nice reader attached to this which doesn't launch a web-browser
@@ -97,7 +101,7 @@ Dependencies
 - SDL2
 - SDL_Image
 - SDL_TTF
-- libCurl (Tested on v7.40.0, but should work on later versions)
+- libCurl (`[sudo] apt-get install libcurl-openssl-dev` (Ubuntu/Debian) Tested on v7.40.0, but should work on later versions)
 
 Maybe more stuff later, but I'll be adding to it. No funny business here. Sorry
 to disappoint.

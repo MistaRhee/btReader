@@ -7,6 +7,7 @@
 #include <exception>
 #include <map>
 #include <memory>
+#include <openssl/sha.h>
 #include <queue>
 #include <SDL2/SDL.h>
 #include <stdio.h>
