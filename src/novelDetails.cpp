@@ -1,7 +1,7 @@
 #include "contents.hpp"
 
 //Lookup just for this file (I really wanna kill myself 'cus of this BADCODE
-#define ND_FONT_LOOKUP(...) config["fontList"].find(__VA_ARGS__)->second["sauce"]
+#define ND_FONT_LOOKUP(...) (*(config))["fontList"].find(__VA_ARGS__)->second["sauce"]
 
 namespace beatOff{
 
@@ -45,20 +45,20 @@ namespace beatOff{
     }
 
     std::string cNovelDetails::getChapName(){
-        if(this->selection > 0){
-            return ((cButton*)this->contents[selection].first)->getText();
-        }
+        return ((cButton*)this->contents[selection].first)->getText();
     }
 
     std::string cNovelDetails::getChapID(){
-        if(this->selection > 0){
-            return this->novelID[((cButton*)this->contents[selection].first->getText()];
-        }
+        return this->novelID[((cButton*)this->contents[selection].first)->getText()];
+    }
+
+    std::string cNovelDetails::getRevID(){
+        return this->chapRevID[((cButton*)this->contents[selection].first)->getText()];
     }
 
     void cNovelDetails::openNovel(
             std::string sauce, SDL_Renderer* mRenderer, 
-            std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >& config //More profitable to just pass the whole config in instead of doing stupid shit
+            std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >* config //More profitable to just pass the whole config in instead of doing stupid shit
             ){ 
         try{
             /* Clearing out old textures */
@@ -71,6 +71,7 @@ namespace beatOff{
             std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::string> > > > volumes;
 
             pugi::xml_document doc;
+            bool hack = 0;
             doc.load_file(sauce.c_str()); //Ignoring return value (I'm a NAUGHTY BOY elegiggle)
             pugi::xml_node mainNode = doc.child("novel");
             std::string title = mainNode.child("info").attribute("title").value();
@@ -82,13 +83,15 @@ namespace beatOff{
              * edit it so that it would include the first cover image that
              * exists, but that is for later ~~~~~~~~~~~~~
              * ***************************************************************/
-            std::string frontLoc = mainNode.child("volume").attribute("image").value();
+            std::string frontLoc;
 
             for(auto currNode: mainNode.children("volume")){
                 std::vector<std::pair<std::string, std::string> > chapterDetails;
+                if(!hack) frontLoc = currNode.attribute("image").value();
                 for(auto chapterNode: currNode.children("chapter")){
                     chapterDetails.push_back(std::make_pair(chapterNode.attribute("title").value(), chapterNode.attribute("location").value())); //Wew!
-                    this->novelID[chpaterNode.attribute("title").value()] = chapterNode.attribute("id").value();
+                    this->novelID[chapterNode.attribute("title").value()] = chapterNode.attribute("id").value();
+                    this->chapRevID[chapterNode.attribute("title").value()] = chapterNode.attribute("revid").value();
                 }
                 volumes.push_back(std::make_pair(currNode.attribute("title").value(), chapterDetails));
             }
@@ -103,8 +106,8 @@ namespace beatOff{
 
             newObject = new cTextBox(
                     title, 
-                    ND_FONT_LOOKUP(config["novelDetails"].find("title")->second["font"]),
-                    std::stoi(config["novelDetails"].find("title")->second["size"]),
+                    ND_FONT_LOOKUP((*(config))["novelDetails"].find("title")->second["font"]),
+                    std::stoi((*(config))["novelDetails"].find("title")->second["size"]),
                     0, mHeight,this->sRect.w
                     );
             /* Title */
@@ -113,7 +116,7 @@ namespace beatOff{
             this->contents.push_back(std::make_pair(newObject, std::make_pair(std::string("__NONE__"), mHeight))); //__NONE__ to stand for unclickable
 
             /* Image */
-            if(!config["novelDetails"].count("image"))
+            if(!(*(config))["novelDetails"].count("image"))
                 newObject = new cImage(
                         frontLoc, 
                         0, 
@@ -126,8 +129,8 @@ namespace beatOff{
                         frontLoc, 
                         0, 
                         mHeight, 
-                        std::stoi(config["novelDetails"].find("image")->second["h"]), 
-                        std::stoi(config["novelDetails"].find("image")->second["w"])
+                        std::stoi((*(config))["novelDetails"].find("image")->second["h"]), 
+                        std::stoi((*(config))["novelDetails"].find("image")->second["w"])
                         ); //Trusting the config man to not be stupid and allocate W to be greater than sRect.w (Possibly want to do a min of this)
             mHeight += ((cImage*)newObject)->getSize().first;
             this->contents.push_back(std::make_pair(newObject, std::make_pair(std::string("__NONE__"), mHeight)));
@@ -135,8 +138,8 @@ namespace beatOff{
             /* Synopsis */
             newObject = new cTextBox(
                     synopsis,
-                    ND_FONT_LOOKUP(config["novelDetails"].find("synopsis")->second["font"]),
-                    std::stoi(config["novelDetails"].find("synopsis")->second["size"]),
+                    ND_FONT_LOOKUP((*(config))["novelDetails"].find("synopsis")->second["font"]),
+                    std::stoi((*(config))["novelDetails"].find("synopsis")->second["size"]),
                     0, mHeight, this->sRect.w
                     );
             mHeight += ((cTextBox*)newObject)->wrappedHeight();
@@ -146,8 +149,8 @@ namespace beatOff{
             for(auto volume : volumes){
                 newObject = new cTextBox(
                         volume.first,
-                        ND_FONT_LOOKUP(config["novelDetails"].find("volume")->second["font"]),
-                        std::stoi(config["novelDetails"].find("volume")->second["size"]),
+                        ND_FONT_LOOKUP((*(config))["novelDetails"].find("volume")->second["font"]),
+                        std::stoi((*(config))["novelDetails"].find("volume")->second["size"]),
                         0, mHeight, this->sRect.w
                         );
                 mHeight += ((cTextBox*)newObject)->wrappedHeight();
@@ -155,8 +158,8 @@ namespace beatOff{
                 for(auto chapter: volume.second){
                     newObject = new cButton(
                             chapter.first,
-                            ND_FONT_LOOKUP(config["novelDetails"].find("chapter")->second["font"]),
-                            std::stoi(config["novelDetails"].find("volume")->second["size"]),
+                            ND_FONT_LOOKUP((*(config))["novelDetails"].find("chapter")->second["font"]),
+                            std::stoi((*(config))["novelDetails"].find("volume")->second["size"]),
                             0, mHeight, this->sRect.w
                             );
                     mHeight += ((cButton*)newObject)->wrappedHeight();
@@ -356,7 +359,7 @@ namespace beatOff{
     }
 
     void cNovelDetails::handleUserScroll(int dx, int dy){
-        move(0, dy*25*1);
+        move(0, std::max(dy*25*-1, -1*sRect.y));
     }
 
 }

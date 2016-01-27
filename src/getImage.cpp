@@ -147,7 +147,10 @@ std::string cGetImage::getImage(const std::string fileName){
                             temp += tempFile[i];
                         }
                     }
-                    if(!fileExists(tempFile)) mDownload.download(imageSauce, tempFile); //TODO: Check if there is updated file first
+                    if(!fileExists(tempFile)) mDownload.download(imageSauce, tempFile);
+                    else{
+                        this->mLog->log("[getImage.cpp] Info: Requested image already downloaded. Ignoring.");
+                    }
                     return tempFile;
                 }
             }

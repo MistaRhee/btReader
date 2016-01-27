@@ -114,7 +114,7 @@ class cMain{
         void render();
 
         /* Database operations */
-        bool hasNew(const std::string); //Request title (checks revIds)
+        bool hasNew(const std::string, const std::string); //Request title (checks revIds)
         bool readDatabase();
         void createDatabase();
         void updateDatabase();

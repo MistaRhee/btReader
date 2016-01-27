@@ -1,14 +1,14 @@
 CC=clang++
 CFLAGS=-c --std=c++11 -g -Wall -iquote include/
 ifeq ($(OS),Windows_NT)
-	LDFLAGS=-lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lcurl -lSDL2_ttf -pthread -lcrypto
+	LDFLAGS=-lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lcurl -lSDL2_ttf -pthread -L lib/
 
 else
-	LDFLAGS=-lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lcurl -lcrypto -pthread
+	LDFLAGS=-lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lcurl -pthread -lmistarheeCrypt -L lib/ -lcrypto
 
 endif
 SDIR=src
-SAUCES=btReader.cpp button.cpp content.cpp database.cpp getImage.cpp httpd.cpp image.cpp main.cpp novelList.cpp object.cpp textbox.cpp wikiParser.cpp pugixml.cpp novelDetails.cpp events.cpp keyMap.cpp logger.cpp menu.cpp
+SAUCES=btReader.cpp button.cpp content.cpp database.cpp getImage.cpp httpd.cpp image.cpp main.cpp novelList.cpp object.cpp textbox.cpp wikiParser.cpp pugixml.cpp novelDetails.cpp events.cpp keyMap.cpp logger.cpp menu.cpp webOut.cpp
 SOURCES=$(patsubst %,$(SDIR)/%,$(SAUCES))
 OBJECTS=$(SOURCES:.cpp=.o)
 

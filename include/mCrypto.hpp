@@ -5,7 +5,7 @@
 
 class cCrypt{
     public:
-        char* crypts(char* string); 
+        char* crypts(const char* string); 
 };
 
 #endif

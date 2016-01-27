@@ -99,11 +99,10 @@ bool cMain::readDatabase(){
 
 }
 
-bool cMain::hasNew(const std::string title){
+bool cMain::hasNew(const std::string title, const std::string revID){
     bool rVal = 1;
     try{
         cHttpd newDl;
-        const std::string original = novelDB.find(title)->second.second;
         std::string fileName = tempLoc+generateRandomName(50);
         while(fileExists(fileName)) fileName = tempLoc+generateRandomName(50);
         newDl.download(domain+revID+title, fileName);
@@ -112,7 +111,7 @@ bool cMain::hasNew(const std::string title){
 
         if(res){
             pugi::xml_node rootNode = doc.child("api");
-            if(original.compare(rootNode.child("query").child("pages").child("page").child("revisions").child("rev").attribute("revid").value()) != 0) rVal = 0;
+            if(revID != rootNode.child("query").child("pages").child("page").child("revisions").child("rev").attribute("revid").value()) rVal = 0;
         }
         else{
             /* XML Failed to load! Since we got here, it should be that the XML is invalid (but user
@@ -155,7 +154,7 @@ void cMain::updateDatabase(){
                 if(novelDB.count(novelName) > 0){
                     auto found = novelDB.find(novelName);
                     if(found->second.first.size() > 0){ //If the details for this novel has been DLed already, check if there is update and update the page
-                        if(hasNew(novelName)){ //More recent version of what was already DLed
+                        if(hasNew(novelName, this->novelDB[novelName].second)){ //More recent version of what was already DLed
                             updateLog.log(std::string("[database.cpp] Info: Found new version of ") + novelName + "! Updating");
                             tempNovelDB[novelName] = getNovelDetails(novelName);
                             remove(found->second.first.c_str()); //Remove the old file
