@@ -162,6 +162,7 @@ namespace beatOff{
                             std::stoi((*(config))["novelDetails"].find("volume")->second["size"]),
                             0, mHeight, this->sRect.w
                             );
+                    if(!((cButton*)newObject)->isCompacted()) ((cButton*)newObject)->compact();
                     mHeight += ((cButton*)newObject)->wrappedHeight();
                     this->contents.push_back(std::make_pair(newObject, std::make_pair(chapter.second, mHeight)));
                 }

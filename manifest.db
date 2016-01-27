@@ -10,7 +10,6 @@
     <folder essential="true" sauce="system/images/" />
     <folder essential="false" sauce="logs/" />
     <file sauce="system/user.profile" />
-    <file sauce="system/fonts/droidsansfallback.ttf" />
     <file sauce="system/images/download.png" />
     <file sauce="system/images/download_invert.png" />
     <file sauce="system/images/notHere.jpg" />

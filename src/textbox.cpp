@@ -89,7 +89,7 @@ namespace beatOff{
     bool cTextBox::isCentered(){
         return centered;
     }
-    
+
     bool cTextBox::isCompacted(){
         return compacted;
     }
@@ -144,43 +144,53 @@ namespace beatOff{
     }
 
     int cTextBox::wrappedHeight(){
-        int renderedHeight = -1;
-        if(!fileExists(font)){
-            std::string mError = currentDateTime();
-            mError += "[textbox.cpp] - Font doesn't exist (Font location = ";
-            mError += font;
-            mError += ")";
-            printf("%s\n", mError.c_str());
-            setWarning(mError); //Only warning the user (maybe they forgot to set the font before the test... IDK LOL!
+        if(compacted){
+            return getFontHeight();
         }
         else{
-            int tempWidth, numLines = 1, space = -1;
-            std::string temp;
-            TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
-
-            for(int i = 0; i < text.size(); i++){
-                temp += text[i];
-                if(text[i] == ' '){
-                    space = i;
-                }
-                TTF_SizeText(mFont, temp.c_str(), &tempWidth, NULL);
-                if(tempWidth > w){
-                    if(space < 0){
-                        i--;
-                        temp.clear();
-                    }
-                    else{
-                        i = space+1;
-                        space = -1;
-                        temp.clear();
-                    }
-                    numLines ++;
-                }
+            int renderedHeight = -1;
+            if(!fileExists(font)){
+                std::string mError = currentDateTime();
+                mError += "[textbox.cpp] - Font doesn't exist (Font location = ";
+                mError += font;
+                mError += ")";
+                printf("%s\n", mError.c_str());
+                setWarning(mError); //Only warning the user (maybe they forgot to set the font before the test... IDK LOL!
             }
-            renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* (numLines-1));
-            TTF_CloseFont(mFont);
+            else{
+                int tempWidth, numLines = 1, space = -1;
+                std::string temp;
+                TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
+
+                for(int i = 0; i < text.size(); i++){
+                    temp += text[i];
+                    if(text[i] == ' '){
+                        space = i;
+                    }
+                    TTF_SizeText(mFont, temp.c_str(), &tempWidth, NULL);
+                    if(tempWidth > w){
+                        if(space < 0){
+                            i--;
+                            temp.clear();
+                        }
+                        else{
+                            i = space+1;
+                            space = -1;
+                            temp.clear();
+                        }
+                        numLines ++;
+                    }
+                    else if(text[i] == '\n'){
+                        /* Manually requested new-line */
+                        numLines++;
+                        temp.clear();
+                    }
+                }
+                renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* (numLines-1));
+                TTF_CloseFont(mFont);
+            }
+            return(renderedHeight);
         }
-        return(renderedHeight);
     }
 
     bool cTextBox::canFit(int incomingHeight){
@@ -287,6 +297,12 @@ namespace beatOff{
                         space = -1;
                     }
                 }
+                else if(text[i] == '\n'){
+                    temp.pop_back();
+                    lines.push_back(temp);
+                    temp.clear();
+                    space = -1;
+                }
             }
             if(temp.size() > 0){
                 lines.push_back(temp);
@@ -298,18 +314,17 @@ namespace beatOff{
             dRect.h = TTF_FontHeight(mFont);
             if(tempY > 0) dRect.y = tempY;
             for(int i = 0, j = lines.size(); i < j; i++){
-                TTF_SizeText(mFont, lines[i].c_str(), &tempW, &dRect.h);
+                TTF_SizeText(mFont, lines[i].c_str(), &dRect.w, &dRect.h);
 
                 if(centered){
-                    dRect.x = x + (w-tempW)/2; //It'll favour shifting towards the left by one pixel. w/e
+                    dRect.x = x + (w-dRect.w)/2; //It'll favour shifting towards the left by one pixel. w/e
                 }
                 else{
                     dRect.x = x;
                 }
                 dRect.y = y+(i*lineSkip);
-                dRect.w = tempW;
 
-                mSurface = TTF_RenderText_Blended(mFont, lines[i].c_str(), mColour);
+                mSurface = TTF_RenderUTF8_Blended(mFont, lines[i].c_str(), mColour);
                 mTexture = SDL_CreateTextureFromSurface(mRenderer, mSurface);
                 SDL_RenderCopy(mRenderer, mTexture, NULL, &dRect);
                 SDL_FreeSurface(mSurface);
