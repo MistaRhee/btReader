@@ -16,11 +16,6 @@ Hikaru ga Chikyuu ni Itakoro...... as a title should not have the extra periods
 after it.................................. and some URLs have them, others
 don't. Yeah, that stuff)
 
-Also, sorry to dissappoint, but the hash used to "encrypt" the filenames/contents
-of novel details will not be released due to fears that this program *may* be used
-to abuse license restrictions. Yeah, I know, it sucks, but there'll be a "secret"
-crypto library used.
-
 -> NOTE: This version is the "lazy man's" version without a proper reader. If
 you wish to have a nice reader attached to this which doesn't launch a web-browser
 make it yourself. Also, Windows will always remain inferior to unix, since I
@@ -53,7 +48,7 @@ is able to have access to all of the functions, and since everything is on ONE
 SCREEN (i.e. there will be no changes in windows) these things must be readily
 available. 
 
-For more details, refer to the (wiki page)[https://bitbucket.org/mistarhee/btreader/wiki/System%20settings] here.
+For more details, refer to the (wiki page)[https://bitbucket.org/mistarhee/btreader/wiki/System%20settings].
 
 
 License and stuff
@@ -63,7 +58,7 @@ these seconds of time which you are reading this note and realising that this
 note is actually pointless and is not worth NOTICING)
 
     btReader - An unofficial reader for the website
-    Copyright (C) 2015  Justin Huang and Christopher Ho
+    Copyright (C) 2015 - 2016 Justin Huang and Christopher Ho
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
