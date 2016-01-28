@@ -447,6 +447,7 @@ void cMain::update(){
                 this->mLog->log("[btReader.cpp] Error: Recieved invalid go to location from mMenu->getSelected!");
                 break;
         }
+        this->mContents[menu]->state = working;
     }
     /* Check updates/updating status and change the image accordingly */
     if(this->updating){
