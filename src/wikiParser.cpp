@@ -56,10 +56,10 @@ std::string cWikiParser::generateRandomName(int length){
 }
 
 void cWikiParser::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile){
+    char toHex[17] = "0123456789abcdef";
     FILE*fin = fopen(inFile.c_str(), "r");
     FILE*fexist = fopen(existFile.c_str(), "r");
     char buffer[4096];
-    cCrypt crippy;
 
     pugi::xml_document doc;
     pugi::xml_node mainNode = doc.append_child("novel");
@@ -260,10 +260,15 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         tempAtt = chapterNode.append_attribute("id");
                                         tempAtt.set_value(chapName.c_str());
                                         
+                                        cCrypt crippy;
                                         std::string loc = title+chapName;
                                         char* hash = crippy.crypts(loc.c_str());
-                                        loc = std::string(hash);
-                                        free(hash);
+                                        loc.clear();
+                                        for(int i = 0, j = strlen(hash); i < strlen(hash); i++){ //Hash length is always 64
+                                            loc += toHex[(hash[i]>>4)&0xF];
+                                            loc += toHex[hash[i]&0xF];
+                                        }
+
                                         title.clear();
 
                                         tempAtt = chapterNode.append_attribute("location");
