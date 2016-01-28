@@ -47,6 +47,7 @@ namespace beatOff{
             boxA = 255;
             drawBox = 1;
             centered = 0;
+            compacted = 0;
         }
     }
 
@@ -83,6 +84,7 @@ namespace beatOff{
             setSize(inH, inW);
             setFont(fontLoc);
             setTextSize(fontSize);
+            compacted = 0;
         }
     }
 

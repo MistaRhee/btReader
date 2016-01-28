@@ -1,8 +1,8 @@
 #include "btReader.hpp"
 
-static const int EXIT = -1;
-static const int SYNOPSIS = 0;
-static const int VOLUMES = 1;
+#define EXIT -1
+#define SYNOPSIS 0
+#define VOLUMES 1
 
 enum splitter_t{
     locate,
@@ -10,7 +10,6 @@ enum splitter_t{
     spacer,
     novTitle,
     leave   
-        //
 };
 
 inline bool fileExists (const std::string& name) {
@@ -36,7 +35,7 @@ cWikiParser::cWikiParser(__logger::cLogger* mLog){
 
 std::string cWikiParser::titleClean(const std::string title){
     std::string cleaned;
-    for(int i = 0, j = title.size(); i<j; i++){
+    for(int i = 0; i<title.size(); i++){
         if(title[i] == ' '){
             cleaned += '_';
         }else{
@@ -262,7 +261,9 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         tempAtt.set_value(chapName.c_str());
                                         
                                         std::string loc = title+chapName;
-                                        loc = crippy.crypts(loc.c_str());
+                                        char* hash = crippy.crypts(loc.c_str());
+                                        loc = std::string(hash);
+                                        free(hash);
                                         title.clear();
 
                                         tempAtt = chapterNode.append_attribute("location");

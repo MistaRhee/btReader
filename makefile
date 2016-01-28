@@ -4,7 +4,7 @@ ifeq ($(OS),Windows_NT)
 	LDFLAGS=-lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lcurl -lSDL2_ttf -pthread -L lib/
 
 else
-	LDFLAGS=-lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lcurl -pthread -lmistarheeCrypt -L lib/ -lcrypto
+	LDFLAGS=-lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lcurl -pthread -lmistarheeCrypt -L lib/ -lmistarheeCrypto
 
 endif
 SDIR=src

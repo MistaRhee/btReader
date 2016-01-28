@@ -78,17 +78,17 @@ know, acknowledge me a bit. Maybe even donate money to charity if you really
 feel guilty about taking the intellectual property from a kid off the internet
 without paying.
 
-Compiling
----------
+Compilation and installation
+----------------------------
 
-I'm not even there yet, but
+Just use the conveniently named:
 
-    $ make
-    $ make clean
+    $ [sudo] ./install.sh
 
-is usually how this works. MAKE SURE YOU CLEAN (YOU DON'T WANT TO BE A DIRTY
-PERSON When it actually works, it'll only be tested under GNU/Linux. Should 
-work for Windows with a few tweaks I guess.
+to build the binaries (must be run in sudo).
+
+For Windows (ew) users, please be patient, I'll try to make an installer file or something soon-ish
+(heh)
 
 Dependencies
 ------------
