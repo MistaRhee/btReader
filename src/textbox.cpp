@@ -169,7 +169,7 @@ namespace beatOff{
                     if(text[i] == ' '){
                         space = i;
                     }
-                    TTF_SizeText(mFont, temp.c_str(), &tempWidth, NULL);
+                    TTF_SizeUTF8(mFont, temp.c_str(), &tempWidth, NULL);
                     if(tempWidth > w){
                         if(space < 0){
                             i--;
@@ -265,7 +265,7 @@ namespace beatOff{
                 }
                 else{
                     tempY = dRect.y + (dRect.h-expected)/2;
-                    TTF_SizeText(mFont, text.c_str(), &tempW, &expected);
+                    TTF_SizeUTF8(mFont, text.c_str(), &tempW, &expected);
                     if(dRect.w < tempW){
                         dRect.x += (tempW-w)/2;
                     }
@@ -281,7 +281,7 @@ namespace beatOff{
                 if(text[i] == ' '){
                     space = i;
                 }
-                TTF_SizeText(mFont, temp.c_str(), &tempW, NULL);
+                TTF_SizeUTF8(mFont, temp.c_str(), &tempW, NULL);
                 if(tempW > w){
                     if(space < 0){
                         temp.pop_back();
@@ -316,7 +316,7 @@ namespace beatOff{
             dRect.h = TTF_FontHeight(mFont);
             if(tempY > 0) dRect.y = tempY;
             for(int i = 0, j = lines.size(); i < j; i++){
-                TTF_SizeText(mFont, lines[i].c_str(), &dRect.w, &dRect.h);
+                TTF_SizeUTF8(mFont, lines[i].c_str(), &dRect.w, &dRect.h);
 
                 if(centered){
                     dRect.x = x + (w-dRect.w)/2; //It'll favour shifting towards the left by one pixel. w/e
