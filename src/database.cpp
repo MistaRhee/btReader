@@ -227,8 +227,8 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
 
         cHttpd mDownload;
         cWikiParser mParser(this->mLog);
-        tempFile = "data/temp/"+generateRandomName(50);
-        while(fileExists(tempFile)||fileExists(tempFile2)) tempFile = "data/temp/"+generateRandomName(50);
+        tempFile = tempLoc+generateRandomName(50);
+        while(fileExists(tempFile)||fileExists(tempFile2)) tempFile = tempLoc+generateRandomName(50);
         tempFile2 = tempFile + "2";
         mDownload.download(domain+pageDetail+title, tempFile);
 
@@ -259,8 +259,8 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
             fclose(fexist);
 
             this->mLog->log("[database.cpp] Info: Extraction complete!");
-            novelStore = "data/novels/"+generateRandomName(50);
-            while(fileExists(novelStore)) novelStore = "data/novels/"+generateRandomName(50);
+            cCrypt prettyCrippy;
+            novelStore = prettyCrippy.crypts((novelStore+title).c_str());
             this->mLog->log("[database.cpp] Info: Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n");
             mParser.cleanNovel(tempFile, tempFile2, novelStore);
             this->mLog->log(std::string("[database.cpp] Info: Cleaned page stored in ")+ novelStore);

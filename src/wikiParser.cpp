@@ -143,10 +143,10 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                             tempStr.erase(tempStr.end()-3, tempStr.end());
                             for(int i = 0, j = tempStr.size(); i < j; i++){
                                 if(tempStr[i] == ' '){
-                                    if(word.compare("by") == 0){
+                                    if(word == "by"){
                                         found = 1;
                                         std::string title;
-                                        for(int k = 0; k < i-1; k++){
+                                        for(int k = 0; k < i-3; k++){
                                             title += tempStr[k];
                                         }
                                         pugi::xml_attribute tempAtt = infoNode.append_attribute("title");
@@ -262,7 +262,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         
                                         cCrypt crippy;
                                         std::string loc = title+chapName;
-                                        char* hash = crippy.crypts(loc.c_str());
+                                        char* hash = crippy.crypth(loc.c_str());
                                         loc.clear();
                                         for(int i = 0, j = strlen(hash); i < j; i++){ //Hash length is always 64
                                             loc += toHex[(hash[i]>>4)&0xF];
@@ -380,6 +380,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 void cWikiParser::cleanChapter(const std::string in, const std::string out){
     FILE*fin = fopen(in.c_str(), "r");
     char buffer[1000000];
+    cCrypt imCrippy;
     std::string text;
     while(true){
         fgets(buffer, 1000000, fin);
@@ -409,6 +410,6 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
     }
     fclose(fin);
     FILE* fout = fopen(out.c_str(), "w+");
-    fprintf(fout, "%s \n", text.c_str());
+    fprintf(fout, "%s \n", imCrippy.crypts(text.c_str()));
     fclose(fout);
 }

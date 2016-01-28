@@ -14,7 +14,6 @@
 
 /* Including the base class I'm deriving this from */
 #include "logger.hpp"
-#include "mCrypto.hpp"
 #include "objects.hpp" 
 #include "types.hpp"
 

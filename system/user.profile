@@ -10,6 +10,8 @@
 
 <config>
 
+    <pwd>~/.local/share</pwd>
+
     <keyBindings>
 
 <!-- Tags are only key. ID is the identification name, code is the relevant SDL KeyCode 119=w, 115=s, 97=a, 100=d -->

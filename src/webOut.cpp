@@ -120,6 +120,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
         /* Start parsing through the file and create a HTML out of it
          * NOTE: This HTML will be a joke of a html page, just H1, H2 etc. + p and text. Don't get
          * hopes up! */
+        cCrypt awwCrip;
         pugi::xml_document main;
         pugi::xml_node temp = main.append_child("html");
         temp.append_child("head");
@@ -130,35 +131,47 @@ void cWebOut::createPage(std::string sauce, std::string title){
         tAtt.set_value("UTF-8");
         pugi::xml_node body = temp.child("body");
         temp.child("head").child("title").text().set(title.c_str()); //Safe again, because only one text field in this anyway
+
+        /* Read from file into a string, then decrypt it */
+        std::string mFile;
         FILE* fin = fopen(sauce.c_str(), "r");
         char buffer[1000000];
+        while(fgets(buffer, 1000000, fin)){
+            mFile += buffer;
+        }
+        mFile = awwCrip.decrypts(mFile.c_str());
+        fclose(fin);
+
+        std::string tmpStr;
         std::string tempS;
         bool bold = 0;
         bool italic = 0;
         while(true){ //Loop 'till end of file (or the end of time, either way is fine)
-            fgets(buffer, 1000000, fin); //Get next line
+            for(int i = 0; mFile[i] != "\n"; i++){//Get next line
+                tmpStr += mFile[i];
+            }
+            tmpStr += '\n';
+            mFile.erase(mFile.begin(), mFile.begin()+tmpStr.size());
 
             /* Not resetting flags at the moment because of potential multi-line bold/italics */
-            if(buffer[0] == '='){ //Heading modifier
+            if(tmpStr[0] == '='){ //Heading modifier
                 /* Count the number of '=' there are */
                 int num = 0;
-                int j = strlen(buffer);
-                for(num = 0; num < j; num++){
-                    if(buffer[num] != '='){
+                for(num = 0; num < tmpStr.size(); num++){
+                    if(tmpStr[num] != '='){
                         break;
                     }
                 }
-                if(num == j){ //Pure equals, just leave it in
+                if(num == tmpStr.size()){ //Pure equals, just leave it in
                     pugi::xml_node tempNode = body.append_child("p");
                     pugi::xml_node tText = tempNode.append_child(pugi::node_pcdata);
-                    tText.set_value(buffer);
+                    tempS += tmpStr;
                 }
                 else{
-                    for(int k = 0; k < j-num; k++){
-                        tempS += buffer[k];
+                    for(int k = num; k < tmpStr.size()-num; k++){
+                        tempS += tmpStr[k];
                     }
-                    sprintf(buffer, "h%d", num);
-                    pugi::xml_node tempNode = body.append_child(buffer);
+                    pugi::xml_node tempNode = body.append_child((std::string("h")+std::to_string(num)).c_str());
                     pugi::xml_node tText = tempNode.append_child(pugi::node_pcdata);
                     tText.set_value(tempS.c_str());
                     tempS.clear();
@@ -167,11 +180,11 @@ void cWebOut::createPage(std::string sauce, std::string title){
             else{
                 /* Create a paragraph node */
                 pugi::xml_node currNode = body.append_child("p");
-                for(int i = 0, j = strlen(buffer); i < j; i++){
+                for(int i = 0; i < tmpStr.size(); i++){
                     /* Continue adding text. */
-                    if(buffer[i] == '\''){
+                    if(tmpStr[i] == '\''){
                         /* Check if it's a triple*/
-                        if(i < j-2 && buffer[i+1] == '\'' && buffer[i+2] == '\''){
+                        if(i < tmpStr.size() && tmpStr[i+1] == '\'' && tmpStr[i+2] == '\''){
                             /* OH BABY IT'S A TRIPLE 
                              * If it's already flagged, then unflag and display as bold 
                              */
@@ -197,7 +210,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             i += 2;
                         }
                         /* Check for double */
-                        else if(i < j-1 && buffer[i+1] == '\''){
+                        else if(i < j-1 && tmpStr[i+1] == '\''){
                             /* DOUBLE! 
                              * Same as above, just with italics instead of bold
                              */
@@ -222,7 +235,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             }
                             i++;
                         }
-                        else if(buffer[i] == '[' && i < j-1 && buffer[i+1] == '['){ //Should never have a '[[' right next to the end anyway
+                        else if(tmpStr[i] == '[' && i < j-1 && tmpStr[i+1] == '['){ //Should never have a '[[' right next to the end anyway
                             /* Image -> It's an internal link */
                             if(!tempS.empty()){
                                 pugi::xml_node tText = currNode.append_child(pugi::node_pcdata);
@@ -230,7 +243,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             }
                             tempS.clear();
                             for(int k = i+2; k < j-1; k++){
-                                if(buffer[k] == ']'){
+                                if(tmpStr[k] == ']'){
                                     /* Save contents of image, break out */
                                     pugi::xml_node imageNode = currNode.append_child("img");
                                     pugi::xml_attribute imageSauce = imageNode.append_attribute("src");
@@ -239,18 +252,18 @@ void cWebOut::createPage(std::string sauce, std::string title){
                                     break;
                                 }
                                 else{
-                                    tempS += buffer[k];
+                                    tempS += tmpStr[k];
                                 }
                             }
                         }
                         else{
                             /* Just add it to the current text, it's not like it's special or
                              * anything -.- */
-                            tempS += buffer[i];
+                            tempS += tmpStr[i];
                         }
                     }
                     else{
-                        tempS += buffer[i];
+                        tempS += tmpStr[i];
                     }
                 }
                 if(!tempS.empty()){
