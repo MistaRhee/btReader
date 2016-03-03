@@ -239,7 +239,7 @@ namespace beatOff{
         this->textureGen = 1;
     }
 
-    void cNovelDetails::render(SDL_Renderer* mRenderer){ //TODO: Verify that this still works
+    void cNovelDetails::render(SDL_Renderer* mRenderer){ 
         if(!this->loaded){
             std::string mError = currentDateTime() = ": ";
             mError += "[novelDetails.cpp] File wasn't loaded before calling render \n";

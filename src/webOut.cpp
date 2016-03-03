@@ -139,7 +139,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
         while(fgets(buffer, 1000000, fin)){
             mFile += buffer;
         }
-        mFile = awwCrip.decrypts(mFile.c_str());
+        mFile = awwCrip.decrypts(mFile.c_str(), NULL);
         fclose(fin);
 
         std::string tmpStr;
@@ -147,7 +147,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
         bool bold = 0;
         bool italic = 0;
         while(true){ //Loop 'till end of file (or the end of time, either way is fine)
-            for(int i = 0; mFile[i] != "\n"; i++){//Get next line
+            for(int i = 0; mFile[i] != '\n'; i++){//Get next line
                 tmpStr += mFile[i];
             }
             tmpStr += '\n';
@@ -166,6 +166,8 @@ void cWebOut::createPage(std::string sauce, std::string title){
                     pugi::xml_node tempNode = body.append_child("p");
                     pugi::xml_node tText = tempNode.append_child(pugi::node_pcdata);
                     tempS += tmpStr;
+                    tText.set_value(tempS.c_str());
+                    tempS.clear();
                 }
                 else{
                     for(int k = num; k < tmpStr.size()-num; k++){
@@ -210,7 +212,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             i += 2;
                         }
                         /* Check for double */
-                        else if(i < j-1 && tmpStr[i+1] == '\''){
+                        else if(i < tmpStr.size()-1 && tmpStr[i+1] == '\''){
                             /* DOUBLE! 
                              * Same as above, just with italics instead of bold
                              */
@@ -235,14 +237,14 @@ void cWebOut::createPage(std::string sauce, std::string title){
                             }
                             i++;
                         }
-                        else if(tmpStr[i] == '[' && i < j-1 && tmpStr[i+1] == '['){ //Should never have a '[[' right next to the end anyway
+                        else if(tmpStr[i] == '[' && i < tmpStr.size()-1 && tmpStr[i+1] == '['){ //Should never have a '[[' right next to the end anyway
                             /* Image -> It's an internal link */
                             if(!tempS.empty()){
                                 pugi::xml_node tText = currNode.append_child(pugi::node_pcdata);
                                 tText.set_value(tempS.c_str());
                             }
                             tempS.clear();
-                            for(int k = i+2; k < j-1; k++){
+                            for(int k = i+2; k < tmpStr.size()-1; k++){
                                 if(tmpStr[k] == ']'){
                                     /* Save contents of image, break out */
                                     pugi::xml_node imageNode = currNode.append_child("img");
@@ -272,7 +274,6 @@ void cWebOut::createPage(std::string sauce, std::string title){
                     tempS.clear();
                 }
             }
-
             if(feof(fin)){ //Now I'm post-checking like a good boy!
                 break;
             }

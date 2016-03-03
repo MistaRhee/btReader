@@ -259,7 +259,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         tempAtt.set_value(title.c_str());
                                         tempAtt = chapterNode.append_attribute("id");
                                         tempAtt.set_value(chapName.c_str());
-                                        
+
                                         cCrypt crippy;
                                         std::string loc = title+chapName;
                                         char* hash = crippy.crypth(loc.c_str());
@@ -410,6 +410,6 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
     }
     fclose(fin);
     FILE* fout = fopen(out.c_str(), "w+");
-    fprintf(fout, "%s \n", imCrippy.crypts(text.c_str()));
+    fprintf(fout, "%s \n", imCrippy.crypts(text.c_str(), NULL));
     fclose(fout);
 }

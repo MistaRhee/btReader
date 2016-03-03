@@ -260,8 +260,8 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
 
             this->mLog->log("[database.cpp] Info: Extraction complete!");
             cCrypt prettyCrippy;
-            novelStore = prettyCrippy.crypts((novelStore+title).c_str());
-            this->mLog->log("[database.cpp] Info: Cleaning novel! Sorry, can't print the name of the file to be saved to due to copyright issues\n");
+            novelStore = prettyCrippy.crypth((novelStore+title).c_str());
+            this->mLog->log("[database.cpp] Info: Cleaning novel!\n");
             mParser.cleanNovel(tempFile, tempFile2, novelStore);
             this->mLog->log(std::string("[database.cpp] Info: Cleaned page stored in ")+ novelStore);
             this->mLog->log("[database.cpp] Info: Deleting temp files");

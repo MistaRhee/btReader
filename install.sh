@@ -4,9 +4,5 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-#Copy over the .so files
-cp lib/* /usr/local/lib
-ldconfig
-
 make
 make clean
