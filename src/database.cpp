@@ -37,6 +37,8 @@ void cMain::createDatabase(){
     try{
         this->mLog->log("[database.cpp] Info: Creating database!");
         cHttpd stream1;
+        cCrypt prettyCrippy;
+        char toHex[17] = "0123456789abcdef";
         std::string mainPageFileName = tempLoc+generateRandomName(50);
         while(fileExists(mainPageFileName)) mainPageFileName = tempLoc+generateRandomName(50);
         stream1.download(domain+novelList, mainPageFileName);
@@ -47,7 +49,13 @@ void cMain::createDatabase(){
             pugi::xml_node category = doc.child("api").child("query").child("categorymembers");
             for(auto cmNode: category.children("cm")){
                 tempStr = cmNode.attribute("title").value();
-                novelDB[tempStr] = std::make_pair("","");
+                char* hash = prettyCrippy.crypth(tempStr.c_str());
+                std::string loc = novelStore;
+                for(int i = 0, j = TITLE_LENGTH; i < j; i++){ //Hash length is always 64
+                    loc += toHex[(hash[i]>>4)&0xF];
+                    loc += toHex[hash[i]&0xF];
+                }
+                novelDB[tempStr] = std::make_pair(loc, "");
             }
         }
         else{
@@ -261,10 +269,17 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
 
             this->mLog->log("[database.cpp] Info: Extraction complete!");
             cCrypt prettyCrippy;
-            novelLoc = novelStore + prettyCrippy.crypth((novelStore+title).c_str());
+            char* hash = prettyCrippy.crypth(title.c_str());
+            char toHex[17] = "0123456789abcdef";
+            std::string tit;
+            for(int i = 0, j = TITLE_LENGTH; i < j; i++){ //Hash length is always 64
+                tit += toHex[(hash[i]>>4)&0xF];
+                tit += toHex[hash[i]&0xF];
+            }
+            novelLoc = novelStore + tit;
             this->mLog->log("[database.cpp] Info: Cleaning novel!\n");
             mParser.cleanNovel(tempFile, tempFile+"2", novelLoc);
-            this->mLog->log(std::string("[database.cpp] Info: Cleaned page stored in ")+ novelStore);
+            this->mLog->log(std::string("[database.cpp] Info: Cleaned page stored in ")+ novelLoc);
             this->mLog->log("[database.cpp] Info: Deleting temp files");
             remove(tempFile.c_str());
             remove((tempFile+"2").c_str());

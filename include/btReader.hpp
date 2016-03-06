@@ -28,6 +28,7 @@
 #include "types.hpp" //To hold global types
 
 #define MAX_THREADS 5
+#define TITLE_LENGTH 64
 #define FPS_CAP 1000/60
 
 class cWebOut{
@@ -127,7 +128,7 @@ class cMain{
 
         /* URL constant strings */
         const std::string tempLoc = "data/temp/";
-        const std::string novelStore = "data/novel/";
+        const std::string novelStore = "data/novels/";
         const std::string domain = "http://baka-tsuki.org/project/api.php?action=";
         const std::string novelList = "query&list=categorymembers&cmtitle=Category:Light_novel_(English)&cmlimit=500&format=xml";
         const std::string pageDetail = "parse&prop=wikitext|revid|links&format=xml&page="; //Add novel name after this (NAME_TITLE_ETC/CHAPTER_NAME)
