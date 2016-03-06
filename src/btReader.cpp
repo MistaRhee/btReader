@@ -488,10 +488,15 @@ void cMain::update(){
                 }
                 if(this->mContents[list]->state == go){
                     /* Get what novel I'm supposed to get details from */
-                    std::string detailsOf = ((beatOff::cNovelList*)this->mContents[list])->getSelected();
-                    ((beatOff::cNovelDetails*)this->mContents[details])->openNovel(this->novelDB[detailsOf].first, this->mRenderer, &(this->config));
-                    this->whereAt = details;
-                    this->mContents[list]->state = working;
+                    try{
+                        std::string detailsOf = ((beatOff::cNovelList*)this->mContents[list])->getSelected();
+                        ((beatOff::cNovelDetails*)this->mContents[details])->openNovel(this->novelDB[detailsOf].first, this->mRenderer, &(this->config));
+                        this->whereAt = details;
+                        this->mContents[list]->state = working;
+                    }
+                    catch(mException& e){
+                        this->mLog->log(e.what());
+                    }
                 }
                 else if(this->mContents[list]->state == broken){
                     /* Log that I'm detecting something's broken */

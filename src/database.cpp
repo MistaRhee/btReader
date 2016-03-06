@@ -52,7 +52,10 @@ void cMain::createDatabase(){
         }
         else{
             /* XML Failed to load -> Either invalid XML recieved or just offline */
-            throw(mException(std::string("[database.cpp] Warning: Recieved invalid XML during createDatabase or client is currently offline! Skipping database creation")));
+            if(res.status == pugi::status_no_document_element){ //The thing was empty (probs offline client)
+                throw(mException(std::string("[database.cpp] Warning: Recieved empty main page file! (is client offline?)")));
+            }
+            else throw(mException(std::string("[database.cpp] Warning: Recieved errornous XML (perhaps XML page was corrupted?) pugiError: ") + res.description()));
         }
         remove(mainPageFileName.c_str());
     }
@@ -214,8 +217,7 @@ void cMain::replaceDatabase(){
 std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ //Returning the filename in combination with the revID
     try{
         std::string tempFile;
-        std::string tempFile2;
-        std::string novelStore;
+        std::string novelLoc;
         std::string revID;
         std::string progress;
         int exist;
@@ -228,8 +230,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
         cHttpd mDownload;
         cWikiParser mParser(this->mLog);
         tempFile = tempLoc+generateRandomName(50);
-        while(fileExists(tempFile)||fileExists(tempFile2)) tempFile = tempLoc+generateRandomName(50);
-        tempFile2 = tempFile + "2";
+        while(fileExists(tempFile)) tempFile = tempLoc+generateRandomName(50);
         mDownload.download(domain+pageDetail+title, tempFile);
 
         logString = std::string("[database.cpp] Info: Page saved to ") + tempFile;
@@ -245,7 +246,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
 
             revID = parseNode.attribute("revid").value();
             FILE*fout = fopen(tempFile.c_str(), "w+");
-            FILE*fexist = fopen(tempFile2.c_str(), "w+");
+            FILE*fexist = fopen((tempFile+"2").c_str(), "w+");
             fprintf(fout, "%s", parseNode.child("wikitext").text().as_string());
             fclose(fout);
 
@@ -260,14 +261,14 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
 
             this->mLog->log("[database.cpp] Info: Extraction complete!");
             cCrypt prettyCrippy;
-            novelStore = prettyCrippy.crypth((novelStore+title).c_str());
+            novelLoc = novelStore + prettyCrippy.crypth((novelStore+title).c_str());
             this->mLog->log("[database.cpp] Info: Cleaning novel!\n");
-            mParser.cleanNovel(tempFile, tempFile2, novelStore);
+            mParser.cleanNovel(tempFile, tempFile+"2", novelLoc);
             this->mLog->log(std::string("[database.cpp] Info: Cleaned page stored in ")+ novelStore);
             this->mLog->log("[database.cpp] Info: Deleting temp files");
-            remove (tempFile.c_str());
-            remove (tempFile2.c_str());
-            return std::make_pair(novelStore, revID);
+            remove(tempFile.c_str());
+            remove((tempFile+"2").c_str());
+            return std::make_pair(novelLoc, revID);
         }
         else{
             /* XML Failed to load! */

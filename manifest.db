@@ -5,6 +5,7 @@
     <folder essential="false" sauce="data/novels/" />
     <folder essential="false" sauce="data/images/" />
     <folder essential="false" sauce="data/temp/" />
+    <folder essential="false" sauce="data/chaps" />
     <folder essential="true" sauce="system/" />
     <folder essential="true" sauce="system/fonts/" />
     <folder essential="true" sauce="system/images/" />

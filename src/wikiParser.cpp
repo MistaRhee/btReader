@@ -264,6 +264,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                         std::string loc = title+chapName;
                                         char* hash = crippy.crypth(loc.c_str());
                                         loc.clear();
+                                        loc = chapLoc;
                                         for(int i = 0, j = strlen(hash); i < j; i++){ //Hash length is always 64
                                             loc += toHex[(hash[i]>>4)&0xF];
                                             loc += toHex[hash[i]&0xF];

@@ -70,6 +70,7 @@ class cWikiParser{
         void cleanChapter(const std::string, const std::string); //Title of the file to clean, title of the location to save to
         std::string generateRandomName(int len);
     private:
+        const std::string chapLoc = "data/chaps/";
         __logger::cLogger* mLog;
         std::string titleClean(const std::string);
 };

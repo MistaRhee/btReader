@@ -66,13 +66,21 @@ namespace beatOff{
                 SDL_DestroyTexture(mTexture);
                 mTexture = NULL;
             }
+            this->contents.clear();
 
             /* Grabbing Volume + Chapter list */
             std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::string> > > > volumes;
 
             pugi::xml_document doc;
             bool hack = 0;
-            doc.load_file(sauce.c_str()); //Ignoring return value (I'm a NAUGHTY BOY elegiggle)
+            pugi::xml_parse_result res = doc.load_file(sauce.c_str()); //Ignoring return value (I'm a NAUGHTY BOY elegiggle)
+            if(!res){
+                if(res.status == pugi::status_no_document_element){ //Empty document (i.e. the thing isn't downloaded yet)
+                    this->loaded = 1;
+                    throw(mException(std::string("[novelDetails.cpp] Warning: Document is empty! (perhaps the details have not been downlaoded yet?)")));
+                }
+                else throw(mException(std::string("[novelDetails.cpp] Error: Failed to open document pugiError: ") + res.description()));
+            }
             pugi::xml_node mainNode = doc.child("novel");
             std::string title = mainNode.child("info").attribute("title").value();
             std::string author = mainNode.child("info").attribute("author").value();
@@ -194,7 +202,7 @@ namespace beatOff{
         }
         catch(mException& e){
             setError(e.what()); 
-            printf("%s \n", e.what());
+            this->mLog->log(e.what());
         }
     }
 
@@ -241,10 +249,8 @@ namespace beatOff{
 
     void cNovelDetails::render(SDL_Renderer* mRenderer){ 
         if(!this->loaded){
-            std::string mError = currentDateTime() = ": ";
-            mError += "[novelDetails.cpp] File wasn't loaded before calling render \n";
-            printf("%s \n", mError.c_str());
-            throw(mException(mError));
+            std::string mError = "[novelDetails.cpp] Warning: File wasn't loaded before calling render -> Rendering nothing \n";
+            this->mLog->log(mError);
         }
         else{
             if(!this->textureGen) genTexture(mRenderer);
