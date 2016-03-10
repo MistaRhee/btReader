@@ -28,7 +28,7 @@
 #include "types.hpp" //To hold global types
 
 #define MAX_THREADS 5
-#define TITLE_LENGTH 64
+#define TITLE_LENGTH 32
 #define FPS_CAP 1000/60
 
 class cWebOut{

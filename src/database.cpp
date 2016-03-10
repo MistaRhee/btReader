@@ -168,7 +168,6 @@ void cMain::updateDatabase(){
                         if(hasNew(novelName, this->novelDB[novelName].second)){ //More recent version of what was already DLed
                             updateLog.log(std::string("[database.cpp] Info: Found new version of ") + novelName + "! Updating");
                             tempNovelDB[novelName] = getNovelDetails(novelName);
-                            remove(found->second.first.c_str()); //Remove the old file
                         }
                         else{
                             tempNovelDB[novelName] = found->second;

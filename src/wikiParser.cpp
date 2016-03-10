@@ -374,7 +374,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
             break;
         }
     }
-    printf("outFile = %s \n", outFile.c_str());
     doc.save_file(outFile.c_str());
     fclose(fexist);
 }
