@@ -98,6 +98,10 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
         volStr.clear();
     }
 
+    if(fileExists(outFile)){
+        remove(outFile.c_str());        //Remove old File
+    }
+
     while(true){
         if(feof(fin)){
             break;
