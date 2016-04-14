@@ -277,7 +277,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
             }
             novelLoc = novelStore + tit;
             this->mLog->log("[database.cpp] Info: Cleaning novel!\n");
-            mParser.cleanNovel(tempFile, tempFile+"2", novelLoc);
+            mParser.cleanNovel(tempFile, tempFile+"2", novelLoc, title);
             this->mLog->log(std::string("[database.cpp] Info: Cleaned page stored in ")+ novelLoc);
             this->mLog->log("[database.cpp] Info: Deleting temp files");
             remove(tempFile.c_str());

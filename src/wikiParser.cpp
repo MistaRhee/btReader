@@ -55,7 +55,7 @@ std::string cWikiParser::generateRandomName(int length){
     return rVal;       
 }
 
-void cWikiParser::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile){
+void cWikiParser::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile, const std::string mTitle){
     char toHex[17] = "0123456789abcdef";
     FILE*fin = fopen(inFile.c_str(), "r");
     FILE*fexist = fopen(existFile.c_str(), "r");
@@ -143,31 +143,25 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                         if(buffer[0] == '=' and buffer[1] == '=' and buffer[2] != '='){
                             std::string word;
                             tempStr = buffer;
-                            tempStr.erase(0, 2);
-                            tempStr.erase(tempStr.end()-3, tempStr.end());
-                            for(int i = 0, j = tempStr.size(); i < j; i++){
-                                if(tempStr[i] == ' '){
-                                    if(word == "by"){
-                                        found = 1;
-                                        std::string title;
-                                        for(int k = 0; k < i-3; k++){
-                                            title += tempStr[k];
-                                        }
-                                        pugi::xml_attribute tempAtt = infoNode.append_attribute("title");
-                                        tempAtt.set_value(title.c_str());
-                                        title.clear();
-                                        for(int k = i; k < j; k++){
-                                            title += tempStr[k];
-                                        }
-                                        tempAtt = infoNode.append_attribute("author");
-                                        tempAtt.set_value(title.c_str());
-                                        break;
-                                    }
-                                    word.clear();
+                            if(tempStr.find(mTitle) != std::string::npos){
+                                size_t p = tempStr.find("by");
+                                if(p != std::string::npos){
+                                    std::string t = tempStr.substr(p+3);
+                                    t.pop_back(); //SO
+                                    t.pop_back(); //MUCH
+                                    t.pop_back(); //HAX
+                                    pugi::xml_attribute auth = infoNode.append_attribute("author");
+                                    auth.set_value(t.c_str());
                                 }
-                                else{
-                                    word += tempStr[i];
-                                }
+                                pugi::xml_attribute tempAtt = infoNode.append_attribute("title");
+                                tempAtt.set_value(mTitle.c_str());
+                                found = 1;
+                            }
+                            else if(tempStr.find("by") != std::string::npos){
+                                this->mLog->log(std::string("[wikiParser.cpp] Warning - Unrecognised name format") + tempStr);
+                                pugi::xml_attribute tempAtt = infoNode.append_attribute("title");
+                                tempAtt.set_value(mTitle.c_str());
+                                found = 1;
                             }
                         }
                     }
@@ -206,6 +200,9 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                 }
                                 while(true){
                                     fgets(buffer, 4096, fin);
+                                    if(feof(fin)){
+                                        break;
+                                    }
                                     std::string title;
                                     std::string chapName;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
@@ -335,12 +332,16 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                              */
                                             std::string tempString(fileName.begin(), fileName.begin()+4);
                                             std::string tempString2(fileName.begin(), fileName.begin()+5);
-                                            if(tempString == "File" or tempString2 == "Image" or tempString2 == "image" or tempString == "file"){ //'cus I'm lazy
+                                            if(fileName.find("File") != std::string::npos or fileName.find("Image") != std::string::npos or fileName.find("image") != std::string::npos or fileName.find("file") != std::string::npos){ //'cus I'm lazy
                                                 this->mLog->log(std::string("[wikiParser.cpp] Info: Calling cGetImage with ") + fileName);
                                                 cGetImage newImageGrab(this->mLog);
                                                 std::string savedTo = newImageGrab.getImage(fileName);
                                                 pugi::xml_attribute tempAtt = newVol.append_attribute("image");
                                                 tempAtt.set_value(savedTo.c_str());
+                                            }
+                                            else if(fileName.find("Category") != std::string::npos or fileName.find("category") != std::string::npos){
+                                                this->mLog->log("[wikiParser.cpp] Info: Category found in filename! Skipping!");
+                                                fgets(buffer, 4096, fin);
                                             }
                                             else{
                                                 std::string err = "[wikiParser.cpp] Warning: Invalid image name ";
@@ -349,7 +350,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                             }
                                         }
                                     }
-                                    else if(strlen(buffer) == 1 or buffer[0] == '<' or buffer[0] == '\'' or buffer[0] == '&' or buffer[0] == '{'){
+                                    else if(strlen(buffer) == 1 or buffer[0] == '<' or buffer[0] == '\'' or buffer[0] == '&' or buffer[0] == '{' or buffer[0] == '\n'){
                                         /* Ignore this, because it's just a
                                          * whitespace or HTML tag or a comment
                                          * etc...
