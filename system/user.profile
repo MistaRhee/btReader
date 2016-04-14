@@ -94,7 +94,7 @@ TODO: To make menu less shitty, just have an exra tag or something like target="
     <!-- TODO: Document this properly -->
     <novelDetails>
         <title font="default" size="35" />
-        <!-- image h="-1" w="-1" //Optional: If it is there, will enforce the requested height/width. Without it, it will dump the full-sized image there -->
+        <!-- image h="-1" w="-1" //Optional: If it is there, will enforce the requested height/width. Without it, it will dump half the image there -->
         <synopsis font="default" size="25" />
         <volume font="default" size="25" />
         <chapter font="default" size="25" />

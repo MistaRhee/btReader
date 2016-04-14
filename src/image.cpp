@@ -61,7 +61,20 @@ namespace beatOff{
                 rVal = std::make_pair(-1, -1);
             }
             else{
-                rVal = std::make_pair(mSurface->h, mSurface->w);
+                if(h < 0 and w < 0){
+                    rVal = std::make_pair(mSurface->h, mSurface->w);
+                }
+                else if(h < 0){
+                    unsigned int th = mSurface->h, tw = mSurface->w;
+                    rVal = std::make_pair(w*th/tw, w);
+                }
+                else if(w < 0){
+                    unsigned int th = mSurface->h, tw = mSurface->w;
+                    rVal = std::make_pair(h, h*tw/th);
+                }
+                else{
+                    rVal = std::make_pair(h, w);
+                }
                 SDL_FreeSurface(mSurface);
             }
         }
@@ -100,9 +113,19 @@ namespace beatOff{
                 else{
                     dRect.x = x;
                     dRect.y = y;
-                    if(h < 0 or w < 0){
+                    if(h < 0 and w < 0){
                         dRect.h = mSurface->h;
                         dRect.w = mSurface->w;
+                    }
+                    else if(h < 0){
+                        unsigned int th = mSurface->h, tw = mSurface->w;
+                        dRect.w = w;
+                        dRect.h = w*th/tw;
+                    }
+                    else if(w < 0){
+                        unsigned int th = mSurface->h, tw = mSurface->w;
+                        dRect.w = h*tw/th;
+                        dRect.h = h;
                     }
                     else{
                         dRect.h = h;
@@ -115,5 +138,5 @@ namespace beatOff{
         SDL_FreeSurface(mSurface);
         SDL_DestroyTexture(mTexture);
     }
-    
+
 }

@@ -95,7 +95,10 @@ namespace beatOff{
 
             for(auto currNode: mainNode.children("volume")){
                 std::vector<std::pair<std::string, std::string> > chapterDetails;
-                if(!hack) frontLoc = currNode.attribute("image").value();
+                if(!hack){
+                    frontLoc = currNode.attribute("image").value();
+                    hack = 1;
+                }
                 for(auto chapterNode: currNode.children("chapter")){
                     chapterDetails.push_back(std::make_pair(chapterNode.attribute("title").value(), chapterNode.attribute("location").value())); //Wew!
                     this->novelID[chapterNode.attribute("title").value()] = chapterNode.attribute("id").value();
@@ -127,10 +130,10 @@ namespace beatOff{
             if(!(*(config))["novelDetails"].count("image"))
                 newObject = new cImage(
                         frontLoc, 
-                        0, 
+                        this->sRect.w/4, 
                         mHeight, 
                         -1, 
-                        this->sRect.w
+                        this->sRect.w/2
                         ); //Don't want to exceed the width of the screen
             else
                 newObject = new cImage(
@@ -209,6 +212,9 @@ namespace beatOff{
     void cNovelDetails::move(int dx, int dy){ //DOES NOT SANITY CHECK!!! (Should be done beforehand anyway)
         /*Ignoring dx at the momemnt, until I can get zoom working. */
         sRect.y += dy;
+        if(sRect.y+sRect.h > contents.back().second.second){
+            sRect.y = contents.back().second.second - sRect.h;
+        }
         //sRect.x += dx;
     }
 
@@ -265,7 +271,7 @@ namespace beatOff{
     }
 
     void cNovelDetails::handleUserMouse(int x, int y, int button, bool isDown){
-        int mx = x - this->x, my = y - this->y;
+        int mx = x - this->x, my = y - this->y + this->sRect.y;
         if(!isDown){ //Trigger event on rising edge
             switch(button){
                 case SDL_BUTTON_LEFT:
@@ -308,10 +314,10 @@ namespace beatOff{
                          */
                         /* Find what object I'm hovering over right now */
                         for(int loc = 0; loc < this->contents.size(); loc++){
-                            if(this->contents[loc].second.second > y){
+                            if(this->contents[loc].second.second > my){
                                 if(this->contents[loc].second.first != "__NONE__"){
                                     /* Over hoverable */
-                                    ((cButton*)this->contents[this->selection].first)->deselect();
+                                    if(this->selection > 0) ((cButton*)this->contents[this->selection].first)->deselect();
                                     this->selection = loc;
                                     ((cButton*)this->contents[this->selection].first)->select();
                                     this->textureGen = 0;

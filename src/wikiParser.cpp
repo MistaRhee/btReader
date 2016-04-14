@@ -126,7 +126,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                 break;
                             }
                             else{
-                                synopsisText += buffer;
+                                if(buffer[0] != '\n') synopsisText += buffer;
                                 synopsisText += '\n';
                             }
                         }
