@@ -206,7 +206,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                 }
                                 while(true){
                                     fgets(buffer, 4096, fin);
-                                    printf("buffer: %s \n", buffer);
                                     std::string title;
                                     std::string chapName;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
