@@ -173,7 +173,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                     }
                     else{
                         std::string fileName;
-                        if(buffer[0] == '[' and buffer[1] == '['){
+                        if((buffer[0] == '[' and buffer[1] == '[') or (buffer[0] == '|' and buffer[1] == '[' and buffer[2] == '[')){
                             /* Get the link, check if it is an image. If it is,
                              * hold it just in case its useful
                              * ************************************************/
@@ -206,6 +206,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                 }
                                 while(true){
                                     fgets(buffer, 4096, fin);
+                                    printf("buffer: %s \n", buffer);
                                     std::string title;
                                     std::string chapName;
                                     if(buffer[0] == ':' or buffer[0] == '*'){
@@ -301,15 +302,17 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                             tempAtt.set_value("0");
                                         }
                                     }
-                                    else if(buffer[0] == '['){
+                                    else if(buffer[0] == '[' or buffer[0] == '|'){
                                         /* There is a link without indentataion
                                          * I'm just gonna assume its another
                                          * image
                                          */
+                                        int i = 1;
+                                        if(buffer[0] == '|' and buffer[1] == '[') i ++;
                                         fileName.clear();
                                         bool shouldGrab = 0;
                                         if(!newVol.attribute("image")){
-                                            for(int i = 1, j = strlen(buffer); i < j; i++){
+                                            for(int j = strlen(buffer); i < j; i++){
                                                 if(buffer[i] == '['){
                                                     /* Iss 13 fix */
                                                     shouldGrab = 1;
@@ -333,7 +336,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                              */
                                             std::string tempString(fileName.begin(), fileName.begin()+4);
                                             std::string tempString2(fileName.begin(), fileName.begin()+5);
-                                            if(tempString == "File" or tempString2 == "Image"){
+                                            if(tempString == "File" or tempString2 == "Image" or tempString2 == "image" or tempString == "file"){ //'cus I'm lazy
                                                 this->mLog->log(std::string("[wikiParser.cpp] Info: Calling cGetImage with ") + fileName);
                                                 cGetImage newImageGrab(this->mLog);
                                                 std::string savedTo = newImageGrab.getImage(fileName);
@@ -342,13 +345,12 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                             }
                                             else{
                                                 std::string err = "[wikiParser.cpp] Warning: Invalid image name ";
-                                                err += tempString + " -> Ignoring";
+                                                err += std::string(buffer) + " -> Ignoring";
                                                 this->mLog->log(err);
-                                                break;
                                             }
                                         }
                                     }
-                                    else if(strlen(buffer) == 1 or buffer[0] == '<' or buffer[0] == '\'' or buffer[0] == '&'){
+                                    else if(strlen(buffer) == 1 or buffer[0] == '<' or buffer[0] == '\'' or buffer[0] == '&' or buffer[0] == '{'){
                                         /* Ignore this, because it's just a
                                          * whitespace or HTML tag or a comment
                                          * etc...
