@@ -164,7 +164,7 @@ namespace beatOff{
                 std::string temp;
                 TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
 
-                for(int i = 0; i < text.size(); i++){
+                for(int i = 0, j = text.size(); i < j; i++){
                     temp += text[i];
                     if(text[i] == ' '){
                         space = i;
@@ -172,20 +172,26 @@ namespace beatOff{
                     TTF_SizeUTF8(mFont, temp.c_str(), &tempWidth, NULL);
                     if(tempWidth > w){
                         if(space < 0){
+                            temp.pop_back();
                             i--;
+                            numLines++;
                             temp.clear();
                         }
                         else{
-                            i = space+1;
-                            space = -1;
+                            for(int k = 0, l = i-space; k < l; k++){
+                                temp.pop_back();
+                                i--;
+                            }
+                            numLines++;
                             temp.clear();
+                            space = -1;
                         }
-                        numLines ++;
                     }
                     else if(text[i] == '\n'){
-                        /* Manually requested new-line */
+                        temp.pop_back();
                         numLines++;
                         temp.clear();
+                        space = -1;
                     }
                 }
                 renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* (numLines-1));

@@ -126,8 +126,10 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                 break;
                             }
                             else{
-                                if(buffer[0] != '\n') synopsisText += buffer;
-                                synopsisText += '\n';
+                                if(buffer[0] != '\n'){
+                                    synopsisText += buffer;
+                                    synopsisText += '\n';
+                                }
                             }
                         }
                         pugi::xml_node synopsis = mainNode.append_child("synopsis");
