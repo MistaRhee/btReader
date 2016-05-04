@@ -194,6 +194,9 @@ namespace beatOff{
                         space = -1;
                     }
                 }
+                if(temp.size() > 0 && temp[0] != '\n'){
+                    numLines++;
+                }
                 renderedHeight = (TTF_FontHeight(mFont)*numLines) + (TTF_FontLineSkip(mFont)* (numLines-1));
                 TTF_CloseFont(mFont);
             }
@@ -312,7 +315,7 @@ namespace beatOff{
                     space = -1;
                 }
             }
-            if(temp.size() > 0){
+            if(temp.size() > 0 && temp[0] != '\n'){
                 lines.push_back(temp);
             }
             if(drawBox){
