@@ -7,9 +7,8 @@ else
 	LDFLAGS=-Llib -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lcurl -pthread -lmistarheeCrypto
 
 endif
-SDIR=src
-SAUCES=btReader.cpp button.cpp content.cpp database.cpp getImage.cpp httpd.cpp image.cpp main.cpp novelList.cpp object.cpp textbox.cpp wikiParser.cpp pugixml.cpp novelDetails.cpp events.cpp keyMap.cpp logger.cpp menu.cpp webOut.cpp
-SOURCES=$(patsubst %,$(SDIR)/%,$(SAUCES))
+SDIR=src/
+SOURCES=$(wildcard %./$(SDIR)*.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
 
 ifeq ($(OS),Windows_NT)
