@@ -8,7 +8,7 @@ else
 
 endif
 SDIR=src/
-SOURCES=$(wildcard %./$(SDIR)*.cpp)
+SOURCES=$(wildcard ./$(SDIR)*.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
 
 ifeq ($(OS),Windows_NT)
