@@ -61,7 +61,7 @@ namespace beatOff{
         this->sRect.x = 0;
         this->sRect.y = 0;
         setPos(inRect.x, inRect.y);
-        setSize(inRect.h, inRect.w);
+        setSize(inRect.w, inRect.h);
     }
 
     void cNovelList::clear(){
@@ -80,7 +80,7 @@ namespace beatOff{
             cButton newText(in, fontLoc, fontSize, 0, this->mNovels.size()*this->novelHeight, w); //Should be generated from corner to corner of the texture
 
             this->novelHeight = newText.getFontHeight(); //Should never change, but just in case I guess..?
-            newText.setSize(this->novelHeight, w);
+            newText.setSize(w, this->novelHeight);
 
             newText.setTextCol(textColour.r, textColour.g, textColour.b, textColour.a);
             newText.setBoxCol(backColour.r, backColour.g, backColour.b, backColour.a);

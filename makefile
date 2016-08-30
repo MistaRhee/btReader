@@ -1,5 +1,5 @@
 CC=clang++
-CFLAGS=-c -O3 --std=c++11 -g -Wall -iquote include/
+CFLAGS=-c -O3 --std=c++14 -g -Wall -iquote include/ 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS=-Llib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lcurl -lSDL2_ttf -pthread -lmistarheeCrypto
 

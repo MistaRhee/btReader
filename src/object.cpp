@@ -3,6 +3,14 @@
 namespace beatOff{
 
     cObject::cObject(){
+        /* Test if SDL is active */
+        if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
+            std::string mError = currentDateTime() + ": ";
+            mError += "[textbox.cpp] - SDL couldn't initialise (SDL Error: ";
+            mError += SDL_GetError();
+            mError += ")";
+            setError(mError);
+        } 
         /* Uninitialise all variables in an object */
         this->x = -1;
         this->y = -1;
@@ -10,12 +18,17 @@ namespace beatOff{
         this->w = -1;
     }
 
+    cObject::cObject(int inX, int inY, int inW, int inH){
+        this->setPos(inX, inY);
+        this->setSize(inW, inH);
+    }
+
     void cObject::setPos(int inX, int inY){
         x = inX;
         y = inY;
     }
 
-    void cObject::setSize(int inH, int inW){
+    void cObject::setSize(int inW, int inH){
         h = inH;
         w = inW;
     }

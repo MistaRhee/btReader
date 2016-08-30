@@ -20,15 +20,8 @@ inline int mDiv(int x, int y){
 
 namespace beatOff{
 
-    cTextBox::cTextBox(){
-        if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
-            std::string mError = currentDateTime() + ": ";
-            mError += "[textbox.cpp] - SDL couldn't initialise (SDL Error: ";
-            mError += SDL_GetError();
-            mError += ")";
-            setError(mError);
-        } 
-        else if(!TTF_WasInit() && TTF_Init() == -1){
+    cTextBox::cTextBox() : cObject(){
+        if(!TTF_WasInit() && TTF_Init() == -1){
             std::string mError = currentDateTime() + ": ";
             mError = "[textbox.cpp] - TTF Couldn't initialise (TTF Error: ";
             mError += TTF_GetError();
@@ -51,16 +44,8 @@ namespace beatOff{
         }
     }
 
-    cTextBox::cTextBox(std::string inText, std::string fontLoc, int fontSize, int inX, int inY, int inW, int inH){
-        if(!SDL_WasInit(SDL_INIT_EVERYTHING) && SDL_Init(SDL_INIT_EVERYTHING) < 0){
-            std::string mError = currentDateTime() + ": ";
-            mError += "[textbox.cpp] - SDL couldn't initialise (SDL Error: ";
-            mError += SDL_GetError();
-            mError += ")";
-            setError(mError);
-            printf("%s \n", mError.c_str());
-        } 
-        else if(!TTF_WasInit() && TTF_Init() == -1){
+    cTextBox::cTextBox(std::string inText, std::string fontLoc, int fontSize, int inX, int inY, int inW, int inH) : cObject(inX, inY, inW, inH){
+        if(!TTF_WasInit() && TTF_Init() == -1){
             std::string mError = currentDateTime() + ": ";
             mError += "[textbox.cpp] - TTF Couldn't initialise (TTF Error: ";
             mError += TTF_GetError();
@@ -79,9 +64,7 @@ namespace beatOff{
             boxA = 255;
             drawBox = 1;
             centered = 0;
-            setPos(inX, inY);
             setText(inText);
-            setSize(inH, inW);
             setFont(fontLoc);
             setTextSize(fontSize);
             compacted = 0;

@@ -308,8 +308,8 @@ void cMain::getUserProfile(){
                                         it->second["sauce"],
                                         std::stoi(it->second["x"]),
                                         std::stoi(it->second["y"]),
-                                        std::stoi(it->second["h"]),
-                                        std::stoi(it->second["w"])
+                                        std::stoi(it->second["w"]),
+                                        std::stoi(it->second["h"])
                                         );
                             }
                         }
@@ -321,14 +321,14 @@ void cMain::getUserProfile(){
                                     std::stoi(it->second["size"]),
                                     std::stoi(it->second["x"]),
                                     std::stoi(it->second["y"]),
-                                    std::stoi(it->second["h"]),
-                                    std::stoi(it->second["w"])
+                                    std::stoi(it->second["w"]),
+                                    std::stoi(it->second["h"])
                                     );
                         }
                         else if(it->first == "region"){
                             /* Where the menu is located */
                             mMenu->setPos(std::stoi(it->second["x"]), std::stoi(it->second["y"]));
-                            mMenu->setSize(std::stoi(it->second["h"]), std::stoi(it->second["w"]));
+                            mMenu->setSize(std::stoi(it->second["w"]), std::stoi(it->second["h"]));
                         }
                         else if (it->first == "font"){
                             /* FONT SHOuLD APPEAR BEFORE EVERYTHING */

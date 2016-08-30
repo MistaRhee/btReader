@@ -119,7 +119,7 @@ namespace beatOff{
                     title, 
                     ND_FONT_LOOKUP((*(config))["novelDetails"].find("title")->second["font"]),
                     std::stoi((*(config))["novelDetails"].find("title")->second["size"]),
-                    0, mHeight,this->sRect.w
+                    0, this->sRect.w, mHeight
                     );
             /* Title */
             if(!((cTextBox*)newObject)->isCentered()) ((cTextBox*)newObject)->centre();
@@ -132,16 +132,16 @@ namespace beatOff{
                         frontLoc, 
                         this->sRect.w/4, 
                         mHeight, 
-                        -1, 
-                        this->sRect.w/2
+                        this->sRect.w/2,
+                        -1
                         ); //Don't want to exceed the width of the screen
             else
                 newObject = new cImage(
                         frontLoc, 
                         0, 
                         mHeight, 
-                        std::stoi((*(config))["novelDetails"].find("image")->second["h"]), 
-                        std::stoi((*(config))["novelDetails"].find("image")->second["w"])
+                        std::stoi((*(config))["novelDetails"].find("image")->second["w"]), 
+                        std::stoi((*(config))["novelDetails"].find("image")->second["h"])
                         ); //Trusting the config man to not be stupid and allocate W to be greater than sRect.w (Possibly want to do a min of this)
             mHeight += ((cImage*)newObject)->getSize().first;
             this->contents.push_back(std::make_pair(newObject, std::make_pair(std::string("__NONE__"), mHeight)));
@@ -151,7 +151,7 @@ namespace beatOff{
                     synopsis,
                     ND_FONT_LOOKUP((*(config))["novelDetails"].find("synopsis")->second["font"]),
                     std::stoi((*(config))["novelDetails"].find("synopsis")->second["size"]),
-                    0, mHeight, this->sRect.w
+                    0, this->sRect.w, mHeight
                     );
             mHeight += ((cTextBox*)newObject)->wrappedHeight();
             this->contents.push_back(std::make_pair(newObject, std::make_pair(std::string("__NONE__"), mHeight)));
@@ -162,7 +162,7 @@ namespace beatOff{
                         volume.first,
                         ND_FONT_LOOKUP((*(config))["novelDetails"].find("volume")->second["font"]),
                         std::stoi((*(config))["novelDetails"].find("volume")->second["size"]),
-                        0, mHeight, this->sRect.w
+                        0, this->sRect.w, mHeight
                         );
                 mHeight += ((cTextBox*)newObject)->wrappedHeight();
                 this->contents.push_back(std::make_pair(newObject, std::make_pair(std::string("__NONE__"), mHeight)));
@@ -171,7 +171,7 @@ namespace beatOff{
                             chapter.first,
                             ND_FONT_LOOKUP((*(config))["novelDetails"].find("chapter")->second["font"]),
                             std::stoi((*(config))["novelDetails"].find("volume")->second["size"]),
-                            0, mHeight, this->sRect.w
+                            0, this->sRect.w, mHeight
                             );
                     if(!((cButton*)newObject)->isCompacted()) ((cButton*)newObject)->compact();
                     mHeight += ((cButton*)newObject)->wrappedHeight();

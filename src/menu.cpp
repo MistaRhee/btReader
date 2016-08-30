@@ -99,14 +99,14 @@ namespace beatOff{
         return;
     }
 
-    void cMenu::addButton(std::string name, std::string text, std::string font, int size, int x, int y, int h, int w){
+    void cMenu::addButton(std::string name, std::string text, std::string font, int size, int x, int y, int w, int h){
         beatOff::cButton newButt(text, font, size, x, y, w, h);
         newButt.centre();
         this->buttons[name] = newButt;
     }
 
-    void cMenu::addImage(std::string name, std::string sauce, int x, int y, int h, int w){
-        beatOff::cImage newIma(sauce, x, y, h, w);
+    void cMenu::addImage(std::string name, std::string sauce, int x, int y, int w, int h){
+        beatOff::cImage newIma(sauce, x, y, w, h);
         this->images[name] = newIma;
     }
 

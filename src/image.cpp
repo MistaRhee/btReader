@@ -12,7 +12,7 @@ inline bool fileExists (const std::string& name){
 
 namespace beatOff{
 
-    cImage::cImage(){
+    cImage::cImage() : cObject(){
         if(IMG_Init(IMG_INIT_JPG||IMG_INIT_PNG) < 0){
             std::string e = currentDateTime() + ": ";
             e += "[image.cpp] - SDL_Image failed to init (Image Error: ";
@@ -21,10 +21,9 @@ namespace beatOff{
             printf ("%s \n", e.c_str());
             setError(e);
         }
-        setSize(-1, -1);
     }
 
-    cImage::cImage(std::string inLoc, int inx, int iny, int inh, int inw){ 
+    cImage::cImage(std::string inLoc, int inx, int iny, int inw, int inh) : cObject(inx, iny, inw, inh){ 
         if(IMG_Init(IMG_INIT_JPG||IMG_INIT_PNG) < 0){
             std::string e = currentDateTime() + ": ";
             e += "[image.cpp] - SDL_Image failed to init (Image Error: ";
@@ -34,8 +33,6 @@ namespace beatOff{
             setError(e);
         }
         setPicLoc(inLoc);
-        setPos(inx, iny);
-        setSize(inh, inw);
     }
 
     void cImage::setPicLoc(std::string inLoc){

@@ -17,10 +17,11 @@ namespace beatOff{
     class cObject{
         public:
             cObject();
+            cObject(int, int, int, int);//x, y, w, h
             virtual ~cObject() {}
             virtual void render(SDL_Renderer*) {}
             void setPos(int, int); //x, y
-            void setSize(int, int); //h, w
+            void setSize(int, int); //w, h
             void move(int, int); //dx, dy
             void setError(std::string);
             void setWarning(std::string);
