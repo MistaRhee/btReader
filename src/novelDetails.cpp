@@ -75,7 +75,7 @@ namespace beatOff{
             bool hack = 0;
             pugi::xml_parse_result res = doc.load_file(sauce.c_str()); //Ignoring return value (I'm a NAUGHTY BOY elegiggle)
             if(!res){
-                if(res.status == pugi::status_no_document_element){ //Empty document (i.e. the thing isn't downloaded yet)
+                if(res.status == pugi::status_no_document_element or res.status == pugi::status_file_not_found){ //Empty document (i.e. the thing isn't downloaded yet)
                     this->loaded = 1;
                     throw(mException(std::string("[novelDetails.cpp] Warning: Document is empty! (perhaps the details have not been downlaoded yet?)")));
                 }
@@ -211,6 +211,7 @@ namespace beatOff{
 
     void cNovelDetails::move(int dx, int dy){ //DOES NOT SANITY CHECK!!! (Should be done beforehand anyway)
         /*Ignoring dx at the momemnt, until I can get zoom working. */
+        if(contents.empty()) return; //Probably hasn't finished downloading yet
         sRect.y += dy;
         if(sRect.y+sRect.h > contents.back().second.second){
             sRect.y = contents.back().second.second - sRect.h;
