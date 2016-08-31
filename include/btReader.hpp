@@ -3,12 +3,10 @@
 
 #include <algorithm>
 #include <cstring>
-#include <dirent.h>
 #include <exception>
 #include <map>
 #include <memory>
 #include <queue>
-#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -16,6 +14,14 @@
 #include <time.h>
 #include <utility>
 #include <vector>
+
+#ifdef _WIN32
+#include <SDL2/SDL.h>
+#endif
+
+#ifdef __unix__
+#include <SDL2/SDL.h>
+#endif
 
 #include "contents.hpp" //For content objects
 #include "httpd.hpp" //For website retreival

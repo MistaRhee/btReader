@@ -1,9 +1,18 @@
 #ifndef OBJECTS_HPP
 #define OBJECTS_HPP
 
+#ifdef __unix__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#endif
+
+#ifdef _WIN32
+#include <SDL2/SDL.h>
+#include <SDL_ttf.h>
+#include <SDL_image.h>
+#endif
+
 #include <map>
 #include <utility>
 #include <vector>
