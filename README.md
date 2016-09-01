@@ -109,3 +109,10 @@ I found this pretty nifty library for parsing XML,
 http://github.com/zeux/pugixml
 
 Pretty neat
+
+Also, for building libcurl on Windows (Which initially was a nighmare) I got this pretty handy thing -> Give the guy some credit
+
+https://github.com/blackrosezy/build-libcurl-windows
+
+(NOTE: If VS is not installed in default directory (C:--blah--) It won't work, so you'll have to manually enter your VS location -
+Which is trivial if the bat file is peered into)
