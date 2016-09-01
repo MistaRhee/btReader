@@ -1,14 +1,29 @@
 #include "objects.hpp"
 
+#ifdef __unix__
+inline bool fileExists (const std::string& name) {
+    if(FILE* test = fopen(name.c_str(), "r")){
+        fclose(test);
+        return true;
+    }
+    else{
+        return false;
+    } 
+}
+#endif
+
+#ifdef _WIN32
 inline bool fileExists (const std::string& name){
-    if(FILE *file = fopen(name.c_str(), "r")){
-        fclose(file);
+    FILE* test = NULL;
+    if(fopen_s(&test, name.c_str(), "r")){
+        fclose(test);
         return true;
     }
     else{
         return false;
     }
 }
+#endif
 
 namespace beatOff{
 
@@ -58,7 +73,7 @@ namespace beatOff{
                 rVal = std::make_pair(-1, -1);
             }
             else{
-                if(h < 0 and w < 0){
+                if(h < 0 && w < 0){
                     rVal = std::make_pair(mSurface->h, mSurface->w);
                 }
                 else if(h < 0){
@@ -91,7 +106,7 @@ namespace beatOff{
         }
         else{
             mSurface = IMG_Load(location.c_str());
-            if(!mSurface or mSurface == NULL){
+            if(!mSurface || mSurface == NULL){
                 printf("cImage Error! Failed to load image \n");
                 std::string e = "cImage Error - Image loading failure (SDL_Image error: ";
                 e += IMG_GetError();
@@ -110,7 +125,7 @@ namespace beatOff{
                 else{
                     dRect.x = x;
                     dRect.y = y;
-                    if(h < 0 and w < 0){
+                    if(h < 0 && w < 0){
                         dRect.h = mSurface->h;
                         dRect.w = mSurface->w;
                     }

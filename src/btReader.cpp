@@ -23,6 +23,17 @@ inline void createFolder(const std::string& dirName){
     command = "mkdir "+dirName;
     system(command.c_str());
 }
+
+inline bool fileExists (const std::string& name){
+    FILE* test = NULL;
+    if(!fopen_s(&test, name.c_str(), "r")){
+        fclose(test);
+        return true;
+    }
+    else{
+        return false;
+    }
+}
 #endif
 #ifdef __unix__
 inline bool dirExists(const std::string& dirName){
@@ -40,7 +51,6 @@ inline void createFolder(const std::string& dirName){
     command = "mkdir "+dirName;
     system(command.c_str());
 }
-#endif
 
 inline bool fileExists (const std::string& name){
     if(FILE *file = fopen(name.c_str(), "r")){
@@ -51,6 +61,7 @@ inline bool fileExists (const std::string& name){
         return false;
     }
 }
+#endif
 
 inline int fastMax(int x, int y) { return (((y-x)>>(31))&(x^y))^y; }
 
@@ -302,7 +313,7 @@ void cMain::getUserProfile(){
                     for(auto it = this->config["menu"].begin(); it != this->config["menu"].end(); ++it){
                         if(it->first == "image"){
                             /* Selectively add images */
-                            if(it->second["name"] == "settings" or it->second["name"] == "downloads"){
+                            if(it->second["name"] == "settings" || it->second["name"] == "downloads"){
                                 mMenu->addImage(
                                         it->second["name"],
                                         it->second["sauce"],
@@ -531,7 +542,13 @@ void cMain::update(){
                             mDownload.download(domain+pageDetail+chapID, tempFile);
                             pugi::xml_document doc;
                             doc.load_file(tempFile.c_str());
-                            FILE* fout = fopen(tempFile.c_str(), "w+");
+#ifdef _WIN32
+                            FILE* fout = NULL;
+                            if(fopen_s(&fout, tempFile.c_str(), "w+")) throw mException("[btReader.cpp] Error: Failed to open tempFile. (Do you have access rights to this folder?)");
+#endif
+#ifdef __unix__
+                            if(!(FILE* fout = fopen(tempFile.c_str(), "w+"))) throw mExceptionN("[btReader.cpp] Error: Failed to open tempFile. (Do you have access rights to this folder?)");
+#endif
                             fprintf(fout, "%s", doc.child("api").child("parse").child("wikitext").text().get());
                             fclose(fout);
                             mParser.cleanChapter(tempFile, chapLoc);
@@ -548,7 +565,13 @@ void cMain::update(){
                         mDownload.download(domain+pageDetail+chapID, tempFile);
                         pugi::xml_document doc;
                         doc.load_file(tempFile.c_str());
-                        FILE* fout = fopen(tempFile.c_str(), "w+");
+#ifdef _WIN32
+                            FILE* fout = NULL;
+                            if(fopen_s(&fout, tempFile.c_str(), "w+")) throw mException("[btReader.cpp] Error: Failed to open tempFile. (Do you have access rights to this folder?)");
+#endif
+#ifdef __unix__
+                            if(!(FILE* fout = fopen(tempFile.c_str(), "w+"))) throw mExceptionN("[btReader.cpp] Error: Failed to open tempFile. (Do you have access rights to this folder?)");
+#endif
                         fprintf(fout, "%s", doc.child("api").child("parse").child("wikitext").text().get());
                         fclose(fout);
                         mParser.cleanChapter(tempFile, chapLoc);

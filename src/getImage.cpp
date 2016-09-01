@@ -1,6 +1,18 @@
 #include "btReader.hpp"
 
 #ifdef _WIN32
+
+inline bool fileExists (const std::string& name) {
+    FILE* test = NULL;
+    if(fopen_s(&test, name.c_str(), "r")){
+        fclose(test);
+        return true;
+    }
+    else{
+        return false;
+    }   
+}
+
 inline bool dirExists(const std::string& dirName) {
     DWORD ftyp = GetFileAttributesA(dirName.c_str());
     if (ftyp == INVALID_FILE_ATTRIBUTES) return false;
@@ -30,17 +42,18 @@ inline void createFolder(const std::string& dirName){
     command = "mkdir "+dirName;
     system(command.c_str());
 }
-#endif
 
 inline bool fileExists (const std::string& name) {
-    if(FILE *file = fopen(name.c_str(), "r")){
-        fclose(file);
+    if(FILE* test = fopen(name.c_str(), "r")){
+        fclose(test);
         return true;
     }
     else{
         return false;
-    }   
+    } 
 }
+#endif
+
 
 cGetImage::cGetImage(){
     std::string logFile = "logs/";
@@ -69,7 +82,7 @@ std::string sanitize(const std::string filename){
         if(filename[i] == ' '){
             newString += "%20";
         }
-        else if(filename[i] == '[' or filename[i] == ']'){
+        else if(filename[i] == '[' || filename[i] == ']'){
             /* Ignoring at the moment anyway */
         }
         else{
@@ -117,9 +130,9 @@ std::string cGetImage::getImage(const std::string fileName){
                     std::string temp;
                     tempFile = imageSauce;
                     /* Remove fluff */
-                    for(int i = 0; i < imageSauce.size(); i++){
+                    for(unsigned int i = 0; i < imageSauce.size(); i++){
                         if(imageSauce[i] == '/'){
-                            if(temp == "image" or temp == "images"){
+                            if(temp == "image" || temp == "images"){
                                 tempFile.erase(0, temp.size()+1);
                                 temp.clear();
                                 break;
@@ -136,7 +149,7 @@ std::string cGetImage::getImage(const std::string fileName){
                     /* Grab subfolders, check their existence and create them if necessary */
                     temp.clear();
                     tempFile = std::string("data/images/") + tempFile;
-                    for(int i = 0; i < tempFile.size(); i++){
+                    for(unsigned int i = 0; i < tempFile.size(); i++){
                         if(tempFile[i] == '/'){
                             if(!dirExists(temp)){
                                 createFolder(temp);

@@ -13,7 +13,8 @@ enum splitter_t{
 };
 
 inline bool fileExists (const std::string& name) {
-    if(FILE *file = fopen(name.c_str(), "r")){
+    FILE* file = NULL;
+    if(!fopen_s(&file, name.c_str(), "r")){
         fclose(file);
         return true;
     }
@@ -35,7 +36,7 @@ cWikiParser::cWikiParser(__logger::cLogger* mLog){
 
 std::string cWikiParser::titleClean(const std::string title){
     std::string cleaned;
-    for(int i = 0; i<title.size(); i++){
+    for(unsigned int i = 0; i<title.size(); i++){
         if(title[i] == ' '){
             cleaned += '_';
         }else{
@@ -57,8 +58,10 @@ std::string cWikiParser::generateRandomName(int length){
 
 void cWikiParser::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile, const std::string mTitle){
     char toHex[17] = "0123456789abcdef";
-    FILE*fin = fopen(inFile.c_str(), "r");
-    FILE*fexist = fopen(existFile.c_str(), "r");
+    FILE* fin = NULL;
+    FILE* fexist= NULL;
+    fopen_s(&fin, inFile.c_str(), "r");
+    fopen_s(&fexist, existFile.c_str(), "r");
     char buffer[4096];
 
     pugi::xml_document doc;
@@ -116,7 +119,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
             case SYNOPSIS:
                 {
                     std::string synopsisText;
-                    if(buffer[0] == '=' and buffer[1] == '='){
+                    if(buffer[0] == '=' && buffer[1] == '='){
                         tempStr = buffer;
                         tempStr.erase(0, 2);
                         tempStr.erase(tempStr.end()-3, tempStr.end());
@@ -142,7 +145,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
             case VOLUMES:
                 {
                     if(!found){
-                        if(buffer[0] == '=' and buffer[1] == '=' and buffer[2] != '='){
+                        if(buffer[0] == '=' && buffer[1] == '=' && buffer[2] != '='){
                             std::string word;
                             tempStr = buffer;
                             if(tempStr.find(mTitle) != std::string::npos){
@@ -169,12 +172,12 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                     }
                     else{
                         std::string fileName;
-                        if((buffer[0] == '[' and buffer[1] == '[') or (buffer[0] == '|' and buffer[1] == '[' and buffer[2] == '[')){
+                        if((buffer[0] == '[' && buffer[1] == '[') || (buffer[0] == '|' && buffer[1] == '[' && buffer[2] == '[')){
                             /* Get the link, check if it is an image. If it is,
                              * hold it just in case its useful
                              * ************************************************/
                             for(int i = 2, j = strlen(buffer); i < j; i++){
-                                if(buffer[i] == '|' or ']'){
+                                if(buffer[i] == '|' || ']'){
                                     break;
                                 }
                                 else{
@@ -183,14 +186,14 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                             }
                             fgets(buffer, 4096, fin);
                         }
-                        if(buffer[0] == '=' and buffer[1] == '='){
+                        if(buffer[0] == '=' && buffer[1] == '='){
                             if(buffer[2] == '='){
                                 pugi::xml_node newVol = mainNode.append_child("volume");
                                 tempStr = buffer;
                                 tempStr.erase(0, 3);
                                 std::string volumeTitle;
                                 for(int i = 0, j = tempStr.size(); i < j; i++){
-                                    if(tempStr[i] == '(' or tempStr[i] == '='){
+                                    if(tempStr[i] == '(' || tempStr[i] == '='){
                                         pugi::xml_attribute tAtt = newVol.append_attribute("title");
                                         tAtt.set_value(volumeTitle.c_str());
                                         volumeTitle.clear();
@@ -207,7 +210,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                     }
                                     std::string title;
                                     std::string chapName;
-                                    if(buffer[0] == ':' or buffer[0] == '*'){
+                                    if(buffer[0] == ':' || buffer[0] == '*'){
                                         splitter_t grabbing = locate;
                                         for(int i = 1, j = strlen(buffer); i < j; i++){
                                             switch(grabbing){
@@ -300,13 +303,13 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                             tempAtt.set_value("0");
                                         }
                                     }
-                                    else if(buffer[0] == '[' or buffer[0] == '|'){
+                                    else if(buffer[0] == '[' || buffer[0] == '|'){
                                         /* There is a link without indentataion
                                          * I'm just gonna assume its another
                                          * image
                                          */
                                         int i = 1;
-                                        if(buffer[0] == '|' and buffer[1] == '[') i ++;
+                                        if(buffer[0] == '|' && buffer[1] == '[') i ++;
                                         fileName.clear();
                                         bool shouldGrab = 0;
                                         if(!newVol.attribute("image")){
@@ -334,14 +337,14 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                              */
                                             std::string tempString(fileName.begin(), fileName.begin()+4);
                                             std::string tempString2(fileName.begin(), fileName.begin()+5);
-                                            if(fileName.find("File") != std::string::npos or fileName.find("Image") != std::string::npos or fileName.find("image") != std::string::npos or fileName.find("file") != std::string::npos){ //'cus I'm lazy
+                                            if(fileName.find("File") != std::string::npos || fileName.find("Image") != std::string::npos || fileName.find("image") != std::string::npos || fileName.find("file") != std::string::npos){ //'cus I'm lazy
                                                 this->mLog->log(std::string("[wikiParser.cpp] Info: Calling cGetImage with ") + fileName);
                                                 cGetImage newImageGrab(this->mLog);
                                                 std::string savedTo = newImageGrab.getImage(fileName);
                                                 pugi::xml_attribute tempAtt = newVol.append_attribute("image");
                                                 tempAtt.set_value(savedTo.c_str());
                                             }
-                                            else if(fileName.find("Category") != std::string::npos or fileName.find("category") != std::string::npos){
+                                            else if(fileName.find("Category") != std::string::npos || fileName.find("category") != std::string::npos){
                                                 this->mLog->log("[wikiParser.cpp] Info: Category found in filename! Skipping!");
                                                 fgets(buffer, 4096, fin);
                                             }
@@ -352,7 +355,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
                                             }
                                         }
                                     }
-                                    else if(strlen(buffer) == 1 or buffer[0] == '<' or buffer[0] == '\'' or buffer[0] == '&' or buffer[0] == '{' or buffer[0] == '\n'){
+                                    else if(strlen(buffer) == 1 || buffer[0] == '<' || buffer[0] == '\'' || buffer[0] == '&' || buffer[0] == '{' || buffer[0] == '\n'){
                                         /* Ignore this, because it's just a
                                          * whitespace or HTML tag or a comment
                                          * etc...
@@ -397,7 +400,7 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
             break;
         }
         else{
-            if(buffer[0] == '[' and buffer[1] == '['){
+            if(buffer[0] == '[' && buffer[1] == '['){
                 std::string fileName;
                 for(int i = 2;; i++){
                     if(buffer[i] == '|'){

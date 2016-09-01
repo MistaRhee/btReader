@@ -16,7 +16,7 @@
 #include <vector>
 
 #ifdef _WIN32
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #endif
 
 #ifdef __unix__

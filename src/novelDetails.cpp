@@ -75,7 +75,7 @@ namespace beatOff{
             bool hack = 0;
             pugi::xml_parse_result res = doc.load_file(sauce.c_str()); //Ignoring return value (I'm a NAUGHTY BOY elegiggle)
             if(!res){
-                if(res.status == pugi::status_no_document_element or res.status == pugi::status_file_not_found){ //Empty document (i.e. the thing isn't downloaded yet)
+                if(res.status == pugi::status_no_document_element || res.status == pugi::status_file_not_found){ //Empty document (i.e. the thing isn't downloaded yet)
                     this->loaded = 1;
                     throw(mException(std::string("[novelDetails.cpp] Warning: Document is empty! (perhaps the details have not been downlaoded yet?)")));
                 }
@@ -226,7 +226,7 @@ namespace beatOff{
             unsigned int last = this->selection; //In case there isn't anything to go to
             while(ds){ //Can afford shitty algo since tiny n
                 this->selection += diff;
-                if(this->selection < 0 or this->selection >= this->contents.size()){ //No other valid "selecatble" option
+                if(this->selection < 0 || this->selection >= this->contents.size()){ //No other valid "selecatble" option
                     this->selection = last;
                     break;
                 }
@@ -235,7 +235,7 @@ namespace beatOff{
                 }
                 //else do nothing
             }
-            if(last != this->selection and this->selection > 0){
+            if(last != this->selection && this->selection > 0){
                 ((cButton*)this->contents[this->selection].first)->select();
                 ((cButton*)this->contents[last].first)->deselect();
             }
