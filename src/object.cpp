@@ -18,7 +18,7 @@ namespace beatOff{
         this->w = -1;
     }
 
-    cObject::cObject(int inX, int inY, int inW, int inH){
+    cObject::cObject(int inX, int inY, int inW, int inH) : cObject(){
         this->setPos(inX, inY);
         this->setSize(inW, inH);
     }

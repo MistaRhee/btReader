@@ -1,12 +1,5 @@
 #include "btReader.hpp"
 
-inline bool fileExists(const std::string loc){
-    FILE* ftest = NULL;
-    ftest = fopen(loc.c_str(), "r");
-    if(ftest) return 1;
-    else return 0;
-}
-
 #ifdef _WIN32
 #include <windows.h>
 
@@ -31,10 +24,28 @@ inline void disp(std::string loc){ //Displays webpage in user's default browser
             NULL, NULL, SW_SHOWNORMAL);
 }
 
+inline bool fileExists(const std::string loc) {
+    FILE* test = NULL;
+    if (!fopen_s(&test, loc.c_str(), "r")) {
+        return true;
+    }
+    return false;
+}
+
 #endif
 
 #if __unix__
 #include <unistd.h>
+
+inline bool fileExists (const std::string& name){
+    if(FILE *file = fopen(name.c_str(), "r")){
+        fclose(file);
+        return true;
+    }
+    else{
+        return false;
+    }
+}
 
 inline bool dirExists(const std::string& dirName){
     DIR* myDir = NULL;
@@ -76,8 +87,15 @@ cWebOut::cWebOut(){
     /* Create the temporary file, ready for writing */
     std::string mLoc;
     mLoc = ctf();
+#ifdef _WIN32
+    FILE* ft = NULL;
+    fopen_s(&ft, mLoc.c_str(), "w+"); //Touching the file
+    fclose(ft);
+#endif
+#ifdef __unix__
     FILE* ft = fopen(mLoc.c_str(), "w+");
     fclose(ft);
+#endif
     this->tempLoc = mLoc;
     this->isReady = 0;
 
@@ -89,15 +107,8 @@ cWebOut::cWebOut(){
     logFile.clear();
 }
 
-cWebOut::cWebOut(__logger::cLogger* mLog){
-    /* Create the temporary file, ready for writing */
+cWebOut::cWebOut(__logger::cLogger* mLog) : cWebOut(){
     this->mLog = mLog;
-    std::string mLoc;
-    mLoc = ctf();
-    FILE* ft = fopen(mLoc.c_str(), "w+");
-    fclose(ft);
-    this->tempLoc = mLoc;
-    this->isReady = 0;
 }
 
 cWebOut::~cWebOut(){
@@ -120,7 +131,6 @@ void cWebOut::createPage(std::string sauce, std::string title){
         /* Start parsing through the file and create a HTML out of it
          * NOTE: This HTML will be a joke of a html page, just H1, H2 etc. + p and text. Don't get
          * hopes up! */
-        cCrypt awwCrip;
         pugi::xml_document main;
         pugi::xml_node temp = main.append_child("html");
         temp.append_child("head");
@@ -134,12 +144,18 @@ void cWebOut::createPage(std::string sauce, std::string title){
 
         /* Read from file into a string, then decrypt it */
         std::string mFile;
-        FILE* fin = fopen(sauce.c_str(), "r");
+        FILE* fin = NULL;
+
+#ifdef __unix__
+        fin = fopen(sauce.c_str(), "r");
+#endif
+#ifdef _WIN32
+        fopen_s(&fin, sauce.c_str(), "r");
+#endif
         char buffer[1000000];
         while(fgets(buffer, 1000000, fin)){
             mFile += buffer;
         }
-        mFile = awwCrip.decrypts(mFile.c_str(), NULL);
         fclose(fin);
 
         std::string tmpStr;
@@ -156,7 +172,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
             /* Not resetting flags at the moment because of potential multi-line bold/italics */
             if(tmpStr[0] == '='){ //Heading modifier
                 /* Count the number of '=' there are */
-                int num = 0;
+                unsigned int num = 0;
                 for(num = 0; num < tmpStr.size(); num++){
                     if(tmpStr[num] != '='){
                         break;
@@ -170,7 +186,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
                     tempS.clear();
                 }
                 else{
-                    for(int k = num; k < tmpStr.size()-num; k++){
+                    for(unsigned int k = num; k < tmpStr.size()-num; k++){
                         tempS += tmpStr[k];
                     }
                     pugi::xml_node tempNode = body.append_child((std::string("h")+std::to_string(num)).c_str());
@@ -182,7 +198,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
             else{
                 /* Create a paragraph node */
                 pugi::xml_node currNode = body.append_child("p");
-                for(int i = 0; i < tmpStr.size(); i++){
+                for(unsigned int i = 0; i < tmpStr.size(); i++){
                     /* Continue adding text. */
                     if(tmpStr[i] == '\''){
                         /* Check if it's a triple*/
@@ -244,7 +260,7 @@ void cWebOut::createPage(std::string sauce, std::string title){
                                 tText.set_value(tempS.c_str());
                             }
                             tempS.clear();
-                            for(int k = i+2; k < tmpStr.size()-1; k++){
+                            for(unsigned int k = i+2; k < tmpStr.size()-1; k++){
                                 if(tmpStr[k] == ']'){
                                     /* Save contents of image, break out */
                                     pugi::xml_node imageNode = currNode.append_child("img");

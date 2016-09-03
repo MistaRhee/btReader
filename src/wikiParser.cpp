@@ -57,7 +57,6 @@ std::string cWikiParser::generateRandomName(int length){
 }
 
 void cWikiParser::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile, const std::string mTitle){
-    char toHex[17] = "0123456789abcdef";
     FILE* fin = NULL;
     FILE* fexist= NULL;
     fopen_s(&fin, inFile.c_str(), "r");
@@ -268,13 +267,9 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 
                                         cCrypt crippy;
                                         std::string loc = title+chapName;
-                                        char* hash = crippy.crypth(loc.c_str());
+                                        std::string hash = crippy.crypth(loc.c_str());
                                         loc.clear();
-                                        loc = chapLoc;
-                                        for(int i = 0, j = TITLE_LENGTH; i < j; i++){ //Hash length is always 64
-                                            loc += toHex[(hash[i]>>4)&0xF];
-                                            loc += toHex[hash[i]&0xF];
-                                        }
+                                        loc = chapLoc+hash;
 
                                         title.clear();
 
@@ -392,7 +387,6 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string existFi
 void cWikiParser::cleanChapter(const std::string in, const std::string out){
     FILE*fin = fopen(in.c_str(), "r");
     char buffer[1000000];
-    cCrypt imCrippy;
     std::string text;
     while(true){
         fgets(buffer, 1000000, fin);
@@ -422,6 +416,6 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
     }
     fclose(fin);
     FILE* fout = fopen(out.c_str(), "w+");
-    fprintf(fout, "%s \n", imCrippy.crypts(text.c_str(), NULL));
+    fprintf(fout, "%s \n", text.c_str(), NULL);
     fclose(fout);
 }

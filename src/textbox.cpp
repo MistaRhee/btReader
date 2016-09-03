@@ -1,5 +1,6 @@
 #include "objects.hpp"
 
+#ifdef __unix__
 inline bool fileExists (const std::string& name){
     if(FILE *file = fopen(name.c_str(), "r")){
         fclose(file);
@@ -9,6 +10,20 @@ inline bool fileExists (const std::string& name){
         return false;
     }
 }
+#endif
+
+#ifdef _WIN32
+inline bool fileExists (const std::string& name){
+    FILE* file = NULL;
+    if(!fopen_s(&file, name.c_str(), "r")){
+        fclose(file);
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+#endif
 
 inline int mDiv(int x, int y){
     int returnVal = x/y;

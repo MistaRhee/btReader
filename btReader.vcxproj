@@ -63,13 +63,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\vs_libraries\libcurl\include;D:\Wondows\MistaRhee\Documents\programs\btReader\include;D:\vs_libraries\SDL2_ttf-2.0.14\include;D:\vs_libraries\SDL2_image-2.0.1\include;D:\vs_libraries\SDL2-2.0.4\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\vs_libraries\libcurl\lib\static-release-x86;D:\vs_libraries\SDL2_image-2.0.1\lib\x86;D:\vs_libraries\SDL2_ttf-2.0.14\lib\x86;D:\vs_libraries\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\vs_libraries\openssl\include;D:\vs_libraries\libcurl\include;D:\Wondows\MistaRhee\Documents\programs\btReader\include;D:\vs_libraries\SDL2_ttf-2.0.14\include;D:\vs_libraries\SDL2_image-2.0.1\include;D:\vs_libraries\SDL2-2.0.4\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\vs_libraries\openssl\lib;D:\vs_libraries\libcurl\lib\dll-release-x86;D:\vs_libraries\SDL2_image-2.0.1\lib\x86;D:\vs_libraries\SDL2_ttf-2.0.14\lib\x86;D:\vs_libraries\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\vs_libraries\libcurl\include;D:\Wondows\MistaRhee\Documents\programs\btReader\include;D:\vs_libraries\SDL2_ttf-2.0.14\include;D:\vs_libraries\SDL2_image-2.0.1\include;D:\vs_libraries\SDL2-2.0.4\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\vs_libraries\libcurl\lib\static-release-x86;D:\vs_libraries\SDL2_image-2.0.1\lib\x86;D:\vs_libraries\SDL2_ttf-2.0.14\lib\x86;D:\vs_libraries\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\vs_libraries\openssl\include;D:\vs_libraries\libcurl\include;D:\Wondows\MistaRhee\Documents\programs\btReader\include;D:\vs_libraries\SDL2_ttf-2.0.14\include;D:\vs_libraries\SDL2_image-2.0.1\include;D:\vs_libraries\SDL2-2.0.4\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\vs_libraries\openssl\lib;D:\vs_libraries\libcurl\lib\dll-release-x86;D:\vs_libraries\SDL2_image-2.0.1\lib\x86;D:\vs_libraries\SDL2_ttf-2.0.14\lib\x86;D:\vs_libraries\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -83,7 +83,7 @@
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SDL2main.lib;SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2main.lib;SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;libcurl.lib;libcrypto.lib;libssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -99,7 +99,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL2main.lib;SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2main.lib;SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;libcurl.lib;libcrypto.lib;libssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -109,6 +109,7 @@
     <ClCompile Include="src\database.cpp" />
     <ClCompile Include="src\events.cpp" />
     <ClCompile Include="src\getImage.cpp" />
+    <ClCompile Include="src\hash.cpp" />
     <ClCompile Include="src\httpd.cpp" />
     <ClCompile Include="src\image.cpp" />
     <ClCompile Include="src\keyMap.cpp" />
@@ -124,12 +125,12 @@
     <ClCompile Include="src\wikiParser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="hash.hpp" />
     <ClInclude Include="include\btReader.hpp" />
     <ClInclude Include="include\contents.hpp" />
     <ClInclude Include="include\httpd.hpp" />
     <ClInclude Include="include\keyMap.hpp" />
     <ClInclude Include="include\logger.hpp" />
-    <ClInclude Include="include\mCrypto.hpp" />
     <ClInclude Include="include\mException.h" />
     <ClInclude Include="include\objects.hpp" />
     <ClInclude Include="include\pugiconfig.hpp" />

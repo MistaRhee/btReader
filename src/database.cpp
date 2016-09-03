@@ -1,5 +1,6 @@
 #include "btReader.hpp"
 
+#ifdef __unix__
 inline bool fileExists (const std::string& name){
     if(FILE *file = fopen(name.c_str(), "r")){
         fclose(file);
@@ -7,8 +8,22 @@ inline bool fileExists (const std::string& name){
     }
     else{
         return false;
-    }   
+    }
 }
+#endif
+
+#ifdef _WIN32
+inline bool fileExists (const std::string& name){
+    FILE* file = NULL;
+    if(!fopen_s(&file, name.c_str(), "r")){
+        fclose(file);
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+#endif
 
 std::string cMain::convTitle(std::string incoming){
     std::string output;
@@ -38,7 +53,6 @@ void cMain::createDatabase(){
         this->mLog->log("[database.cpp] Info: Creating database!");
         cHttpd stream1;
         cCrypt prettyCrippy;
-        char toHex[17] = "0123456789abcdef";
         std::string mainPageFileName = tempLoc+generateRandomName(50);
         while(fileExists(mainPageFileName)) mainPageFileName = tempLoc+generateRandomName(50);
         stream1.download(domain+novelList, mainPageFileName);
@@ -49,12 +63,8 @@ void cMain::createDatabase(){
             pugi::xml_node category = doc.child("api").child("query").child("categorymembers");
             for(auto cmNode: category.children("cm")){
                 tempStr = cmNode.attribute("title").value();
-                char* hash = prettyCrippy.crypth(tempStr.c_str());
-                std::string loc = novelStore;
-                for(int i = 0, j = TITLE_LENGTH; i < j; i++){ //Hash length is always 64
-                    loc += toHex[(hash[i]>>4)&0xF];
-                    loc += toHex[hash[i]&0xF];
-                }
+                std::string hash = prettyCrippy.crypth(tempStr.c_str());
+                std::string loc = novelStore + hash;
                 novelDB[tempStr] = std::make_pair(loc, "");
             }
         }
@@ -252,8 +262,16 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
             pugi::xml_node linksNode = parseNode.child("links");
 
             revID = parseNode.attribute("revid").value();
-            FILE*fout = fopen(tempFile.c_str(), "w+");
-            FILE*fexist = fopen((tempFile+"2").c_str(), "w+");
+            FILE* fout = NULL;
+            FILE* fexist = NULL;
+#ifdef _WIN32
+            fopen_s(&fout, tempFile.c_str(), "w+");
+            fopen_s(&fexist, (tempFile + "2").c_str(), "w+");
+#endif
+#ifdef __unix__
+            fout = fopen(tempFile.c_str(), "w+");
+            fexist = fopen((tempFile+"2").c_str(), "w+");
+#endif
             fprintf(fout, "%s", parseNode.child("wikitext").text().as_string());
             fclose(fout);
 
@@ -268,14 +286,8 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
 
             this->mLog->log("[database.cpp] Info: Extraction complete!");
             cCrypt prettyCrippy;
-            char* hash = prettyCrippy.crypth(title.c_str());
-            char toHex[17] = "0123456789abcdef";
-            std::string tit;
-            for(int i = 0, j = TITLE_LENGTH; i < j; i++){ //Hash length is always 64
-                tit += toHex[(hash[i]>>4)&0xF];
-                tit += toHex[hash[i]&0xF];
-            }
-            novelLoc = novelStore + tit;
+            std::string hash = prettyCrippy.crypth(title.c_str());
+            novelLoc = novelStore + hash;
             this->mLog->log("[database.cpp] Info: Cleaning novel!\n");
             mParser.cleanNovel(tempFile, tempFile+"2", novelLoc, title);
             this->mLog->log(std::string("[database.cpp] Info: Cleaned page stored in ")+ novelLoc);
