@@ -5,10 +5,5 @@ noteToSelf
 notesToSelf
 reader
 data/
-.codelite/
-btreader.project
-btreader.workspace
 stats.html
-.cproject
-.project
 logs/
