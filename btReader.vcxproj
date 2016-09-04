@@ -125,9 +125,9 @@
     <ClCompile Include="src\wikiParser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="hash.hpp" />
     <ClInclude Include="include\btReader.hpp" />
     <ClInclude Include="include\contents.hpp" />
+    <ClInclude Include="include\hash.hpp" />
     <ClInclude Include="include\httpd.hpp" />
     <ClInclude Include="include\keyMap.hpp" />
     <ClInclude Include="include\logger.hpp" />

@@ -1,11 +1,11 @@
 <!-- Notes on this XML: The original folder must be included first, before any of it's children folders (i.e. data/ before data/novels) for non-essential folders. Files are automatically considered as essential.-->
-
+<!-- Uses linux folder formats -->
 <content>
     <folder essential="false" sauce="data" />
     <folder essential="false" sauce="data/novels/" />
     <folder essential="false" sauce="data/images/" />
     <folder essential="false" sauce="data/temp/" />
-    <folder essential="false" sauce="data/chaps" />
+    <folder essential="false" sauce="data/chaps/" />
     <folder essential="true" sauce="system/" />
     <folder essential="true" sauce="system/fonts/" />
     <folder essential="true" sauce="system/images/" />

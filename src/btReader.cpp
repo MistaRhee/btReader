@@ -20,7 +20,12 @@ inline bool dirExists(const std::string& dirName) {
 
 inline void createFolder(const std::string& dirName){
     std::string command;
-    command = "mkdir "+dirName;
+    std::string convertedName;
+    for (unsigned int i = 0; i < dirName.length(); i++) {
+        if (dirName[i] == '/') convertedName += '\\';
+        else convertedName += dirName[i];
+    }
+    command = "mkdir "+ convertedName;
     system(command.c_str());
 }
 

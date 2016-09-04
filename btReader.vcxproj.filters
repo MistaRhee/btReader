@@ -107,7 +107,7 @@
     <ClInclude Include="include\types.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hash.hpp">
+    <ClInclude Include="include\hash.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
