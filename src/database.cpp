@@ -46,6 +46,10 @@ std::string cMain::generateRandomName(int length){
     return rVal;       
 }
 
+double cMain::getCompletion(){
+    return completion;
+}
+
 void cMain::createDatabase(){
     //This is the lengthy process of getting the novels when the program first
     //starts up. Just so the user doesn't have to do it themselves
@@ -169,6 +173,9 @@ void cMain::updateDatabase(){
         pugi::xml_parse_result res = doc.load_file(tempFile.c_str());
         if(res){
             pugi::xml_node category = doc.child("api").child("query").child("categorymembers");
+            this->completion = 0;
+            int current = 0;
+            int total = std::distance(category.children("cm").begin(), category.children("cm").end());
             for(auto cm: category.children("cm")){
                 novelName = cm.attribute("title").value();
                 updateLog.log(std::string("[databse.cpp] Info: Checking details of ")+novelName);
@@ -186,6 +193,8 @@ void cMain::updateDatabase(){
                     else tempNovelDB[novelName] = getNovelDetails(novelName);//New novel, just get the details
                 }
                 else tempNovelDB[novelName] = getNovelDetails(novelName);//New novel, just get the details
+                current ++;
+                this->completion = current/total;
             }
         }
         else{

@@ -1,4 +1,4 @@
-CC=g++
+CC=clang++
 CFLAGS=-c -O3 --std=c++14 -g -Wall -iquote include/ -Werror
 LDFLAGS=-Llib -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lcurl -pthread -lcrypto
 SDIR=src/
@@ -29,3 +29,9 @@ hardClean:
 	rm -f src/*.o
 	rm -f $(OBJECTS)
 	rm -f $(EXECUTABLE)
+
+testClean:
+	rm -rf data/chaps/
+	rm -rf data/novels/
+	rm -rf data/novels.db
+	rm -rf data/temp/

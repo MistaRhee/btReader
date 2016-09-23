@@ -130,6 +130,8 @@ class cMain{
         void createDatabase();
         void updateDatabase();
         void replaceDatabase();
+        double getCompletion();
+        double completion; //Just so people can see how much has been completed in the update database
         std::pair<std::string, std::string> getNovelDetails(std::string); //Returns name and location
 
         /* Logging needs */
