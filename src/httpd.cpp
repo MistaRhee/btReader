@@ -17,7 +17,7 @@ cHttpd::~cHttpd(){
 
 std::string cHttpd::fixURL(const std::string incoming){
     std::string rVal;
-    for(int i = 0; i < incoming.size(); i++){
+    for(unsigned int i = 0; i < incoming.size(); i++){
         if(incoming[i] == ' '){
             rVal += "%20";
         }

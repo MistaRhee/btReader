@@ -36,6 +36,7 @@ inline bool fileExists(const std::string loc) {
 
 #if __unix__
 #include <unistd.h>
+#include <dirent.h>
 
 inline bool fileExists (const std::string& name){
     if(FILE *file = fopen(name.c_str(), "r")){
@@ -61,10 +62,10 @@ inline bool dirExists(const std::string& dirName){
 inline std::string ctf(){
     if(!dirExists("/tmp/")) throw(mException("Error! User's /tmp doesn't exist!"));
     char tmpNam[L_tmpnam]; //Shouldn't need more than 50 random characters right?
-    tmpnam(tmpNam);
+    char* pointer = tmpnam(tmpNam);
     std::string mCurrLoc = tmpNam; 
     while(fileExists(mCurrLoc)){
-        tmpnam(tmpNam);
+        pointer = tmpnam(tmpNam);
         mCurrLoc = tmpNam;
     }
     return mCurrLoc;

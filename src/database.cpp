@@ -289,7 +289,7 @@ std::pair<std::string, std::string> cMain::getNovelDetails(std::string title){ /
             std::string hash = prettyCrippy.crypth(title.c_str());
             novelLoc = novelStore + hash;
             this->mLog->log("[database.cpp] Info: Cleaning novel!\n");
-            mParser.cleanNovel(tempFile, tempFile+"2", novelLoc, title);
+            mParser.cleanNovel(tempFile, novelLoc, title);
             this->mLog->log(std::string("[database.cpp] Info: Cleaned page stored in ")+ novelLoc);
             this->mLog->log("[database.cpp] Info: Deleting temp files");
             remove(tempFile.c_str());

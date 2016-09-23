@@ -17,10 +17,13 @@
 
 #ifdef _WIN32
 #include <SDL.h>
+#include <windows.h>
 #endif
 
 #ifdef __unix__
 #include <SDL2/SDL.h>
+#include <unistd.h>
+#include <dirent.h>
 #endif
 
 #include "contents.hpp" //For content objects
@@ -73,7 +76,7 @@ class cWikiParser{
         cWikiParser();
         cWikiParser(__logger::cLogger*);
         ~cWikiParser(){}
-        void cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile, const std::string title);
+        void cleanNovel(const std::string inFile, const std::string outFile, const std::string title);
         void cleanChapter(const std::string inFile, const std::string outFile); 
         std::string generateRandomName(int len);
     private:

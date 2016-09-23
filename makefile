@@ -1,12 +1,6 @@
-CC=clang++
-CFLAGS=-c -O3 --std=c++14 -g -Wall -iquote include/ 
-ifeq ($(OS),Windows_NT)
-	LDFLAGS=-Llib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lcurl -lSDL2_ttf -pthread -lmistarheeCrypto
-
-else
-	LDFLAGS=-Llib -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lcurl -pthread -lmistarheeCrypto
-
-endif
+CC=g++
+CFLAGS=-c -O3 --std=c++14 -g -Wall -iquote include/ -Werror
+LDFLAGS=-Llib -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lcurl -pthread -lcrypto
 SDIR=src/
 SOURCES=$(wildcard ./$(SDIR)*.cpp)
 OBJECTS=$(SOURCES:.cpp=.o)
