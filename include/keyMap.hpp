@@ -1,7 +1,14 @@
 #ifndef KEYMAP_HPP
 #define KEYMAP_HPP
 
+#ifdef _WIN32
 #include <SDL.h>
+#endif
+
+#ifdef __unix__
+#include <SDL2/SDL.h>
+#endif
+
 #include <map>
 #include <string>
 

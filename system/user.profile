@@ -10,7 +10,10 @@
 
 <config>
 
-    <pwd>~/.local/share</pwd>
+    <window>
+        <height value="" />
+        <width value="" />
+    </window>
 
     <keyBindings>
 
@@ -70,7 +73,7 @@ There is only support for one content ATM
 To leave the image at its original size (and only set the size), set height and width at -1
 
 
-TODO: Make menu config non-shitty (It should be trivial but I ceebs impelementing it
+TODO: Make menu config non-shitty (It should be trivial but I ceebs impelementing it)
 TODO: To make menu less shitty, just have an exra tag or something like target="" which tells the program to point this to somewhere... (I guess -_-)
  -->
  

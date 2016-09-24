@@ -56,14 +56,6 @@ namespace beatOff{
 
     cNovelList::~cNovelList(){}
 
-    void cNovelList::setRect(SDL_Rect inRect){
-        this->sRect = inRect; //To set appropriate height and width.
-        this->sRect.x = 0;
-        this->sRect.y = 0;
-        setPos(inRect.x, inRect.y);
-        setSize(inRect.w, inRect.h);
-    }
-
     void cNovelList::clear(){
         this->mNovels.clear();
         this->novelNames.clear();

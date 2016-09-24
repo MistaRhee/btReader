@@ -109,7 +109,7 @@ namespace __logger{
             else fprintf(stderr, "Previous log was successfully renamed to <prev>.old \n");
         }
         else{
-            for(int i = 0; i < fileLoc.size(); i++){
+            for(unsigned int i = 0; i < fileLoc.size(); i++){
                 if(fileLoc[i] == '/'){
                     /* There is folder */
                     if(!dirExists(tempStr)){

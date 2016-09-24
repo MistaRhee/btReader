@@ -12,6 +12,7 @@ enum splitter_t{
     leave   
 };
 
+#ifdef _WIN32
 inline bool fileExists (const std::string& name) {
     FILE* file = NULL;
     if(!fopen_s(&file, name.c_str(), "r")){
@@ -22,6 +23,20 @@ inline bool fileExists (const std::string& name) {
         return false;
     }   
 }
+#endif
+#ifdef __unix__
+
+inline bool fileExists (const std::string& name){
+    if(FILE *file = fopen(name.c_str(), "r")){
+        fclose(file);
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+#endif
 
 cWikiParser::cWikiParser(){
     std::string logLoc = "logs/";
@@ -56,11 +71,17 @@ std::string cWikiParser::generateRandomName(int length){
     return rVal;       
 }
 
-void cWikiParser::cleanNovel(const std::string inFile, const std::string existFile, const std::string outFile, const std::string mTitle){
+void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile, const std::string mTitle){
     FILE* fin = NULL;
     FILE* fexist= NULL;
+#ifdef _WIN32
     fopen_s(&fin, inFile.c_str(), "r");
-    fopen_s(&fexist, existFile.c_str(), "r");
+    fopen_s(&fexist, (inFile+"2").c_str(), "r");
+#endif
+#ifdef __unix__
+    fin = fopen(inFile.c_str(), "r");
+    fexist = fopen((inFile+"2").c_str(), "r");
+#endif
     char buffer[4096];
 
     pugi::xml_document doc;

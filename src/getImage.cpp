@@ -2,6 +2,8 @@
 
 #ifdef _WIN32
 
+#include <windows.h>
+
 inline bool fileExists (const std::string& name) {
     FILE* test = NULL;
     if(fopen_s(&test, name.c_str(), "r")){
@@ -27,6 +29,10 @@ inline void createFolder(const std::string& dirName){
 }
 #endif
 #ifdef __unix__
+
+#include <unistd.h>
+#include <dirent.h>
+
 inline bool dirExists(const std::string& dirName){
     DIR* myDir = NULL;
     myDir = opendir(dirName.c_str());

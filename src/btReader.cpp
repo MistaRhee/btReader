@@ -552,7 +552,8 @@ void cMain::update(){
                             if(fopen_s(&fout, tempFile.c_str(), "w+")) throw mException("[btReader.cpp] Error: Failed to open tempFile. (Do you have access rights to this folder?)");
 #endif
 #ifdef __unix__
-                            if(!(FILE* fout = fopen(tempFile.c_str(), "w+"))) throw mExceptionN("[btReader.cpp] Error: Failed to open tempFile. (Do you have access rights to this folder?)");
+                            FILE* fout = NULL;
+                            if(!(fout = fopen(tempFile.c_str(), "w+"))) throw mException("[btReader.cpp] Error: Failed to open tempFile. (Do you have access rights to this folder?)");
 #endif
                             fprintf(fout, "%s", doc.child("api").child("parse").child("wikitext").text().get());
                             fclose(fout);
@@ -575,7 +576,8 @@ void cMain::update(){
                             if(fopen_s(&fout, tempFile.c_str(), "w+")) throw mException("[btReader.cpp] Error: Failed to open tempFile. (Do you have access rights to this folder?)");
 #endif
 #ifdef __unix__
-                            if(!(FILE* fout = fopen(tempFile.c_str(), "w+"))) throw mExceptionN("[btReader.cpp] Error: Failed to open tempFile. (Do you have access rights to this folder?)");
+                            FILE*fout = NULL;
+                            if(!(fout = fopen(tempFile.c_str(), "w+"))) throw mException("[btReader.cpp] Error: Failed to open tempFile. (Do you have access rights to this folder?)");
 #endif
                         fprintf(fout, "%s", doc.child("api").child("parse").child("wikitext").text().get());
                         fclose(fout);
