@@ -24,15 +24,6 @@ namespace beatOff{
         this->textureGen = 0;
     }
 
-    void cNovelDetails::setRect(SDL_Rect inRect){
-        sRect = inRect; //The "viewport" of the texture
-        sRect.x = 0;
-        sRect.y = 0;
-        setPos(inRect.x, inRect.y); //The position to render to on screen
-        /* Like all things, height is variable, its just the width that stays the same */
-        setSize(inRect.h, inRect.w); 
-    }
-
     std::string cNovelDetails::getSelected(){ //Returns the chapter location
         if(this->selection > 0){
             return this->contents[selection].second.first;

@@ -38,6 +38,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             cContent(); //To set the state to working so it doesn't immediately break -_-
             virtual ~cContent(){}
 
+            void setRect(SDL_Rect); //Only care about the rectangle's xPos and yPos and width
             void setFont(std::string);
             void setFontSize(int);
             void setTextColour(SDL_Color);
@@ -57,6 +58,9 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             SDL_Color textColour;
             SDL_Color backColour;
             __logger::cLogger* mLog;
+
+            int fsX; //The starting point of the free scroll
+            int fsY; //The ending point of the free scroll
     };
     
     class cMenu : public cContent{ //For the main menu (headers etc.)
@@ -92,7 +96,6 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             cNovelList();
             cNovelList(__logger::cLogger*);
             ~cNovelList();
-            void setRect(SDL_Rect);
 
             /* "User" interactions */
             void addNovel(std::string in, int fontSize, std::string fontLoc = "system/fonts/default.ttf"); //Default fontloc is pretty fake
@@ -104,8 +107,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void handleUserScroll(int, int);
             void handleUserKeyboard(std::string, bool, unsigned int);
 
-            /* Rendering to stuffs */
-            void clear();
+            /* Rendering to stuffs */ void clear();
             void render(SDL_Renderer*);
 
         private:
@@ -129,8 +131,6 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             /* Flags flags fags... */
             bool textureGen;
             bool freeScroll;
-            int fsX; //The starting point of the free scroll
-            int fsY; //The ending point of the free scroll
     };
 
     class cNovelDetails : public cContent{
@@ -138,7 +138,6 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             cNovelDetails();
             cNovelDetails(__logger::cLogger*);
             ~cNovelDetails() {}
-            void setRect(SDL_Rect); //Only care about the rectangle's xPos and yPos and width
             void openNovel(std::string, SDL_Renderer*, std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >*); //Opens up a novel from XML and then renders it to a texture
             void render(SDL_Renderer*); //Draws a section of the texture
             std::string getSelected();
@@ -163,9 +162,26 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             bool highlighted; //Flag for if mouse has focused on the buttons
             bool textureGen;
             int selection;
-
-            int fsX, fsY; //Free scroll starting position
     };
+
+    class cReader : public cContent{
+        public:
+            cReader();
+            cReader(__logger::cLogger*);
+            ~cReader (){}
+            void loadChap(std::string, SDL_Renderer*, std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >*); //Opens up the current chapter. Currently doing it in a naive way of just loading everything into the texture, then scrolling down
+            void closeChap();
+            void handleUserMouse(int, int, int, bool);
+            void handleUserScroll(int, int);
+            void handleUserKeyboard(std::string, bool, unsigned int);
+
+            void render(SDL_Renderer*);
+
+        private:
+            bool loaded;
+            std::string chapLoc; //Store the location of the file just in case...
+            unsigned int heightReached; //Stores where the reader was last and dumping it back into the XML if required
+    }
     
 }
 #endif //CONTENTS_HPP
