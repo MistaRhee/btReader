@@ -406,6 +406,7 @@ void cWikiParser::cleanNovel(const std::string inFile, const std::string outFile
 }
 
 void cWikiParser::cleanChapter(const std::string in, const std::string out){
+    /*
     FILE*fin = fopen(in.c_str(), "r");
     char buffer[1000000];
     std::string text;
@@ -414,7 +415,7 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
         if(feof(fin)){
             break;
         }
-        else{
+        else{ //This assumes that images are on their separate lines.
             if(buffer[0] == '[' && buffer[1] == '['){
                 std::string fileName;
                 for(int i = 2;; i++){
@@ -436,7 +437,13 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
         }
     }
     fclose(fin);
-    FILE* fout = fopen(out.c_str(), "w+");
-    fprintf(fout, "%s \n", text.c_str(), NULL);
-    fclose(fout);
+    */
+    FILE* fin = fopen(in.c_str(), "r");
+    char buff[1000000];
+    pugi::xml_document doc;
+    pugi::xml_node root = doc.append_child("chapter");
+    pugi::xml_node 
+
+
+    doc.save_file(out.c_str());
 }

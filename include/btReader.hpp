@@ -33,7 +33,7 @@
 #include "hash.hpp" //For the hashing algorithm
 #include "mException.h" //For exception handling
 #include "objects.hpp" //For SDL Objects
-#include "pugixml.hpp" //Nifty XML parsing library - It's depricated, however due to the small sized XML, I'm sticking with this.
+#include "pugixml.hpp" //Nifty XML parsing library - It's deprecated, however due to the small sized XML, I'm sticking with this.
 #include "types.hpp" //To hold global types
 
 #define MAX_THREADS 5

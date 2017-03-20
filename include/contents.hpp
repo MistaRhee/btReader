@@ -178,9 +178,16 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             void render(SDL_Renderer*);
 
         private:
+
+            void move(int, int);
+
             bool loaded;
             std::string chapLoc; //Store the location of the file just in case...
             unsigned int heightReached; //Stores where the reader was last and dumping it back into the XML if required
+            SDL_Texture* mTex;
+            SDL_Rect sRect;
+            bool freeScroll;
+            bool loaded;
     }
     
 }

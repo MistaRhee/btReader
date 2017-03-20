@@ -33,6 +33,8 @@ inline int mDiv(int x, int y){
     return returnVal;
 }
 
+typedef unsigned char byte;
+
 namespace beatOff{
 
     cTextBox::cTextBox() : cObject(){
@@ -343,4 +345,19 @@ namespace beatOff{
         }
     }
 
+    void cWikiTextBox::render(SDL_Renderer* mRenderer){
+        if(!fileExists(fontLoc.c_str())){
+            printf("Font doesn't exist! \n");
+            exit(500); //IDK
+        }
+        else{
+            TTF_Font* mFont(fontLoc.c_str(), fontSize);
+            int currX = 0, currY = 0;
+            int currStyle = 0; 
+            currStyle = TTF_STYLE_NORMAL; // Just keep or-ing the new thing.
+            int lineskip =  TTF_FontLineSkip();
+            int letterWidth = -1; //Will be updated on the fly anyway
+
+        }
+    } 
 }
