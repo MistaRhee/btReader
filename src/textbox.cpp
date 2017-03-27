@@ -356,8 +356,51 @@ namespace beatOff{
             int currStyle = 0; 
             currStyle = TTF_STYLE_NORMAL; // Just keep or-ing the new thing.
             int lineskip =  TTF_FontLineSkip();
-            int letterWidth = -1; //Will be updated on the fly anyway
+            int letterW = -1; //Will be updated on the fly anyway
+            int letterH = -1; //Updated on the fly
+            
+            SDL_Colour mColour = {static_cast<Uint8>(textR), static_cast<Uint8>(textG), static_cast<Uint8>(textB), static_cast<Uint8>(textA)};
 
+            currX = this->x;
+            currY = this->y;
+            /* Currently not doing nice text wrapping because reasons */
+
+            for(unsigned int i = 0; i < this->text,size(); i++){
+                switch(text[i]){
+                    case '*':
+                        {
+                            if(text[i+1] == '*'){
+                                i++;
+                                currStyle ^= TTF_STYLE_BOLD;
+                            }
+                            else{
+                                currStyle ^= TTF_STYLE_ITALIC;
+                            }
+                            break;
+                        }
+
+                    case '_':
+                        {
+                            if(text[i+1] == '_'){
+                                i++;
+                                currStyle ^= TTF_STYLE_UNDERLINE;
+                                break;
+                            }
+                        }
+
+                    default:
+                        /* Render the glyph, move on */
+                        TTF_SetFontStyle(mFont, currStyle);
+                        TTF_SizeUTF8(mFont, text[i], &letterW, &letterH);
+                        TTF_RenderUTF8_Blended(mFont, text[i], mCOlour);
+                        currX += letterW;
+                        if(currX > this->x + this->w){ //Too wide now.
+                            currY += letterH; //Should be a constant thing anyway
+                            currX = x;
+                        }
+                        break;
+                }
+            }
         }
     } 
 }
