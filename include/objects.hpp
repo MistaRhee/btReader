@@ -81,14 +81,6 @@ namespace beatOff{
             std::string compactedText; //To prevent recalculations. It will memorise what was done before
     };
 
-    class cWikiTextBox : public cTextBox{
-        public:
-            cWikiTextBox() : cTextox() {}
-            cWikiTextBOx() : cWikiTextBox(std::string contents, std::string fontLoc, int fontSize, int inX, int inY, int inW, int inH = -1) {}
-
-            void render(SDL_Renderer*); //Overloading because reasons.
-    };
-
     class cImage : public cObject{
         /* To leave the image at its original size, set height and width to -1 */
         public:
@@ -100,6 +92,14 @@ namespace beatOff{
         private:
             std::string location;
 
+    };
+
+    class cWikiTextBox : public cTextBox{
+        public:
+            cWikiTextBox() : cTextBox() {}
+            cWikiTextBox(std::string contents, std::string fontLoc, int fontSize, int inX, int inY, int inW, int inH = -1) : cWikiTextBox(contents, fontLoc, fontSize, inX, inY, inW,  inH) {}
+
+            void render(SDL_Renderer*); //Overloading because reasons.
     };
 
     class cButton : public cTextBox {

@@ -10,7 +10,7 @@ namespace beatOff{
     { }
 
     //TODO: Fix this config datastructure somehow.
-    void cReader::loadChap(std::string fileLoc, SDL_Renderer* mRenderer, std::map<std::multimap<std::string, std::map<std::string, std::string> > >* mConfig)
+    void cReader::loadChap(std::string fileLoc, SDL_Renderer* mRenderer, std::map<std::multimap<std::string, std::map<std::string, std::string> > >& mConfig)
     {
         try{
             pugi::xml_document doc ;

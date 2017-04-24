@@ -49,7 +49,7 @@ namespace beatOff{
 
     void cNovelDetails::openNovel(
             std::string sauce, SDL_Renderer* mRenderer, 
-            std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >* config //More profitable to just pass the whole config in instead of doing stupid shit
+            std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >& config //More profitable to just pass the whole config in instead of doing stupid shit
             ){ 
         try{
             /* Clearing out old textures */

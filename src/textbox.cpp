@@ -388,6 +388,30 @@ namespace beatOff{
                             }
                         }
 
+                    case '=':
+                        {
+                            int hSize = 0;
+                            while(text[i] == '=') {
+                                hSize++;
+                                i++;
+                            }
+                            /* Headers are bold + size inversely proportionate to the header type
+                             * (I'm assuming from 1 -> 6 in biggest -> smallest)
+                             */
+                            /* Calculate the height of the header */
+                            hSize = 6 - hSize; //Proportionate size increase.
+
+                            /* Grab the rest of the header/text. I'm assuming correctly formatted
+                             * text = headers are on their own lines with correct numbers of equals
+                             * on both sides
+                             */
+
+
+                            TTF_Font* headerFont = TTF_OpenFont(fontLoc.c_str(), fontSize + (1 << hSize));
+                            TTF_SetFontStyle(headerFont, TTF_STYLE_BOLD);
+                            TTF_RenderUTF8Blended(headerFont, headerText);
+                        }
+
                     default:
                         /* Render the glyph, move on */
                         TTF_SetFontStyle(mFont, currStyle);

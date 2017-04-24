@@ -52,6 +52,8 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             state_t state; //GLOBALLY ACCESSABLE STATE. YES PLEASE!
             std::string err; //Set if the state is stuck/broken. Indicates what needs to be logged with mLog->log()
         protected:
+
+            SDL_Rect sRect;
 //            bool changed, created; //Not sure why these are here....
             std::string fontLoc;
             int fontSize;
@@ -138,7 +140,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             cNovelDetails();
             cNovelDetails(__logger::cLogger*);
             ~cNovelDetails() {}
-            void openNovel(std::string, SDL_Renderer*, std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >*); //Opens up a novel from XML and then renders it to a texture
+            void openNovel(std::string, SDL_Renderer*, std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >&); //Opens up a novel from XML and then renders it to a texture
             void render(SDL_Renderer*); //Draws a section of the texture
             std::string getSelected();
             std::string getChapName();
@@ -169,7 +171,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             cReader();
             cReader(__logger::cLogger*);
             ~cReader (){}
-            void loadChap(std::string, SDL_Renderer*, std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >*); //Opens up the current chapter. Currently doing it in a naive way of just loading everything into the texture, then scrolling down
+            void loadChap(std::string, SDL_Renderer*, std::map<std::string, std::multimap<std::string, std::map<std::string, std::string> > >&); //Opens up the current chapter. Currently doing it in a naive way of just loading everything into the texture, then scrolling down
             void closeChap();
             void handleUserMouse(int, int, int, bool);
             void handleUserScroll(int, int);
@@ -187,8 +189,7 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             SDL_Texture* mTex;
             SDL_Rect sRect;
             bool freeScroll;
-            bool loaded;
-    }
+    };
     
 }
 #endif //CONTENTS_HPP
