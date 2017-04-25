@@ -7,3 +7,5 @@ reader
 data/
 stats.html
 logs/
+Debug/
+.vs/

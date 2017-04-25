@@ -10,17 +10,9 @@
 #include <vector>
 
 
-#ifdef _WIN32
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <SDL_image.h>
-#endif
-
-#ifdef __unix__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
-#endif
 
 /* Including the base class I'm deriving this from */
 #include "logger.hpp"

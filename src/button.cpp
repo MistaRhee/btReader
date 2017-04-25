@@ -12,6 +12,7 @@ namespace beatOff{
         selected = 0;
         showBox();
     }
+
     void cButton::select(){
         if(!selected){
             invert();

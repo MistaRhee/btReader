@@ -7,21 +7,21 @@
 #include <map>
 #include <memory>
 #include <queue>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <string>
 #include <thread>
-#include <time.h>
+#include <ctime>
 #include <utility>
 #include <vector>
 
+#include <SDL2/SDL.h>
+
 #ifdef _WIN32
-#include <SDL.h>
 #include <windows.h>
 #endif
 
 #ifdef __unix__
-#include <SDL2/SDL.h>
 #include <unistd.h>
 #include <dirent.h>
 #endif
