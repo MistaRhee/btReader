@@ -121,6 +121,7 @@
     <ClCompile Include="src\novelList.cpp" />
     <ClCompile Include="src\object.cpp" />
     <ClCompile Include="src\pugixml.cpp" />
+    <ClCompile Include="src\reader.cpp" />
     <ClCompile Include="src\textbox.cpp" />
     <ClCompile Include="src\webOut.cpp" />
     <ClCompile Include="src\wikiParser.cpp" />
