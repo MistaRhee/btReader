@@ -7,7 +7,8 @@ enum places_t{
     list, //NovelList
     settings, //Settings
     details, //Novel Details
-    dlList //List of DLs
+    dlList, //List of DLs
+	reader //Reader
     //updates (maybe implementing later)
 };
 

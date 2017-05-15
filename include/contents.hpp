@@ -116,7 +116,6 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
 
             /* Rendering objects */
             SDL_Texture* mTexture;
-            SDL_Rect sRect;
 
             /* Storage */
             std::map<std::string, cButton> mNovels;
@@ -150,7 +149,6 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
             std::map<std::string, std::string> novelID; //Should really be chapID, but I'm too lazy to fix it Q_Q
             std::map<std::string, std::string> chapRevID; //Got it right this time. SCORE!
             SDL_Texture* mTexture; //Texture which stores the stuff
-            SDL_Rect sRect;
             bool freeScroll;
             bool loaded;
             bool highlighted; //Flag for if mouse has focused on the buttons
@@ -175,12 +173,13 @@ namespace beatOff{ //Because it's a derived class and I would like to keep names
 
             void move(int, int);
 
+			std::vector<cObject*> contents; //Only need to store the object's height :^)
             bool loaded;
             std::string chapLoc; //Store the location of the file just in case...
-            unsigned int heightReached; //Stores where the reader was last and dumping it back into the XML if required
             SDL_Texture* mTex;
-            SDL_Rect sRect;
             bool freeScroll;
+
+			// Stored "height reached" should just be sRect.y
     };
     
 }

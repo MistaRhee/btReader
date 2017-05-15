@@ -346,16 +346,16 @@ namespace beatOff{
     }
 
     void cWikiTextBox::render(SDL_Renderer* mRenderer){
-        if(!fileExists(fontLoc.c_str())){
+        if(!fileExists(font.c_str())){
             printf("Font doesn't exist! \n");
             exit(500); //IDK
         }
         else{
-            TTF_Font* mFont(fontLoc.c_str(), fontSize);
+            TTF_Font* mFont = TTF_OpenFont(font.c_str(), textSize);
             int currX = 0, currY = 0;
             int currStyle = 0; 
             currStyle = TTF_STYLE_NORMAL; // Just keep or-ing the new thing.
-            int lineskip =  TTF_FontLineSkip();
+            int lineskip =  TTF_FontLineSkip(mFont);
             int letterW = -1; //Will be updated on the fly anyway
             int letterH = -1; //Updated on the fly
             
@@ -365,7 +365,7 @@ namespace beatOff{
             currY = this->y;
             /* Currently not doing nice text wrapping because reasons */
 
-            for(unsigned int i = 0; i < this->text,size(); i++){
+            for(unsigned int i = 0; i < this->text.size(); i++){
                 switch(text[i]){
                     case '*':
                         {
@@ -405,18 +405,21 @@ namespace beatOff{
                              * text = headers are on their own lines with correct numbers of equals
                              * on both sides
                              */
+							std::string headerText(text.begin()+hSize, text.end()-hSize);
 
-
-                            TTF_Font* headerFont = TTF_OpenFont(fontLoc.c_str(), fontSize + (1 << hSize));
+                            TTF_Font* headerFont = TTF_OpenFont(font.c_str(), textSize + (1 << hSize));
                             TTF_SetFontStyle(headerFont, TTF_STYLE_BOLD);
-                            TTF_RenderUTF8Blended(headerFont, headerText);
+                            TTF_RenderUTF8_Blended(headerFont, headerText.c_str(), mColour);
+
+							break;
                         }
 
                     default:
                         /* Render the glyph, move on */
+						char t = text[i];
                         TTF_SetFontStyle(mFont, currStyle);
-                        TTF_SizeUTF8(mFont, text[i], &letterW, &letterH);
-                        TTF_RenderUTF8_Blended(mFont, text[i], mCOlour);
+                        TTF_SizeUTF8(mFont, &t, &letterW, &letterH);
+                        TTF_RenderUTF8_Blended(mFont, &t, mColour);
                         currX += letterW;
                         if(currX > this->x + this->w){ //Too wide now.
                             currY += letterH; //Should be a constant thing anyway

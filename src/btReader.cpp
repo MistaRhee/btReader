@@ -173,6 +173,7 @@ void cMain::preComp(){
 
     ((beatOff::cNovelList*)this->mContents[list])->setRect(mRect);
     ((beatOff::cNovelDetails*)this->mContents[details])->setRect(mRect);
+	((beatOff::cReader*)this->mContents[reader])->setRect(mRect);
 
     /* TODO: Uncomment when appropriate contents are implemented */
     //((beatOff::cSettings*)this->mContents[settings])->setRect(mRect);
@@ -510,7 +511,7 @@ void cMain::update(){
                     /* Get what novel I'm supposed to get details from */
                     try{
                         std::string detailsOf = ((beatOff::cNovelList*)this->mContents[list])->getSelected();
-                        ((beatOff::cNovelDetails*)this->mContents[details])->openNovel(this->novelDB[detailsOf].first, this->mRenderer, &(this->config));
+                        ((beatOff::cNovelDetails*)this->mContents[details])->openNovel(this->novelDB[detailsOf].first, this->mRenderer, this->config);
                         this->whereAt = details;
                         this->mContents[list]->state = working;
                     }

@@ -1,7 +1,7 @@
 #include "contents.hpp"
 
 //Lookup just for this file (I really wanna kill myself 'cus of this BADCODE
-#define ND_FONT_LOOKUP(...) (*(config))["fontList"].find(__VA_ARGS__)->second["sauce"]
+#define ND_FONT_LOOKUP(...) (config)["fontList"].find(__VA_ARGS__)->second["sauce"]
 
 namespace beatOff{
 
@@ -108,8 +108,8 @@ namespace beatOff{
 
             newObject = new cTextBox(
                     title, 
-                    ND_FONT_LOOKUP((*(config))["novelDetails"].find("title")->second["font"]),
-                    std::stoi((*(config))["novelDetails"].find("title")->second["size"]),
+                    ND_FONT_LOOKUP((config)["novelDetails"].find("title")->second["font"]),
+                    std::stoi((config)["novelDetails"].find("title")->second["size"]),
                     0, this->sRect.w, mHeight
                     );
             /* Title */
@@ -118,7 +118,7 @@ namespace beatOff{
             this->contents.push_back(std::make_pair(newObject, std::make_pair(std::string("__NONE__"), mHeight))); //__NONE__ to stand for unclickable
 
             /* Image */
-            if(!(*(config))["novelDetails"].count("image"))
+            if(!(config)["novelDetails"].count("image"))
                 newObject = new cImage(
                         frontLoc, 
                         this->sRect.w/4, 
@@ -131,8 +131,8 @@ namespace beatOff{
                         frontLoc, 
                         0, 
                         mHeight, 
-                        std::stoi((*(config))["novelDetails"].find("image")->second["w"]), 
-                        std::stoi((*(config))["novelDetails"].find("image")->second["h"])
+                        std::stoi((config)["novelDetails"].find("image")->second["w"]), 
+                        std::stoi((config)["novelDetails"].find("image")->second["h"])
                         ); //Trusting the config man to not be stupid and allocate W to be greater than sRect.w (Possibly want to do a min of this)
             mHeight += ((cImage*)newObject)->getSize().first;
             this->contents.push_back(std::make_pair(newObject, std::make_pair(std::string("__NONE__"), mHeight)));
@@ -140,8 +140,8 @@ namespace beatOff{
             /* Synopsis */
             newObject = new cTextBox(
                     synopsis,
-                    ND_FONT_LOOKUP((*(config))["novelDetails"].find("synopsis")->second["font"]),
-                    std::stoi((*(config))["novelDetails"].find("synopsis")->second["size"]),
+                    ND_FONT_LOOKUP((config)["novelDetails"].find("synopsis")->second["font"]),
+                    std::stoi((config)["novelDetails"].find("synopsis")->second["size"]),
                     0, this->sRect.w, mHeight
                     );
             mHeight += ((cTextBox*)newObject)->wrappedHeight();
@@ -151,8 +151,8 @@ namespace beatOff{
             for(auto volume : volumes){
                 newObject = new cTextBox(
                         volume.first,
-                        ND_FONT_LOOKUP((*(config))["novelDetails"].find("volume")->second["font"]),
-                        std::stoi((*(config))["novelDetails"].find("volume")->second["size"]),
+                        ND_FONT_LOOKUP((config)["novelDetails"].find("volume")->second["font"]),
+                        std::stoi((config)["novelDetails"].find("volume")->second["size"]),
                         0, this->sRect.w, mHeight
                         );
                 mHeight += ((cTextBox*)newObject)->wrappedHeight();
@@ -160,8 +160,8 @@ namespace beatOff{
                 for(auto chapter: volume.second){
                     newObject = new cButton(
                             chapter.first,
-                            ND_FONT_LOOKUP((*(config))["novelDetails"].find("chapter")->second["font"]),
-                            std::stoi((*(config))["novelDetails"].find("volume")->second["size"]),
+                            ND_FONT_LOOKUP((config)["novelDetails"].find("chapter")->second["font"]),
+                            std::stoi((config)["novelDetails"].find("volume")->second["size"]),
                             0, this->sRect.w, mHeight
                             );
                     if(!((cButton*)newObject)->isCompacted()) ((cButton*)newObject)->compact();
@@ -181,7 +181,7 @@ namespace beatOff{
             SDL_SetRenderTarget(mRenderer, mTexture);
             SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
             SDL_RenderClear(mRenderer);
-            for(int i = 0; i < this->contents.size(); i++){
+            for(unsigned int i = 0; i < this->contents.size(); i++){
                 this->contents[i].first->render(mRenderer);
             }
 
@@ -269,7 +269,7 @@ namespace beatOff{
                 case SDL_BUTTON_LEFT:
                     /* Work out what I'm hovering over, then check if it's a selectable, if it is,
                      * highlight it and trigger the flag, otherwise don't do anything */
-                    for(int i = 0; i < this->contents.size(); i++){
+                    for(unsigned int i = 0; i < this->contents.size(); i++){
                         if(this->contents[i].second.second > y){
                             if(this->contents[i].second.first == "__NONE__"){
                                 this->highlighted = 0;
@@ -305,7 +305,7 @@ namespace beatOff{
                          * otherwise, don't
                          */
                         /* Find what object I'm hovering over right now */
-                        for(int loc = 0; loc < this->contents.size(); loc++){
+                        for(unsigned int loc = 0; loc < this->contents.size(); loc++){
                             if(this->contents[loc].second.second > my){
                                 if(this->contents[loc].second.first != "__NONE__"){
                                     /* Over hoverable */

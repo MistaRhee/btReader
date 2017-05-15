@@ -439,10 +439,11 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
     fclose(fin);
     */
     FILE* fin = fopen(in.c_str(), "r");
-    char buff[1000000];
+    char buffer[1000000];
     pugi::xml_document doc;
     pugi::xml_node root = doc.append_child("chapter");
-    pugi::xml_node content = doc.append_child("text");
+    pugi::xml_node content = root.append_child("text");
+	std::string text;
 
     while(true){
         fgets(buffer, 1000000, fin);
@@ -451,6 +452,9 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
         }
         else{ //Making an ass out of u and me -> Images are on separate lines
             if(buffer[0] == '[' && buffer[1] == '['){
+				content.text().set(text.c_str()));
+				content = root.append_child("image");
+
                 std::string fileName;
                 for(int i = 2;; i++){
                     if(buffer[i] == '|'){
@@ -461,10 +465,8 @@ void cWikiParser::cleanChapter(const std::string in, const std::string out){
                     }
                 }
                 cGetImage newImage(this->mLog);
-                text += "[[";
-                text += newImage.getImage(fileName);
-                text += "]]";
-                text += "\n";
+                content.text().set(newImage.getImage(fileName).c_str());
+				content = root.append_child("text");
             }
 
             else{
